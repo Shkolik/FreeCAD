@@ -30,6 +30,8 @@
 #include "Blending/BlendPointPy.h"
 #include "Blending/FeatureBlendCurve.h"
 
+#include "Gordon/FeatureGordonSurface.h"
+
 #include "FeatureCut.h"
 #include "FeatureExtend.h"
 #include "FeatureFilling.h"
@@ -77,13 +79,14 @@ PyMOD_INIT_FUNC(Surface)
 
     // clang-format off
     // Add types to module
-    Surface::Filling           ::init();
-    Surface::Sewing            ::init();
-    Surface::Cut               ::init();
-    Surface::GeomFillSurface   ::init();
-    Surface::Extend            ::init();
-    Surface::FeatureBlendCurve ::init();
-    Surface::Sections          ::init();
+    Surface::Filling            ::init();
+    Surface::Sewing             ::init();
+    Surface::Cut                ::init();
+    Surface::GeomFillSurface    ::init();
+    Surface::Extend             ::init();
+    Surface::FeatureBlendCurve  ::init();
+    Surface::Sections           ::init();
+    Surface::GordonSurface      ::init();
     // clang-format on
 
     PyMOD_Return(mod);

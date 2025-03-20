@@ -47,9 +47,45 @@ SET(Blending_SRCS
   Blending/BlendCurve.h
 )
 
+SET(Gordon_SRCS
+  Gordon/FeatureGordonSurface.cpp
+  Gordon/FeatureGordonSurface.h
+)
+
+SET(OCC_Gordon_SRCS
+  Gordon/ApproxResult.h
+  Gordon/BSplineAlgorithms.cpp
+  Gordon/BSplineAlgorithms.h
+  Gordon/BSplineApproxInterp.cpp
+  Gordon/BSplineApproxInterp.h
+  Gordon/CurveNetworkSorter.cpp
+  Gordon/CurveNetworkSorter.h
+  Gordon/CurvesToSurface.cpp
+  Gordon/CurvesToSurface.h
+  Gordon/GordonSurfaceBuilder.cpp
+  Gordon/GordonSurfaceBuilder.h
+  Gordon/InterpolateCurveNetwork.cpp
+  Gordon/InterpolateCurveNetwork.h
+  Gordon/IntersectBSplines.cpp
+  Gordon/IntersectBSplines.h
+  Gordon/IntersectionPoint.h
+  Gordon/PointsToBSplineInterpolation.cpp
+  Gordon/PointsToBSplineInterpolation.h
+  Gordon/occ_gordon_internal.h
+  Gordon/occ_std_adapters.h
+  Gordon/Error.h
+  Gordon/Error.cpp
+  Gordon/DebugSurface.h
+  Gordon/occ_gordon.h
+  Gordon/occ_gordon.cpp
+)
+
+
 SET(Surface_SRCS
   ${Blending_SRCS}
   ${BlendingPy_SRCS}
+  ${Gordon_SRCS}
+  ${OCC_Gordon_SRCS}
   AppSurface.cpp
   PreCompiled.cpp
   PreCompiled.h
