@@ -39,28 +39,11 @@ T Clamp(T val, T min, T max)
 }
 
 InterpolateCurveNetwork::InterpolateCurveNetwork(const std::vector<Handle(Geom_Curve)>& profiles,
-                                                 const std::vector<Handle(Geom_Curve)>& guides,
-                                                 double spatialTol)
-    : m_hasPerformed(false)
-    , m_spatialTol(spatialTol)
+                                                            const std::vector<Handle(Geom_Curve)>& guides,
+                                                            double spatialTol)
+    : InterpolateCurveNetwork(BSplineAlgorithms::toBSplines(profiles),
+                              BSplineAlgorithms::toBSplines(guides), spatialTol)
 {
-    std::vector<Handle(Geom_BSplineCurve)> ucurves_bsplines, vcurves_bsplines;
-
-    ucurves_bsplines.reserve(profiles.size());
-    vcurves_bsplines.reserve(guides.size());
-
-    try {
-        for (const auto& profile : profiles) {
-            ucurves_bsplines.push_back(GeomConvert::CurveToBSplineCurve(profile));
-        }
-        for (const auto& guide : guides) {
-            ucurves_bsplines.push_back(GeomConvert::CurveToBSplineCurve(guide));
-        }
-    }
-    catch (Standard_Failure& err) {
-        throw std::runtime_error(std::string("Error converting curves to B-splines: ")
-                                 + err.GetMessageString());
-    }
 }
 
 InterpolateCurveNetwork::InterpolateCurveNetwork(const std::vector<Handle(Geom_BSplineCurve)>& profiles,
@@ -217,20 +200,20 @@ void InterpolateCurveNetwork::MakeCurvesCompatible()
 
     ComputeIntersections(tmp_intersection_params_u, tmp_intersection_params_v);
 
-    /*printIntersectionMatrix(tmp_intersection_params_u,
+    printIntersectionMatrix(tmp_intersection_params_u,
                 tmp_intersection_params_v,
                 nProfiles,
                 nGuides,
-                "tmp_intersection_");*/
+                "tmp_intersection_");
 
     // sort intersection_params_u and intersection_params_v and u-directional and v-directional B-spline curves
     SortCurves(tmp_intersection_params_u, tmp_intersection_params_v);
 
-    /*printIntersectionMatrix(tmp_intersection_params_u,
+    printIntersectionMatrix(tmp_intersection_params_u,
                 tmp_intersection_params_v,
                 nProfiles,
                 nGuides,
-                "sorted tmp_intersection_");*/
+                "sorted tmp_intersection_");
     
     // TODO: Need to check if profiles are closed curves
     // and if so - duplicate 1st guide at the end of guides array and fix intersection matrix

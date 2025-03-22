@@ -271,7 +271,14 @@ void GordonSurfaceBuilder::CheckCurveNetworkCompatibility(const std::vector<Hand
             double distance = p_prof.Distance(p_guid);
 
             if (distance > splines_scale * tol) {
-                throw error("B-spline network is incompatible (e.g. wrong parametrization) or intersection parameters are in a wrong order!");
+                if (distance > splines_scale * tol * 100) {
+                    throw error("B-spline network is incompatible (e.g. wrong parametrization) or "
+                                "intersection parameters are in a wrong order!");
+                }
+                else {
+                    throw error("B-spline network is incompatible (e.g. wrong parametrization) or "
+                                "tolerance value is too small!");
+                }
             }
         }
     }

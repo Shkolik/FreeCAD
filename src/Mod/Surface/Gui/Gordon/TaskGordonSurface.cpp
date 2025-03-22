@@ -247,12 +247,12 @@ GordonSurfacePanel::GordonSurfacePanel(ViewProviderGordonSurface* vp, Surface::G
     connect(action1, &QAction::triggered, this, &GordonSurfacePanel::onDeleteGuide);
     ui->listGuides->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    // clang-format off
-    connect(ui->listProfiles->model(), &QAbstractItemModel::rowsMoved,
-            this, &GordonSurfacePanel::onProfileIndexesMoved);
-    connect(ui->listGuides->model(), &QAbstractItemModel::rowsMoved,
-            this, &GordonSurfacePanel::onGuideIndexesMoved);
-    // clang-format on
+    //// clang-format off
+    //connect(ui->listProfiles->model(), &QAbstractItemModel::rowsMoved,
+    //        this, &GordonSurfacePanel::onProfileIndexesMoved);
+    //connect(ui->listGuides->model(), &QAbstractItemModel::rowsMoved,
+    //        this, &GordonSurfacePanel::onGuideIndexesMoved);
+    //// clang-format on
 }
 
 /*
@@ -676,62 +676,6 @@ void GordonSurfacePanel::onDeleteGuide()
 
         //editedObject->recomputeFeature();
     }
-}
-
-void GordonSurfacePanel::onProfileIndexesMoved()
-{
-    QAbstractItemModel* model = qobject_cast<QAbstractItemModel*>(sender());
-    if (!model) {
-        return;
-    }
-
-    std::vector<App::DocumentObject*> objects;
-    std::vector<std::string> element;
-
-    int rows = model->rowCount();
-    for (int i = 0; i < rows; i++) {
-        QModelIndex index = model->index(i, 0);
-        QList<QVariant> data;
-        data = index.data(Qt::UserRole).toList();
-
-        App::Document* doc = App::GetApplication().getDocument(data[0].toByteArray());
-        App::DocumentObject* obj = doc ? doc->getObject(data[1].toByteArray()) : nullptr;
-        std::string sub = data[2].toByteArray().constData();
-
-        objects.push_back(obj);
-        element.push_back(sub);
-    }
-
-    editedObject->ProfileEdges.setValues(objects, element);
-    //editedObject->recomputeFeature();
-}
-
-void GordonSurfacePanel::onGuideIndexesMoved()
-{
-    QAbstractItemModel* model = qobject_cast<QAbstractItemModel*>(sender());
-    if (!model) {
-        return;
-    }
-
-    std::vector<App::DocumentObject*> objects;
-    std::vector<std::string> element;
-
-    int rows = model->rowCount();
-    for (int i = 0; i < rows; i++) {
-        QModelIndex index = model->index(i, 0);
-        QList<QVariant> data;
-        data = index.data(Qt::UserRole).toList();
-
-        App::Document* doc = App::GetApplication().getDocument(data[0].toByteArray());
-        App::DocumentObject* obj = doc ? doc->getObject(data[1].toByteArray()) : nullptr;
-        std::string sub = data[2].toByteArray().constData();
-
-        objects.push_back(obj);
-        element.push_back(sub);
-    }
-
-    editedObject->GuideEdges.setValues(objects, element);
-    //editedObject->recomputeFeature();
 }
 
 void GordonSurfacePanel::onToleranceChanged(double tolerance)

@@ -120,8 +120,6 @@ private:
     void onDeleteProfile();
     void onDeleteGuide();
     void clearSelection();
-    void onProfileIndexesMoved();
-    void onGuideIndexesMoved();
     void onToleranceChanged(double tolerance);
     void appendEdges(const Gui::SelectionChanges& msg,
                      QListWidget* list,

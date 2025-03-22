@@ -95,19 +95,6 @@
       <string>Profile edges</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="0" colspan="2">
-       <widget class="QListWidget" name="listProfiles">
-        <property name="toolTip">
-         <string>Drag the items to reorder the list</string>
-        </property>
-        <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
-        </property>
-        <property name="dragDropMode">
-         <enum>QAbstractItemView::InternalMove</enum>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
@@ -150,16 +137,19 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QLabel" name="label_3">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+      <item row="1" column="0" colspan="2">
+       <widget class="QListWidget" name="listProfiles">
+        <property name="toolTip">
+         <string>List of profile edges</string>
         </property>
-        <property name="text">
-         <string>Drag the items to reorder the list.</string>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="showDropIndicator" stdset="0">
+         <bool>false</bool>
+        </property>
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::NoDragDrop</enum>
         </property>
        </widget>
       </item>
@@ -169,25 +159,12 @@
    <item row="2" column="0">
     <widget class="QGroupBox" name="groupBox1">
      <property name="toolTip">
-      <string>Add the profile edges.</string>
+      <string>Add the guide edges.</string>
      </property>
      <property name="title">
       <string>Guide edges</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="1" column="0" colspan="2">
-       <widget class="QListWidget" name="listGuides">
-        <property name="toolTip">
-         <string>Drag the items to reorder the list</string>
-        </property>
-        <property name="editTriggers">
-         <set>QAbstractItemView::NoEditTriggers</set>
-        </property>
-        <property name="dragDropMode">
-         <enum>QAbstractItemView::InternalMove</enum>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0" colspan="2">
        <layout class="QHBoxLayout" name="horizontalLayout_1">
         <item>
@@ -230,16 +207,16 @@
         </item>
        </layout>
       </item>
-      <item row="2" column="0" colspan="2">
-       <widget class="QLabel" name="label_4">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+      <item row="1" column="0" colspan="2">
+       <widget class="QListWidget" name="listGuides">
+        <property name="toolTip">
+         <string>List of guide edges</string>
         </property>
-        <property name="text">
-         <string>Drag the items to reorder the list.</string>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
+        <property name="dragDropMode">
+         <enum>QAbstractItemView::NoDragDrop</enum>
         </property>
        </widget>
       </item>
