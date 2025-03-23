@@ -20,6 +20,7 @@ List of Open Source components<br />
 <li><p><a href="#_TocXercesC">Xerces-C</a></p></li>
 <li><p><a href="#_TocZipios">Zipios++</a></p></li>
 <li><p><a href="#_TocZlib">zlib</a></p></li>
+<li><p><a href="#_TocOccGordon">occ_gordon</a></p></li>
 </ul>
 
 
@@ -215,6 +216,14 @@ Additional BSD Notice
 <p>Version: ${ZLIB_VERSION_STRING}</p>
 <p>Web site: <a href="https://zlib.net/">https://zlib.net/</a></p>
 <p>License: zlib: <a href="https://zlib.net/zlib_license.html">https://zlib.net/zlib_license.html</p>
+
+
+<hr>
+
+<h3><a name="_TocOccGordon"></a>occ_gordon</h3>
+<p>Version: 0.1.0</p>
+<p>Web site: <a href="https://github.com/rainman110/occ_gordon">https://github.com/rainman110/occ_gordon</a></p>
+<p>License: Apache License Version 2.0: <a href="https://www.apache.org/licenses/LICENSE-2.0.html">https://www.apache.org/licenses/LICENSE-2.0.html</a></p>
 
 
 <hr>
