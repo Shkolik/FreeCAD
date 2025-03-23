@@ -29,6 +29,11 @@
 #include <Base/Tools.h>
 #include <Base/Console.h>
 
+#include <App/Application.h>
+#include <App/Document.h>
+#include <Gui/Document.h>
+#include <Mod/Part/App/PartFeature.h>
+
 FC_LOG_LEVEL_INIT("Surface", true, true)
 
 namespace
@@ -154,6 +159,20 @@ void printIntersectionMatrix(const math_Matrix& params_u,
 }
 
 
+void showBSplineSurface(Handle(Geom_BSplineSurface) surface, const char* name = "Surface")
+{    
+    // Create a face from the BSpline surface
+    BRepBuilderAPI_MakeFace faceMaker(surface, Precision::Confusion());
+    if (!faceMaker.IsDone()) {
+        return;
+    }
+
+    App::Document* doc = App::GetApplication().getActiveDocument();
+    std::string objName = doc->getUniqueObjectName(name);
+    Part::Feature* object = static_cast<Part::Feature*>(doc->addObject("Part::Feature", objName.c_str()));
+    
+    object->Shape.setValue(faceMaker.Face());
+}
 }  // namespace
 
 

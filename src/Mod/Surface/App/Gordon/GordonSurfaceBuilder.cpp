@@ -162,6 +162,7 @@ void GordonSurfaceBuilder::CreateGordonSurface(const std::vector<Handle(Geom_BSp
     Handle(Geom_BSplineSurface) surfProfiles = surfProfilesSkinner.Surface();
     // therefore reparametrization before this method
 
+    /*showBSplineSurface(surfProfiles, "surfProfiles");*/
     /*printSurface(surfProfiles, " surfProfiles ");
 
 
@@ -175,6 +176,7 @@ void GordonSurfaceBuilder::CreateGordonSurface(const std::vector<Handle(Geom_BSp
     // flipping of the surface in v-direction; flipping is redundant here, therefore the next line is a comment!
     surfGuides = BSplineAlgorithms::flipSurface(surfGuides);
 
+    /*showBSplineSurface(surfGuides, "surfGuides");*/
     /*printSurface(surfGuides, " surfGuides ");*/
 
     // if there are too little points for degree in u-direction = 3 and degree in v-direction=3 creating an interpolation B-spline surface isn't possible in Open CASCADE
@@ -183,6 +185,8 @@ void GordonSurfaceBuilder::CreateGordonSurface(const std::vector<Handle(Geom_BSp
     Handle(Geom_BSplineSurface) tensorProdSurf = BSplineAlgorithms::pointsToSurface(intersection_pnts,
                                                                                          intersection_params_spline_u, intersection_params_spline_v,
                                                                                          makeUClosed, makeVClosed);
+    /*showBSplineSurface(tensorProdSurf, "tensorProdSurf");*/
+
     // match degree of all three surfaces
     Standard_Integer degreeU = std::max(std::max(surfGuides->UDegree(),
                                                  surfProfiles->UDegree()),
@@ -191,11 +195,7 @@ void GordonSurfaceBuilder::CreateGordonSurface(const std::vector<Handle(Geom_BSp
     Standard_Integer degreeV = std::max(std::max(surfGuides->VDegree(),
                                                  surfProfiles->VDegree()),
                                                  tensorProdSurf->VDegree());
-    //// TEST - REMOVE
-    //m_gordonSurf = Handle(Geom_BSplineSurface)::DownCast(surfProfiles->Copy());
-
-    //return;
-    //// END TEST
+   
     /*warning("degreeU: " + std::to_string(degreeU) + " degreeV: " + std::to_string(degreeV));*/
 
     // check whether degree elevation is necessary (does method elevate_degree_u()) and if yes, elevate degree
