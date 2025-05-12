@@ -58,7 +58,7 @@ public:
     bool setEdit(int ModNum) override;
     void unsetEdit(int ModNum) override;
     QIcon getIcon() const override;
-    void highlightReferences(const References& refs, bool on);
+    void highlightReferences(const References& profiles, const References& guides, bool on);
 };
 
 class GordonSurfacePanel: public QWidget,

@@ -37,6 +37,7 @@
 #endif
 
 #include <App/Document.h>
+#include <App/DocumentObject.h>
 #include <App/PropertyLinks.h>
 #include <Base/Tools.h>
 #include <Gui/Application.h>
@@ -51,6 +52,8 @@
 #include "Gordon/TaskGordonSurface.h"
 
 #include "Gordon/ui_TaskGordonSurface.h"
+#include <map>
+#include <Gui/InputField.h>
 
 
 using namespace SurfaceGui;
@@ -70,11 +73,7 @@ void ViewProviderGordonSurface::setupContextMenu(QMenu* menu, QObject* receiver,
 
 bool ViewProviderGordonSurface::setEdit(int ModNum)
 {
-    if (ModNum == ViewProvider::Default) {
-        // When double-clicking on the item for this sketch the
-        // object unsets and sets its edit mode without closing
-        // the task panel
-
+    if (ModNum == ViewProvider::Default) {        
         Surface::GordonSurface* obj = this->getObject<Surface::GordonSurface>();
 
         Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
@@ -107,9 +106,33 @@ QIcon ViewProviderGordonSurface::getIcon() const
     return Gui::BitmapFactory().pixmap("Surface_GordonSurface");
 }
 
-void ViewProviderGordonSurface::highlightReferences(const References& refs, bool on)
+void ViewProviderGordonSurface::highlightReferences(const References& profiles,
+                                                    const References& guides,
+                                                    bool on)
 {
-    for (const auto& it : refs) {
+    std::map<App::DocumentObject*, std::vector<std::string>> subs;
+
+    for (const auto& it : profiles) {
+        // Check if 'base' exists as a key in 'subs', if not, add it with an empty vector
+        if (subs.find(it.first) == subs.end()) {
+            subs[it.first] = std::vector<std::string>();
+        }
+
+        // Append values from 'it.second' to the vector stored by the key 'base'
+        subs[it.first].insert(subs[it.first].end(), it.second.begin(), it.second.end());
+    }
+
+    for (const auto& it : guides) {
+        // Check if 'base' exists as a key in 'subs', if not, add it with an empty vector
+        if (subs.find(it.first) == subs.end()) {
+            subs[it.first] = std::vector<std::string>();
+        }
+
+        // Append values from 'it.second' to the vector stored by the key 'base'
+        subs[it.first].insert(subs[it.first].end(), it.second.begin(), it.second.end());
+    }
+
+    for (const auto& it : subs) {
         Part::Feature* base = dynamic_cast<Part::Feature*>(it.first);
         if (base) {
             PartGui::ViewProviderPartExt* svp = dynamic_cast<PartGui::ViewProviderPartExt*>(
@@ -372,10 +395,10 @@ void GordonSurfacePanel::open()
 {
     checkOpenCommand();
 
-    // highlight all edges
-    this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(), true);
-    this->vp->highlightReferences(editedObject->GuideEdges.getSubListValues(), true);
-
+    // highlight all edges   
+    this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(),
+                                  editedObject->GuideEdges.getSubListValues(),
+                                  true);
     clearSelection();
 
     // if the surface is not yet created then automatically start "AppendEdge" mode
@@ -414,8 +437,9 @@ void GordonSurfacePanel::slotDeletedObject(const Gui::ViewProviderDocumentObject
     // If this view provider is being deleted then reset the colors of
     // referenced part objects. The dialog will be deleted later.
     if (this->vp == &Obj) {
-        this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(), false);
-        this->vp->highlightReferences(editedObject->GuideEdges.getSubListValues(), false);
+        this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(),
+                                      editedObject->GuideEdges.getSubListValues(),
+                                      false);
     }
 }
 
@@ -434,17 +458,18 @@ bool GordonSurfacePanel::accept()
         return false;
     }
 
-    this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(), false);
-    this->vp->highlightReferences(editedObject->GuideEdges.getSubListValues(), false);
-
+    this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(),
+                                  editedObject->GuideEdges.getSubListValues(),
+                                  false);
     return true;
 }
 
 bool GordonSurfacePanel::reject()
 {
     if (!editedObject.expired()) {
-        this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(), false);
-        this->vp->highlightReferences(editedObject->GuideEdges.getSubListValues(), false);
+        this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(),
+                                      editedObject->GuideEdges.getSubListValues(),
+                                      false);
     }
 
     selectionMode = None;
@@ -531,8 +556,6 @@ void GordonSurfacePanel::appendEdges(const Gui::SelectionChanges& msg, QListWidg
     auto element = edges.getSubValues();
     element.emplace_back(msg.pSubName);
     edges.setValues(objects, element);
-
-    this->vp->highlightReferences(edges.getSubListValues(), true);
 }
 
 void GordonSurfacePanel::removeEdge(const Gui::SelectionChanges& msg,
@@ -556,7 +579,6 @@ void GordonSurfacePanel::removeEdge(const Gui::SelectionChanges& msg,
         }
     }
 
-    this->vp->highlightReferences(edges.getSubListValues(), false);
     App::DocumentObject* obj = sel.getObject();
     std::string sub = msg.pSubName;
     auto objects = edges.getValues();
@@ -574,7 +596,6 @@ void GordonSurfacePanel::removeEdge(const Gui::SelectionChanges& msg,
             break;
         }
     }
-    this->vp->highlightReferences(edges.getSubListValues(), true);
 }
 
 
@@ -605,6 +626,9 @@ void GordonSurfacePanel::onSelectionChanged(const Gui::SelectionChanges& msg)
 
         //editedObject->recomputeFeature();
         QTimer::singleShot(50, this, &GordonSurfacePanel::clearSelection);
+        this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(),
+                                      editedObject->GuideEdges.getSubListValues(),
+                                      true);
     }
 }
 
@@ -626,7 +650,7 @@ void GordonSurfacePanel::onDeleteProfile()
         auto element = editedObject->ProfileEdges.getSubValues();
         auto it = objects.begin();
         auto jt = element.begin();
-        this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(), false);
+
         for (; it != objects.end() && jt != element.end(); ++it, ++jt) {
             if (*it == obj && *jt == sub) {
                 std::size_t index = std::distance(objects.begin(), it);
@@ -637,7 +661,9 @@ void GordonSurfacePanel::onDeleteProfile()
                 break;
             }
         }
-        this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(), true);
+        this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(),
+                                      editedObject->GuideEdges.getSubListValues(),
+                                      true);
 
         //editedObject->recomputeFeature();
     }
@@ -661,7 +687,7 @@ void GordonSurfacePanel::onDeleteGuide()
         auto element = editedObject->GuideEdges.getSubValues();
         auto it = objects.begin();
         auto jt = element.begin();
-        this->vp->highlightReferences(editedObject->GuideEdges.getSubListValues(), false);
+
         for (; it != objects.end() && jt != element.end(); ++it, ++jt) {
             if (*it == obj && *jt == sub) {
                 std::size_t index = std::distance(objects.begin(), it);
@@ -672,7 +698,9 @@ void GordonSurfacePanel::onDeleteGuide()
                 break;
             }
         }
-        this->vp->highlightReferences(editedObject->GuideEdges.getSubListValues(), true);
+        this->vp->highlightReferences(editedObject->GuideEdges.getSubListValues(),
+                                      editedObject->GuideEdges.getSubListValues(),
+                                      true);
 
         //editedObject->recomputeFeature();
     }
