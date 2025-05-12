@@ -28,6 +28,7 @@
 
 #ifndef _PreComp_
 #include <cstdlib>
+#include <limits>
 #endif
 
 #include <boost/regex.hpp>
@@ -623,7 +624,7 @@ void ComplexGeoData::restoreStream(std::istream& stream, std::size_t count)
         }
     }
     catch (Base::Exception& e) {
-        e.ReportException();
+        e.reportException();
         _restoreFailed = true;
         _elementMap.reset();
     }

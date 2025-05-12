@@ -67,7 +67,7 @@ void PropertyPartShape::setValue(const TopoShape& sh)
 {
     aboutToSetValue();
     _Shape = sh;
-    auto obj = Base::freecad_dynamic_cast<App::DocumentObject>(getContainer());
+    auto obj = freecad_cast<App::DocumentObject*>(getContainer());
     if(obj) {
         auto tag = obj->getID();
         if(_Shape.Tag && tag!=_Shape.Tag) {
@@ -109,7 +109,7 @@ const TopoShape& PropertyPartShape::getShape() const
     //        res.Tag = -1;
     //    else if (!res.Tag) {
     if (!_Shape.Tag) {
-        if (auto parent = Base::freecad_dynamic_cast<App::DocumentObject>(getContainer())) {
+        if (auto parent = freecad_cast<App::DocumentObject*>(getContainer())) {
             _Shape.Tag = parent->getID();
         }
     }
@@ -219,7 +219,7 @@ App::Property *PropertyPartShape::Copy() const
 
 void PropertyPartShape::Paste(const App::Property &from)
 {
-    auto prop = Base::freecad_dynamic_cast<const PropertyPartShape>(&from);
+    auto prop = freecad_cast<const PropertyPartShape*>(&from);
     if(prop) {
         setValue(prop->_Shape);
         _Ver = prop->_Ver;
@@ -249,7 +249,7 @@ void PropertyPartShape::beforeSave() const
 {
     _HasherIndex = 0;
     _SaveHasher = false;
-    auto owner = Base::freecad_dynamic_cast<App::DocumentObject>(getContainer());
+    auto owner = freecad_cast<App::DocumentObject*>(getContainer());
     if(owner && !_Shape.isNull() && _Shape.getElementMapSize()>0) {
         auto ret = owner->getDocument()->addStringHasher(_Shape.Hasher);
         _HasherIndex = ret.second;
@@ -323,7 +323,7 @@ void PropertyPartShape::Restore(Base::XMLReader &reader)
 {
     reader.readElement("Part");
 
-    auto owner = Base::freecad_dynamic_cast<App::DocumentObject>(getContainer());
+    auto owner = freecad_cast<App::DocumentObject*>(getContainer());
     _Ver = "?";
     bool has_ver = reader.hasAttribute("ElementMap");
     if (has_ver)
@@ -481,11 +481,11 @@ void PropertyPartShape::saveToFile(Base::Writer &writer) const
         App::PropertyContainer* father = this->getContainer();
         if (father && father->isDerivedFrom<App::DocumentObject>()) {
             App::DocumentObject* obj = static_cast<App::DocumentObject*>(father);
-            Base::Console().Error("Shape of '%s' cannot be written to BRep file '%s'\n",
+            Base::Console().error("Shape of '%s' cannot be written to BRep file '%s'\n",
                 obj->Label.getValue(),fi.filePath().c_str());
         }
         else {
-            Base::Console().Error("Cannot save BRep file '%s'\n", fi.filePath().c_str());
+            Base::Console().error("Cannot save BRep file '%s'\n", fi.filePath().c_str());
         }
 
         std::stringstream ss;
@@ -533,11 +533,11 @@ void PropertyPartShape::loadFromFile(Base::Reader &reader)
             App::PropertyContainer* father = this->getContainer();
             if (father && father->isDerivedFrom<App::DocumentObject>()) {
                 App::DocumentObject* obj = static_cast<App::DocumentObject*>(father);
-                Base::Console().Error("BRep file '%s' with shape of '%s' seems to be empty\n",
+                Base::Console().error("BRep file '%s' with shape of '%s' seems to be empty\n",
                     fi.filePath().c_str(),obj->Label.getValue());
             }
             else {
-                Base::Console().Warning("Loaded BRep file '%s' seems to be empty\n", fi.filePath().c_str());
+                Base::Console().warning("Loaded BRep file '%s' seems to be empty\n", fi.filePath().c_str());
             }
         }
     }
@@ -558,7 +558,7 @@ void PropertyPartShape::loadFromStream(Base::Reader &reader)
     }
     catch (const std::exception&) {
         if (!reader.eof())
-            Base::Console().Warning("Failed to load BRep file %s\n", reader.getFileName().c_str());
+            Base::Console().warning("Failed to load BRep file %s\n", reader.getFileName().c_str());
     }
 }
 
@@ -603,7 +603,7 @@ void PropertyPartShape::RestoreDocFile(Base::Reader &reader)
     // Now it's not possible anymore because both PropertyPartShape::loadFromFile() and
     // PropertyPartShape::loadFromStream() calls PropertyPartShape::setValue() which clears the
     // value of _Ver.
-    // Therefor we're storing the value of _Ver here so that we don't lose it.
+    // Therefore we're storing the value of _Ver here so that we don't lose it.
 
     std::string ver = _Ver;
 
@@ -943,7 +943,7 @@ void PropertyShapeCache::setPyObject(PyObject *value) {
  * @return The shape cache, or null if we aren't creating and it doesn't exist
  */
 PropertyShapeCache *PropertyShapeCache::get(const App::DocumentObject *obj, bool create) {
-    auto prop = Base::freecad_dynamic_cast<PropertyShapeCache>(
+    auto prop = freecad_cast<PropertyShapeCache*>(
         obj->getDynamicPropertyByName(SHAPE_CACHE_NAME));
     if(prop && prop->getContainer()==obj)
         return prop;

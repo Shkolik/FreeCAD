@@ -23,7 +23,6 @@
 #include "PreCompiled.h"
 
 #ifndef _PreComp_
-# include <cfloat>
 # ifdef FC_OS_WIN32
 #  include <windows.h>
 # endif
@@ -263,14 +262,14 @@ public:
         if (event->type() == Spaceball::ButtonEvent::ButtonEventType) {
             auto buttonEvent = static_cast<Spaceball::ButtonEvent*>(event);  // NOLINT
             if (!buttonEvent) {
-                Base::Console().Log("invalid spaceball button event\n");
+                Base::Console().log("invalid spaceball button event\n");
                 return true;
             }
         }
         else if (event->type() == Spaceball::MotionEvent::MotionEventType) {
             auto motionEvent = static_cast<Spaceball::MotionEvent*>(event);  // NOLINT
             if (!motionEvent) {
-                Base::Console().Log("invalid spaceball motion event\n");
+                Base::Console().log("invalid spaceball motion event\n");
                 return true;
             }
         }
@@ -288,7 +287,7 @@ public:
         if (event->type() == Spaceball::MotionEvent::MotionEventType) {
             auto motionEvent = static_cast<Spaceball::MotionEvent*>(event);  // NOLINT
             if (!motionEvent) {
-                Base::Console().Log("invalid spaceball motion event\n");
+                Base::Console().log("invalid spaceball motion event\n");
                 return nullptr;
             }
 
@@ -625,9 +624,9 @@ void View3DInventorViewer::init()
         this->grabGesture(Qt::PanGesture);
         this->grabGesture(Qt::PinchGesture);
     } catch (Base::Exception &e) {
-        Base::Console().Warning("Failed to set up gestures. Error: %s\n", e.what());
+        Base::Console().warning("Failed to set up gestures. Error: %s\n", e.what());
     } catch (...) {
-        Base::Console().Warning("Failed to set up gestures. Unknown error.\n");
+        Base::Console().warning("Failed to set up gestures. Unknown error.\n");
     }
 
     //create the cursors
@@ -1020,18 +1019,18 @@ void View3DInventorViewer::resetEditingRoot(bool updateLinks)
             Py::Object py = Py::type(e);
             if (py.isString()) {
                 Py::String str(py);
-                Base::Console().Warning("%s\n", str.as_std_string("utf-8").c_str());
+                Base::Console().warning("%s\n", str.as_std_string("utf-8").c_str());
             }
             else {
                 Py::String str(py.repr());
-                Base::Console().Warning("%s\n", str.as_std_string("utf-8").c_str());
+                Base::Console().warning("%s\n", str.as_std_string("utf-8").c_str());
             }
             // Prints message to console window if we are in interactive mode
             PyErr_Print();
         }
         catch (Py::Exception& e) {
             e.clear();
-            Base::Console().Error("Unexpected exception raised in View3DInventorViewer::resetEditingRoot\n");
+            Base::Console().error("Unexpected exception raised in View3DInventorViewer::resetEditingRoot\n");
         }
     }
 }
@@ -1707,16 +1706,11 @@ void View3DInventorViewer::savePicture(int width, int height, int sample, const 
     auto root = new SoSeparator;
     root->ref();
 
-#if (COIN_MAJOR_VERSION >= 4)
-    // The behaviour in Coin4 has changed so that when using the same instance of 'SoFCOffscreenRenderer'
-    // multiple times internally the biggest viewport size is stored and set to the SoGLRenderAction.
-    // The trick is to add a callback node and override the viewport size with what we want.
     if (useCoinOffscreenRenderer) {
         auto cbvp = new SoCallback;
         cbvp->setCallback(setViewportCB);
         root->addChild(cbvp);
     }
-#endif
 
     SoCamera* camera = getSoRenderManager()->getCamera();
 
@@ -2035,7 +2029,7 @@ void View3DInventorViewer::interactionFinishCB(void* ud, SoQTQuarterAdaptor* vie
 void View3DInventorViewer::interactionLoggerCB(void* ud, SoAction* action)
 {
     Q_UNUSED(ud)
-    Base::Console().Log("%s\n", action->getTypeId().getName().getString());
+    Base::Console().log("%s\n", action->getTypeId().getName().getString());
 }
 
 void View3DInventorViewer::addGraphicsItem(GLGraphicsItem* item)
@@ -2221,7 +2215,7 @@ void View3DInventorViewer::imageFromFramebuffer(int width, int height, int sampl
 
     const QOpenGLContext* context = QOpenGLContext::currentContext();
     if (!context) {
-        Base::Console().Warning("imageFromFramebuffer failed because no context is active\n");
+        Base::Console().warning("imageFromFramebuffer failed because no context is active\n");
         return;
     }
 
@@ -3267,7 +3261,7 @@ void View3DInventorViewer::setCameraType(SoType type)
         // heightAngle. Setting it to 45 deg also causes an issue with a too
         // close camera but we don't have this other ugly effect.
 
-        static_cast<SoPerspectiveCamera*>(cam)->heightAngle = (float)(M_PI / 4.0);  // NOLINT
+        static_cast<SoPerspectiveCamera*>(cam)->heightAngle = (float)(std::numbers::pi / 4.0);  // NOLINT
     }
 
     lightRotation->rotation.connectFrom(&cam->orientation);
@@ -3426,7 +3420,7 @@ void View3DInventorViewer::viewAll()
     SoCamera* cam = this->getSoRenderManager()->getCamera();
 
     if (cam && cam->getTypeId().isDerivedFrom(SoPerspectiveCamera::getClassTypeId())) {
-        static_cast<SoPerspectiveCamera*>(cam)->heightAngle = (float)(M_PI / 4.0);  // NOLINT
+        static_cast<SoPerspectiveCamera*>(cam)->heightAngle = (float)(std::numbers::pi / 4.0);  // NOLINT
     }
 
     if (isAnimationEnabled()) {
@@ -3524,7 +3518,6 @@ void View3DInventorViewer::viewSelection()
                     float(bbox.MaxX),
                     float(bbox.MaxY),
                     float(bbox.MaxZ));
-#if (COIN_MAJOR_VERSION >= 4)
         float aspectratio = getSoRenderManager()->getViewportRegion().getViewportAspectRatio();
         switch (cam->viewportMapping.getValue()) {
             case SoCamera::CROP_VIEWPORT_FILL_FRAME:
@@ -3536,27 +3529,6 @@ void View3DInventorViewer::viewSelection()
                 break;
         }
         cam->viewBoundingBox(box,aspectratio,1.0);
-#else
-        SoTempPath path(2);
-        path.ref();
-        auto pcGroup = new SoGroup;
-        pcGroup->ref();
-        auto pcTransform = new SoTransform;
-        pcGroup->addChild(pcTransform);
-        pcTransform->translation = box.getCenter();
-        auto *pcCube = new SoCube;
-        pcGroup->addChild(pcCube);
-        float sizeX,sizeY,sizeZ;
-        box.getSize(sizeX,sizeY,sizeZ);
-        pcCube->width = sizeX;
-        pcCube->height = sizeY;
-        pcCube->depth = sizeZ;
-        path.append(pcGroup);
-        path.append(pcCube);
-        cam->viewAll(&path,getSoRenderManager()->getViewportRegion());
-        path.unrefNoDelete();
-        pcGroup->unref();
-#endif
     }
 }
 
@@ -3587,14 +3559,90 @@ void View3DInventorViewer::alignToSelection()
     }
 
     const auto globalPlacement = App::GeoFeature::getGlobalPlacement(selection[0].pResolvedObject, selection[0].pObject, elementName.oldName);
-    const auto rotation = globalPlacement.getRotation() * geoFeature->Placement.getValue().getRotation().inverse();
+    const auto globalRotation = globalPlacement.getRotation() * geoFeature->Placement.getValue().getRotation().inverse();
     const auto splitSubName = Base::Tools::splitSubName(elementName.oldName);
     const auto geoFeatureSubName = !splitSubName.empty() ? splitSubName.back() : "";
 
-    Base::Vector3d direction;
-    if (geoFeature->getCameraAlignmentDirection(direction, geoFeatureSubName.c_str())) {
-        rotation.multVec(direction, direction);
-        const auto orientation = SbRotation(SbVec3f(0, 0, 1), Base::convertTo<SbVec3f>(direction));
+    Base::Vector3d alignmentZ;
+    Base::Vector3d alignmentX (0, 0, 0);
+    if (geoFeature->getCameraAlignmentDirection(alignmentZ, alignmentX, geoFeatureSubName.c_str())) {
+
+        // Find a x alignment if the geoFeature did not suggest any
+        if (alignmentX == Base::Vector3d (0, 0, 0)) {
+            Base::Rotation(-Base::Vector3d::UnitZ, alignmentZ).multVec(Base::Vector3d::UnitX, alignmentX);
+        }
+
+        // Convert to global coordinates
+        globalRotation.multVec(alignmentZ, alignmentZ);
+        globalRotation.multVec(alignmentX, alignmentX);
+
+        const auto cameraOrientation = getCameraOrientation();
+
+        auto directionZ = Base::convertTo<SbVec3f>(alignmentZ);
+        auto directionX = Base::convertTo<SbVec3f>(alignmentX);
+
+        SbVec3f cameraZ;
+        cameraOrientation.multVec(SbVec3f(0, 0, 1), cameraZ);
+
+        // Negate if the camera is closer to the opposite direction
+        if (cameraZ.dot(directionZ) < 0) {
+            directionZ.negate();
+        }
+
+        // Rotate the camera to align with directionZ by the smallest angle to align the z-axis
+        const SbRotation intermediateOrientation = cameraOrientation * SbRotation(cameraZ, directionZ);
+
+        SbVec3f intermediateX;
+        intermediateOrientation.multVec(SbVec3f(1, 0, 0), intermediateX);
+
+        // Find angle between directionX and intermediateX
+        const SbRotation rotation(directionX, intermediateX);
+        SbVec3f axis;
+        float angle;
+        rotation.getValue(axis, angle);
+
+        // Flip the sign of the angle if axis and directionZ are in opposite direction
+        if (axis.dot(directionZ) < 0 && angle != 0) {
+            angle *= -1;
+        }
+
+        using std::numbers::pi;
+
+        // Make angle positive
+        if (angle < 0) {
+            angle += 2 * pi;
+        }
+
+        // Find the angle to rotate to the nearest horizontal or vertical alignment with directionX.
+        // f is a small value used to get more deterministic behavior when the camera is at directionX +- 45 degrees.
+        const float f = 0.00001F;
+
+        if (angle <= pi/4 + f) {
+            angle = 0;
+        }
+        else if (angle <= 3 * pi/4 + f) {
+            angle = pi/2;
+        }
+        else if (angle < pi + pi/4 - f) {
+            angle = pi;
+        }
+        else if (angle < pi + 3 * pi/4 - f) {
+            angle = pi + pi/2;
+        }
+        else {
+            angle = 0;
+        }
+
+        SbRotation(directionZ, angle).multVec(directionX, directionX);
+
+        const SbVec3f directionY = directionZ.cross(directionX);
+
+        const auto orientation = SbRotation(SbMatrix(
+            directionX[0],  directionX[1],  directionX[2],  0,
+            directionY[0],  directionY[1],  directionY[2],  0,
+            directionZ[0],  directionZ[1],  directionZ[2],  0,
+            0,              0,              0,              1));
+
         setCameraOrientation(orientation);
     }
 }
@@ -3888,7 +3936,7 @@ void View3DInventorViewer::drawAxisCross()
 
     const float NEARVAL = 0.1F;
     const float FARVAL = 10.0F;
-    const float dim = NEARVAL * float(tan(M_PI / 8.0)); // FOV is 45 deg (45/360 = 1/8)
+    const float dim = NEARVAL * float(tan(std::numbers::pi / 8.0)); // FOV is 45 deg (45/360 = 1/8)
     glFrustum(-dim, dim, -dim, dim, NEARVAL, FARVAL);
 
 
@@ -4247,7 +4295,7 @@ void View3DInventorViewer::removeEventCallback(SoType eventtype, SoEventCallback
 ViewProvider* View3DInventorViewer::getViewProviderByPath(SoPath* path) const
 {
     if (!guiDocument) {
-        Base::Console().Warning("View3DInventorViewer::getViewProviderByPath: No document set\n");
+        Base::Console().warning("View3DInventorViewer::getViewProviderByPath: No document set\n");
         return nullptr;
     }
     return guiDocument->getViewProviderByPathFromHead(path);
@@ -4256,7 +4304,7 @@ ViewProvider* View3DInventorViewer::getViewProviderByPath(SoPath* path) const
 ViewProvider* View3DInventorViewer::getViewProviderByPathFromTail(SoPath* path) const
 {
     if (!guiDocument) {
-        Base::Console().Warning("View3DInventorViewer::getViewProviderByPathFromTail: No document set\n");
+        Base::Console().warning("View3DInventorViewer::getViewProviderByPathFromTail: No document set\n");
         return nullptr;
     }
     return guiDocument->getViewProviderByPathFromTail(path);
@@ -4265,7 +4313,7 @@ ViewProvider* View3DInventorViewer::getViewProviderByPathFromTail(SoPath* path) 
 std::vector<ViewProvider*> View3DInventorViewer::getViewProvidersOfType(const Base::Type& typeId) const
 {
     if (!guiDocument) {
-        Base::Console().Warning("View3DInventorViewer::getViewProvidersOfType: No document set\n");
+        Base::Console().warning("View3DInventorViewer::getViewProvidersOfType: No document set\n");
         return {};
     }
     return guiDocument->getViewProvidersOfType(typeId);

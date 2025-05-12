@@ -47,10 +47,10 @@
 #endif
 
 #include <algorithm>
-#include <cfloat>
 #include <future>
 #include <iostream>
 #include <limits>
+#include <numbers>
 
 #include "GCS.h"
 #include "qp_eq.h"
@@ -302,7 +302,7 @@ SolverReportingManager& SolverReportingManager::Manager()
 
 void SolverReportingManager::LogToConsole(const std::string& str)
 {
-    Base::Console().Log(str.c_str());
+    Base::Console().log(str.c_str());
 }
 
 void SolverReportingManager::LogToFile(const std::string& str)
@@ -1029,6 +1029,8 @@ int System::addConstraintPerpendicularLine2Arc(Point& p1,
                                                int tagId,
                                                bool driving)
 {
+    using std::numbers::pi;
+
     addConstraintP2PCoincident(p2, a.start, tagId, driving);
     double dx = *(p2.x) - *(p1.x);
     double dy = *(p2.y) - *(p1.y);
@@ -1046,6 +1048,8 @@ int System::addConstraintPerpendicularArc2Line(Arc& a,
                                                int tagId,
                                                bool driving)
 {
+    using std::numbers::pi;
+
     addConstraintP2PCoincident(p1, a.end, tagId, driving);
     double dx = *(p2.x) - *(p1.x);
     double dy = *(p2.y) - *(p1.y);
@@ -1063,8 +1067,10 @@ int System::addConstraintPerpendicularCircle2Arc(Point& center,
                                                  int tagId,
                                                  bool driving)
 {
+    using std::numbers::pi;
+
     addConstraintP2PDistance(a.start, center, radius, tagId, driving);
-    double incrAngle = *(a.startAngle) < *(a.endAngle) ? pi_2 : -pi_2;
+    double incrAngle = *(a.startAngle) < *(a.endAngle) ? pi / 2 : -pi / 2;
     double tangAngle = *a.startAngle + incrAngle;
     double dx = *(a.start.x) - *(center.x);
     double dy = *(a.start.y) - *(center.y);
@@ -1082,8 +1088,10 @@ int System::addConstraintPerpendicularArc2Circle(Arc& a,
                                                  int tagId,
                                                  bool driving)
 {
+    using std::numbers::pi;
+
     addConstraintP2PDistance(a.end, center, radius, tagId, driving);
-    double incrAngle = *(a.startAngle) < *(a.endAngle) ? -pi_2 : pi_2;
+    double incrAngle = *(a.startAngle) < *(a.endAngle) ? -pi / 2 : pi / 2;
     double tangAngle = *a.endAngle + incrAngle;
     double dx = *(a.end.x) - *(center.x);
     double dy = *(a.end.y) - *(center.y);
@@ -2078,7 +2086,7 @@ int System::solve_BFGS(SubSystem* subsys, bool /*isFine*/, bool isRedundantsolvi
                << ", maxIter: " << maxIterNumber << "\n";
 
         const std::string tmp = stream.str();
-        Base::Console().Log(tmp.c_str());
+        Base::Console().log(tmp.c_str());
     }
 
     double divergingLim = 1e6 * err + 1e12;
@@ -2093,7 +2101,7 @@ int System::solve_BFGS(SubSystem* subsys, bool /*isFine*/, bool isRedundantsolvi
                        << ", err: " << err << ", h_norm: " << h_norm << "\n";
 
                 const std::string tmp = stream.str();
-                Base::Console().Log(tmp.c_str());
+                Base::Console().log(tmp.c_str());
             }
             break;
         }
@@ -2105,7 +2113,7 @@ int System::solve_BFGS(SubSystem* subsys, bool /*isFine*/, bool isRedundantsolvi
                        << ", err: " << err << ", divergingLim: " << divergingLim << "\n";
 
                 const std::string tmp = stream.str();
-                Base::Console().Log(tmp.c_str());
+                Base::Console().log(tmp.c_str());
             }
             break;
         }
@@ -2142,7 +2150,7 @@ int System::solve_BFGS(SubSystem* subsys, bool /*isFine*/, bool isRedundantsolvi
                    << "\n";
 
             const std::string tmp = stream.str();
-            Base::Console().Log(tmp.c_str());
+            Base::Console().log(tmp.c_str());
         }
     }
 
@@ -2205,7 +2213,7 @@ int System::solve_LM(SubSystem* subsys, bool isRedundantsolving)
                << ", xsize: " << xsize << ", maxIter: " << maxIterNumber << "\n";
 
         const std::string tmp = stream.str();
-        Base::Console().Log(tmp.c_str());
+        Base::Console().log(tmp.c_str());
     }
 
     double nu = 2, mu = 0;
@@ -2270,12 +2278,13 @@ int System::solve_LM(SubSystem* subsys, bool isRedundantsolving)
                 x_new = x + h;
                 h_norm = h.squaredNorm();
 
+                constexpr double epsilon = std::numeric_limits<double>::epsilon();
                 if (h_norm <= eps1 * eps1 * x.norm()) {
                     // relative change in p is small, stop
                     stop = 3;
                     break;
                 }
-                else if (h_norm >= (x.norm() + eps1) / (DBL_EPSILON * DBL_EPSILON)) {
+                else if (h_norm >= (x.norm() + eps1) / (epsilon * epsilon)) {
                     // almost singular
                     stop = 4;
                     break;
@@ -2323,7 +2332,7 @@ int System::solve_LM(SubSystem* subsys, bool isRedundantsolving)
                    << ", g_inf(eps1): " << g_inf << ", h_norm: " << h_norm << "\n";
 
             const std::string tmp = stream.str();
-            Base::Console().Log(tmp.c_str());
+            Base::Console().log(tmp.c_str());
         }
     }
 
@@ -2376,7 +2385,7 @@ int System::solve_DL(SubSystem* subsys, bool isRedundantsolving)
                << "\n";
 
         const std::string tmp = stream.str();
-        Base::Console().Log(tmp.c_str());
+        Base::Console().log(tmp.c_str());
     }
 
     Eigen::VectorXd x(xsize), x_new(xsize);
@@ -2533,7 +2542,7 @@ int System::solve_DL(SubSystem* subsys, bool isRedundantsolving)
                    << ", err(divergingLim): " << err << "\n";
 
             const std::string tmp = stream.str();
-            Base::Console().Log(tmp.c_str());
+            Base::Console().log(tmp.c_str());
         }
 
         // count this iteration and start again
@@ -2547,7 +2556,7 @@ int System::solve_DL(SubSystem* subsys, bool isRedundantsolving)
         stream << "DL: stopcode: " << stop << ((stop == 1) ? ", Success" : ", Failed") << "\n";
 
         const std::string tmp = stream.str();
-        Base::Console().Log(tmp.c_str());
+        Base::Console().log(tmp.c_str());
     }
 
     return (stop == 1) ? Success : Failed;
@@ -4966,7 +4975,7 @@ int System::diagnose(Algorithm alg)
 
 #ifndef EIGEN_SPARSEQR_COMPATIBLE
     if (qrAlgorithm == EigenSparseQR) {
-        Base::Console().Warning("SparseQR not supported by you current version of Eigen. It "
+        Base::Console().warning("SparseQR not supported by you current version of Eigen. It "
                                 "requires Eigen 3.2.2 or higher. Falling back to Dense QR\n");
         qrAlgorithm = EigenDenseQR;
     }
@@ -5044,7 +5053,7 @@ int System::diagnose(Algorithm alg)
 
         auto SolveTime = Base::TimeElapsed::diffTimeF(DenseQR_start_time, DenseQR_end_time);
 
-        Base::Console().Log("\nDenseQR - Lapsed Time: %f seconds\n", SolveTime);
+        Base::Console().log("\nDenseQR - Lapsed Time: %f seconds\n", SolveTime);
 #endif
     }
 
@@ -5119,7 +5128,7 @@ int System::diagnose(Algorithm alg)
 
         auto SolveTime = Base::TimeElapsed::diffTimeF(SparseQR_start_time, SparseQR_end_time);
 
-        Base::Console().Log("\nSparseQR - Lapsed Time: %f seconds\n", SolveTime);
+        Base::Console().log("\nSparseQR - Lapsed Time: %f seconds\n", SolveTime);
 #endif
     }
 #endif
@@ -5649,7 +5658,7 @@ void System::identifyConflictingRedundantConstraints(
                 break;
         }
 
-        Base::Console().Log("Sketcher::RedundantSolving-%s-\n", solvername.c_str());
+        Base::Console().log("Sketcher::RedundantSolving-%s-\n", solvername.c_str());
     }
 
     if (res == Success) {
@@ -5664,7 +5673,7 @@ void System::identifyConflictingRedundantConstraints(
         resetToReference();
 
         if (debugMode == Minimal || debugMode == IterationLevel) {
-            Base::Console().Log("Sketcher Redundant solving: %d redundants\n", redundant.size());
+            Base::Console().log("Sketcher Redundant solving: %d redundants\n", redundant.size());
         }
 
         // TODO: Figure out why we need to iterate in reverse order and add explanation here.
@@ -5683,7 +5692,7 @@ void System::identifyConflictingRedundantConstraints(
             }
 
             if (debugMode == IterationLevel) {
-                Base::Console().Log("(Partially) Redundant, Group %d, index %d, Tag: %d\n",
+                Base::Console().log("(Partially) Redundant, Group %d, index %d, Tag: %d\n",
                                     i,
                                     iterRedundantEntry - conflictGroupsOrig[i].begin(),
                                     (*iterRedundantEntry)->getTag());

@@ -24,6 +24,7 @@
 #ifndef _PreComp_
 # include <QApplication>
 # include <QMessageBox>
+# include <cmath>
 # include <sstream>
 # include <BRepGProp.hxx>
 # include <GProp_GProps.hxx>
@@ -33,6 +34,7 @@
 # include <App/DocumentObject.h>
 # include <Base/Console.h>
 # include <Base/Type.h>
+# include <Base/Tools.h>
 # include <Gui/Action.h>
 # include <Gui/Application.h>
 # include <Gui/BitmapFactory.h>
@@ -321,7 +323,7 @@ CmdTechDrawExtensionInsertPrefixGroup::CmdTechDrawExtensionInsertPrefixGroup()
 
 void CmdTechDrawExtensionInsertPrefixGroup::activated(int iMsg)
 {
-    //    Base::Console().Message("CMD::ExtensionLinePPGroup - activated(%d)\n", iMsg);
+    //    Base::Console().message("CMD::ExtensionLinePPGroup - activated(%d)\n", iMsg);
     Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
     if (dlg) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Task In Progress"),
@@ -345,7 +347,7 @@ void CmdTechDrawExtensionInsertPrefixGroup::activated(int iMsg)
         execRemovePrefixChar(this);
         break;
     default:
-        Base::Console().Message("CMD::CVGrp - invalid iMsg: %d\n", iMsg);
+        Base::Console().message("CMD::CVGrp - invalid iMsg: %d\n", iMsg);
     };
 }
 
@@ -544,7 +546,7 @@ CmdTechDrawExtensionIncreaseDecreaseGroup::CmdTechDrawExtensionIncreaseDecreaseG
 
 void CmdTechDrawExtensionIncreaseDecreaseGroup::activated(int iMsg)
 {
-    //    Base::Console().Message("CMD::ExtensionIncreaseDecreaseGroup - activated(%d)\n", iMsg);
+    //    Base::Console().message("CMD::ExtensionIncreaseDecreaseGroup - activated(%d)\n", iMsg);
     Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
     if (dlg) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Task In Progress"),
@@ -562,7 +564,7 @@ void CmdTechDrawExtensionIncreaseDecreaseGroup::activated(int iMsg)
         execIncreaseDecreaseDecimal(this, -1);
         break;
     default:
-        Base::Console().Message("CMD::CVGrp - invalid iMsg: %d\n", iMsg);
+        Base::Console().message("CMD::CVGrp - invalid iMsg: %d\n", iMsg);
     };
 }
 
@@ -804,7 +806,7 @@ void CmdTechDrawExtensionPosObliqueChainDimension::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
     execPosObliqueChainDimension(this);
-    ///Base::Console().Message("TechDraw_ExtensionPosObliqueChainDimension started\n");
+    ///Base::Console().message("TechDraw_ExtensionPosObliqueChainDimension started\n");
 }
 
 bool CmdTechDrawExtensionPosObliqueChainDimension::isActive()
@@ -836,7 +838,7 @@ CmdTechDrawExtensionPosChainDimensionGroup::CmdTechDrawExtensionPosChainDimensio
 
 void CmdTechDrawExtensionPosChainDimensionGroup::activated(int iMsg)
 {
-    //    Base::Console().Message("CMD::ExtensionPosChainDimensionGroup - activated(%d)\n", iMsg);
+    //    Base::Console().message("CMD::ExtensionPosChainDimensionGroup - activated(%d)\n", iMsg);
     Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
     if (dlg) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Task In Progress"),
@@ -857,7 +859,7 @@ void CmdTechDrawExtensionPosChainDimensionGroup::activated(int iMsg)
         execPosObliqueChainDimension(this);
         break;
     default:
-        Base::Console().Message("CMD::CVGrp - invalid iMsg: %d\n", iMsg);
+        Base::Console().message("CMD::CVGrp - invalid iMsg: %d\n", iMsg);
     };
 }
 
@@ -1131,7 +1133,7 @@ void CmdTechDrawExtensionCascadeObliqueDimension::activated(int iMsg)
 {
     Q_UNUSED(iMsg);
     execCascadeObliqueDimension(this);
-    ///Base::Console().Message("TechDraw_ExtensionPosObliqueChainDimension started\n");
+    ///Base::Console().message("TechDraw_ExtensionPosObliqueChainDimension started\n");
 }
 
 bool CmdTechDrawExtensionCascadeObliqueDimension::isActive()
@@ -1164,7 +1166,7 @@ CmdTechDrawExtensionCascadeDimensionGroup::CmdTechDrawExtensionCascadeDimensionG
 
 void CmdTechDrawExtensionCascadeDimensionGroup::activated(int iMsg)
 {
-    //    Base::Console().Message("CMD::ExtensionCascadeDimansionGroup - activated(%d)\n", iMsg);
+    //    Base::Console().message("CMD::ExtensionCascadeDimansionGroup - activated(%d)\n", iMsg);
     Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
     if (dlg) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Task In Progress"),
@@ -1185,7 +1187,7 @@ void CmdTechDrawExtensionCascadeDimensionGroup::activated(int iMsg)
         execCascadeObliqueDimension(this);
         break;
     default:
-        Base::Console().Message("CMD::CVGrp - invalid iMsg: %d\n", iMsg);
+        Base::Console().message("CMD::CVGrp - invalid iMsg: %d\n", iMsg);
     };
 }
 
@@ -1540,7 +1542,7 @@ CmdTechDrawExtensionCreateChainDimensionGroup::CmdTechDrawExtensionCreateChainDi
 
 void CmdTechDrawExtensionCreateChainDimensionGroup::activated(int iMsg)
 {
-    //    Base::Console().Message("CMD::ExtensionCascadeDimansionGroup - activated(%d)\n", iMsg);
+    //    Base::Console().message("CMD::ExtensionCascadeDimansionGroup - activated(%d)\n", iMsg);
     Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
     if (dlg) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Task In Progress"),
@@ -1561,7 +1563,7 @@ void CmdTechDrawExtensionCreateChainDimensionGroup::activated(int iMsg)
         execCreateObliqueChainDimension(this);
         break;
     default:
-        Base::Console().Message("CMD::CVGrp - invalid iMsg: %d\n", iMsg);
+        Base::Console().message("CMD::CVGrp - invalid iMsg: %d\n", iMsg);
     };
 }
 
@@ -1933,7 +1935,7 @@ CmdTechDrawExtensionCreateCoordDimensionGroup::CmdTechDrawExtensionCreateCoordDi
 
 void CmdTechDrawExtensionCreateCoordDimensionGroup::activated(int iMsg)
 {
-    //    Base::Console().Message("CMD::ExtensionCascadeDimansionGroup - activated(%d)\n", iMsg);
+    //    Base::Console().message("CMD::ExtensionCascadeDimansionGroup - activated(%d)\n", iMsg);
     Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
     if (dlg) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Task In Progress"),
@@ -1954,7 +1956,7 @@ void CmdTechDrawExtensionCreateCoordDimensionGroup::activated(int iMsg)
         execCreateObliqueCoordDimension(this);
         break;
     default:
-        Base::Console().Message("CMD::CVGrp - invalid iMsg: %d\n", iMsg);
+        Base::Console().message("CMD::CVGrp - invalid iMsg: %d\n", iMsg);
     };
 }
 
@@ -2050,7 +2052,6 @@ void execCreateHorizChamferDimension(Gui::Command* cmd) {
     std::vector<dimVertex> allVertexes;
     allVertexes = _getVertexInfo(objFeat, subNames);
     if (!allVertexes.empty() && allVertexes.size() > 1) {
-        const auto Pi180 = 180.0 / M_PI;
         TechDraw::DrawViewDimension* dim;
         dim = _createLinDimension(objFeat, allVertexes[0].name, allVertexes[1].name, "DistanceX");
         float yMax = std::max(abs(allVertexes[0].point.y), abs(allVertexes[1].point.y)) + 7.0;
@@ -2062,7 +2063,7 @@ void execCreateHorizChamferDimension(Gui::Command* cmd) {
         dim->Y.setValue(-yMax);
         float dx = allVertexes[0].point.x - allVertexes[1].point.x;
         float dy = allVertexes[0].point.y - allVertexes[1].point.y;
-        float alpha = round(abs(atan(dy / dx)) * Pi180);
+        float alpha = std::round(Base::toDegrees(std::abs<float>(std::atan(dy / dx))));
         std::string sAlpha = std::to_string((int)alpha);
         std::string formatSpec = dim->FormatSpec.getStrValue();
         formatSpec = formatSpec + " x" + sAlpha + "°";
@@ -2119,7 +2120,6 @@ void execCreateVertChamferDimension(Gui::Command* cmd) {
     std::vector<dimVertex> allVertexes;
     allVertexes = _getVertexInfo(objFeat, subNames);
     if (!allVertexes.empty() && allVertexes.size() > 1) {
-        const auto Pi180 = 180.0 / M_PI;
         TechDraw::DrawViewDimension* dim;
         dim = _createLinDimension(objFeat, allVertexes[0].name, allVertexes[1].name, "DistanceY");
         float xMax = std::max(abs(allVertexes[0].point.x), abs(allVertexes[1].point.x)) + 7.0;
@@ -2131,7 +2131,7 @@ void execCreateVertChamferDimension(Gui::Command* cmd) {
         dim->Y.setValue(-mid.y);
         float dx = allVertexes[0].point.x - allVertexes[1].point.x;
         float dy = allVertexes[0].point.y - allVertexes[1].point.y;
-        float alpha = round(abs(atan(dx / dy)) * Pi180);
+        float alpha = std::round(Base::toDegrees(std::abs<float>(std::atan(dx / dy))));
         std::string sAlpha = std::to_string((int)alpha);
         std::string formatSpec = dim->FormatSpec.getStrValue();
         formatSpec = formatSpec + " x" + sAlpha + "°";
@@ -2192,7 +2192,7 @@ CmdTechDrawExtensionChamferDimensionGroup::CmdTechDrawExtensionChamferDimensionG
 
 void CmdTechDrawExtensionChamferDimensionGroup::activated(int iMsg)
 {
-    //    Base::Console().Message("CMD::ExtensionIncreaseDecreaseGroup - activated(%d)\n", iMsg);
+    //    Base::Console().message("CMD::ExtensionIncreaseDecreaseGroup - activated(%d)\n", iMsg);
     Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
     if (dlg) {
         QMessageBox::warning(Gui::getMainWindow(), QObject::tr("Task In Progress"),
@@ -2210,7 +2210,7 @@ void CmdTechDrawExtensionChamferDimensionGroup::activated(int iMsg)
         execCreateVertChamferDimension(this);
         break;
     default:
-        Base::Console().Message("CMD::CVGrp - invalid iMsg: %d\n", iMsg);
+        Base::Console().message("CMD::CVGrp - invalid iMsg: %d\n", iMsg);
     };
 }
 

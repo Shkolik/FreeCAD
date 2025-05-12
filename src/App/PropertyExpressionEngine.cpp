@@ -246,7 +246,7 @@ void PropertyExpressionEngine::updateHiddenReference(const std::string& key)
             }
         }
         catch (Base::Exception& e) {
-            e.ReportException();
+            e.reportException();
             FC_ERR("Failed to evaluate property binding " << myProp->getFullName()
                                                           << " on change of " << key);
         }
@@ -406,9 +406,9 @@ void PropertyExpressionEngine::buildGraphStructures(
  * @return New ObjectIdentifier
  */
 
-ObjectIdentifier PropertyExpressionEngine::canonicalPath(const ObjectIdentifier& p) const
+ObjectIdentifier PropertyExpressionEngine::canonicalPath(const ObjectIdentifier& oid) const
 {
-    DocumentObject* docObj = freecad_dynamic_cast<DocumentObject>(getContainer());
+    DocumentObject* docObj = freecad_cast<DocumentObject*>(getContainer());
 
     // Am I owned by a DocumentObject?
     if (!docObj) {
@@ -416,24 +416,24 @@ ObjectIdentifier PropertyExpressionEngine::canonicalPath(const ObjectIdentifier&
     }
 
     int ptype;
-    Property* prop = p.getProperty(&ptype);
+    Property* prop = oid.getProperty(&ptype);
 
-    // p pointing to a property...?
+    // oid pointing to a property...?
     if (!prop) {
-        throw Base::RuntimeError(p.resolveErrorString().c_str());
+        throw Base::RuntimeError(oid.resolveErrorString().c_str());
     }
 
     if (ptype || prop->getContainer() != getContainer()) {
-        return p;
+        return oid;
     }
 
     // In case someone calls this with p pointing to a PropertyExpressionEngine for some reason
     if (prop->isDerivedFrom(PropertyExpressionEngine::classTypeId)) {
-        return p;
+        return oid;
     }
 
     // Dispatch call to actual canonicalPath implementation
-    return p.canonicalPath();
+    return oid.canonicalPath();
 }
 
 /**
@@ -448,7 +448,7 @@ size_t PropertyExpressionEngine::numExpressions() const
 
 void PropertyExpressionEngine::afterRestore()
 {
-    DocumentObject* docObj = freecad_dynamic_cast<DocumentObject>(getContainer());
+    DocumentObject* docObj = freecad_cast<DocumentObject*>(getContainer());
     if (restoredExpressions && docObj) {
         Base::FlagToggler<bool> flag(restoring);
         AtomicPropertyChange signaller(*this);
@@ -669,7 +669,7 @@ PropertyExpressionEngine::computeEvaluationOrder(ExecuteOption option)
 DocumentObjectExecReturn* App::PropertyExpressionEngine::execute(ExecuteOption option,
                                                                  bool* touched)
 {
-    DocumentObject* docObj = freecad_dynamic_cast<DocumentObject>(getContainer());
+    DocumentObject* docObj = freecad_cast<DocumentObject*>(getContainer());
 
     if (!docObj) {
         throw Base::RuntimeError("PropertyExpressionEngine must be owned by a DocumentObject.");
@@ -739,7 +739,7 @@ DocumentObjectExecReturn* App::PropertyExpressionEngine::execute(ExecuteOption o
             throw Base::RuntimeError("Path does not resolve to a property.");
         }
 
-        DocumentObject* parent = freecad_dynamic_cast<DocumentObject>(prop->getContainer());
+        DocumentObject* parent = freecad_cast<DocumentObject*>(prop->getContainer());
 
         /* Make sure property belongs to the same container as this PropertyExpressionEngine */
         if (parent != docObj) {
@@ -808,7 +808,7 @@ void PropertyExpressionEngine::getPathsToDocumentObject(
     DocumentObject* obj,
     std::vector<App::ObjectIdentifier>& paths) const
 {
-    DocumentObject* owner = freecad_dynamic_cast<DocumentObject>(getContainer());
+    DocumentObject* owner = freecad_cast<DocumentObject*>(getContainer());
 
     if (!owner || owner == obj) {
         return;
@@ -873,7 +873,7 @@ PropertyExpressionEngine::validateExpression(const ObjectIdentifier& path,
     auto inList = pathDocObj->getInListEx(true);
     for (auto& v : expr->getDepObjects()) {
         auto docObj = v.first;
-        if (!v.second && inList.count(docObj)) {
+        if (!v.second && inList.contains(docObj)) {
             std::stringstream ss;
             ss << "cyclic reference to " << docObj->getFullName();
             return ss.str();
@@ -1008,7 +1008,7 @@ bool PropertyExpressionEngine::adjustLink(const std::set<DocumentObject*>& inLis
     }
     bool found = false;
     for (auto& v : _Deps) {
-        if (inList.count(v.first)) {
+        if (inList.contains(v.first)) {
             found = true;
             break;
         }

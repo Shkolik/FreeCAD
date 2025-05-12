@@ -2523,7 +2523,7 @@ void StdCmdViewIvIssueCamPos::activated(int iMsg)
     Temp += Temp2;
     Temp += "\")";
 
-    Base::Console().Message("%s\n",Temp2.c_str());
+    Base::Console().message("%s\n",Temp2.c_str());
     getGuiApplication()->macroManager()->addLine(MacroManager::Gui,Temp.c_str());
 }
 
@@ -2612,7 +2612,7 @@ public:
     {
         if (currentSelectionHandler)
         {
-            Base::Console().Message("SelectionCallbackHandler: A selection handler already active.");
+            Base::Console().message("SelectionCallbackHandler: A selection handler already active.");
             return;
         }
 
@@ -2697,10 +2697,7 @@ public:
             hotYF *= pRatio;
         }
 #endif
-        qreal cursorWidth = size.width() * pRatio;
-        qreal cursorHeight = size.height() * pRatio;
-        QPixmap px(Gui::BitmapFactory().pixmapFromSvg(svgFile, QSizeF(cursorWidth, cursorHeight)));
-        px.setDevicePixelRatio(pRatio);
+        QPixmap px(Gui::BitmapFactory().pixmapFromSvg(svgFile, size));
         return QCursor(px, hotXF, hotYF);
     }
 };
@@ -2868,7 +2865,7 @@ static std::vector<std::string> getBoxSelection(
         if(!vis)
             continue;
 
-        auto svp = dynamic_cast<ViewProviderDocumentObject*>(Application::Instance->getViewProvider(sobj));
+        auto svp = freecad_cast<ViewProviderDocumentObject*>(Application::Instance->getViewProvider(sobj));
         if(!svp)
             continue;
 
@@ -2931,7 +2928,7 @@ static void doSelect(void* ud, SoEventCallback * cb)
             if(App::GeoFeatureGroupExtension::getGroupOfObject(obj))
                 continue;
 
-            auto vp = dynamic_cast<ViewProviderDocumentObject*>(Application::Instance->getViewProvider(obj));
+            auto vp = freecad_cast<ViewProviderDocumentObject*>(Application::Instance->getViewProvider(obj));
             if (!vp || !vp->isVisible())
                 continue;
 
@@ -3113,7 +3110,7 @@ bool StdCmdTreeSelectAllInstances::isActive()
     auto obj = sels[0].getObject();
     if(!obj || !obj->isAttachedToDocument())
         return false;
-    return dynamic_cast<ViewProviderDocumentObject*>(
+    return freecad_cast<ViewProviderDocumentObject*>(
             Application::Instance->getViewProvider(obj)) != nullptr;
 }
 
@@ -3126,7 +3123,7 @@ void StdCmdTreeSelectAllInstances::activated(int iMsg)
     auto obj = sels[0].getObject();
     if(!obj || !obj->isAttachedToDocument())
         return;
-    auto vpd = dynamic_cast<ViewProviderDocumentObject*>(
+    auto vpd = freecad_cast<ViewProviderDocumentObject*>(
             Application::Instance->getViewProvider(obj));
     if(!vpd)
         return;

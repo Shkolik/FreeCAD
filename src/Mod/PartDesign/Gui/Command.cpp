@@ -344,7 +344,7 @@ CmdPartDesignSubShapeBinder::CmdPartDesignSubShapeBinder()
     sAppModule      = "PartDesign";
     sGroup          = QT_TR_NOOP("PartDesign");
     sMenuText       = QT_TR_NOOP("Create a sub-object(s) shape binder");
-    sToolTipText    = QT_TR_NOOP("Create a sub-object(s) shape binder");
+    sToolTipText    = QT_TR_NOOP("Create a reference to geometry from one or more objects, allowing it to be used inside or outside a PartDesign Body. It tracks relative placements, supports multiple geometry types (solids, faces, edges, vertices), and can work with objects in the same or external documents.");
     sWhatsThis      = "PartDesign_SubShapeBinder";
     sStatusTip      = sToolTipText;
     sPixmap         = "PartDesign_SubShapeBinder";
@@ -405,7 +405,7 @@ void CmdPartDesignSubShapeBinder::activated(int iMsg)
         updateActive();
         commitCommand();
     } catch (Base::Exception &e) {
-        e.ReportException();
+        e.reportException();
         QMessageBox::critical(Gui::getMainWindow(),
                 QObject::tr("Sub-Shape Binder"), QApplication::translate("Exception", e.what()));
         abortCommand();
@@ -428,7 +428,7 @@ CmdPartDesignClone::CmdPartDesignClone()
     sAppModule      = "PartDesign";
     sGroup          = QT_TR_NOOP("PartDesign");
     sMenuText       = QT_TR_NOOP("Create a clone");
-    sToolTipText    = QT_TR_NOOP("Create a new clone");
+    sToolTipText    = QT_TR_NOOP("Create a parametric copy of a solid object as the base feature of a new body");
     sWhatsThis      = "PartDesign_Clone";
     sStatusTip      = sToolTipText;
     sPixmap         = "PartDesign_Clone";
@@ -609,13 +609,13 @@ unsigned validateSketches(std::vector<App::DocumentObject*>& sketches,
             continue;
         }
 
-        //Base::Console().Error("Checking sketch %s\n", (*s)->getNameInDocument());
+        //Base::Console().error("Checking sketch %s\n", (*s)->getNameInDocument());
         // Check whether this sketch is already being used by another feature
         // Body features don't count...
         std::vector<App::DocumentObject*> inList = (*s)->getInList();
         std::vector<App::DocumentObject*>::iterator o = inList.begin();
         while (o != inList.end()) {
-            //Base::Console().Error("Inlist: %s\n", (*o)->getNameInDocument());
+            //Base::Console().error("Inlist: %s\n", (*o)->getNameInDocument());
             if ((*o)->isDerivedFrom<PartDesign::Body>())
                 o = inList.erase(o); //ignore bodies
             else if (!(  (*o)->isDerivedFrom<PartDesign::Feature>()  ))
@@ -677,7 +677,7 @@ bool importExternalElements(App::PropertyLinkSub& prop, std::vector<App::SubObje
     if (!prop.getName() || !prop.getName()[0]) {
         FC_THROWM(Base::RuntimeError, "Invalid property");
     }
-    auto editObj = Base::freecad_dynamic_cast<App::DocumentObject>(prop.getContainer());
+    auto editObj = freecad_cast<App::DocumentObject*>(prop.getContainer());
     if (!editObj) {
         FC_THROWM(Base::RuntimeError, "Editing object not found");
     }
@@ -784,7 +784,7 @@ void prepareProfileBased(PartDesign::Body *pcActiveBody, Gui::Command* cmd, cons
 
         // Populate the subs parameter by checking for external elements before
         // we construct our command.
-        auto ProfileFeature = Base::freecad_dynamic_cast<PartDesign::ProfileBased>(Feat);
+        auto ProfileFeature = freecad_cast<PartDesign::ProfileBased*>(Feat);
 
         std::vector<std::string>& cmdSubs = const_cast<vector<std::string>&>(subs);
         if (subs.size() == 0) {
@@ -1288,7 +1288,7 @@ void CmdPartDesignGroove::activated(int iMsg)
                 FCMD_OBJ_CMD(Feat,"Reversed = 1");
         }
         catch (const Base::Exception& e) {
-            e.ReportException();
+            e.reportException();
         }
 
         finishProfileBased(cmd, sketch, Feat);

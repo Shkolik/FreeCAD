@@ -166,7 +166,7 @@ Base::Vector3d CosmeticVertex::rotatedAndScaled(const double scale, const double
         // invert the Y coordinate so the rotation math works out
         // the stored point is inverted
         scaledPoint = DU::invertY(scaledPoint);
-        scaledPoint.RotateZ(rotDegrees * M_PI / DegreesHalfCircle);
+        scaledPoint.RotateZ(rotDegrees * std::numbers::pi / DegreesHalfCircle);
         scaledPoint = DU::invertY(scaledPoint);
     }
     return scaledPoint;
@@ -182,7 +182,7 @@ Base::Vector3d CosmeticVertex::makeCanonicalPoint(DrawViewPart* dvp, Base::Vecto
     Base::Vector3d result = point;
     if (rotDeg != 0.0) {
         // unrotate the point
-        double rotRad = rotDeg * M_PI / DegreesHalfCircle;
+        double rotRad = rotDeg * std::numbers::pi / DegreesHalfCircle;
         // we always rotate around the origin.
         result.RotateZ(-rotRad);
     }
@@ -208,13 +208,13 @@ Base::Vector3d CosmeticVertex::makeCanonicalPointInverted(DrawViewPart* dvp, Bas
 
 CosmeticVertex* CosmeticVertex::copy() const
 {
-//    Base::Console().Message("CV::copy()\n");
+//    Base::Console().message("CV::copy()\n");
     return new CosmeticVertex(this);
 }
 
 CosmeticVertex* CosmeticVertex::clone() const
 {
-//    Base::Console().Message("CV::clone()\n");
+//    Base::Console().message("CV::clone()\n");
     CosmeticVertex* cpy = this->copy();
     cpy->setTag(this->getTag());
     return cpy;
@@ -232,6 +232,6 @@ PyObject* CosmeticVertex::getPyObject()
 // To do: make const
 void CosmeticVertex::dump(const char* title)
 {
-    Base::Console().Message("CV::dump - %s \n", title);
-    Base::Console().Message("CV::dump - %s \n", toString().c_str());
+    Base::Console().message("CV::dump - %s \n", title);
+    Base::Console().message("CV::dump - %s \n", toString().c_str());
 }

@@ -83,7 +83,9 @@ void AutoSaver::renameFile(QString dirName, QString file, QString tmpFile)
             << " -> " << file.toUtf8().constData());
     QDir dir(dirName);
     dir.remove(file);
-    dir.rename(tmpFile,file);
+    if (!dir.rename(tmpFile,file)) {
+        FC_ERR("Failed to rename autosave file " << tmpFile.toStdString() << " to " << file.toStdString() << "\n");
+    }
 }
 
 void AutoSaver::setTimeout(int ms)
@@ -220,7 +222,7 @@ void AutoSaver::saveDocument(const std::string& name, AutoSaveProperty& saver)
             }
         }
 
-        Base::Console().Log("Save AutoRecovery file in %fs\n", Base::TimeElapsed::diffTimeF(startTime,Base::TimeElapsed()));
+        Base::Console().log("Save AutoRecovery file in %fs\n", Base::TimeElapsed::diffTimeF(startTime,Base::TimeElapsed()));
         hGrp->SetBool("SaveThumbnail",save);
     }
 }
@@ -236,7 +238,7 @@ void AutoSaver::timerEvent(QTimerEvent * event)
                 break;
             }
             catch (...) {
-                Base::Console().Error("Failed to auto-save document '%s'\n", it.first.c_str());
+                Base::Console().error("Failed to auto-save document '%s'\n", it.first.c_str());
             }
         }
     }

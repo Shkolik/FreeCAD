@@ -249,13 +249,13 @@ void TaskMeasure::update()
         App::DocumentObject* sub = ob->getSubObject(sel.SubName);
 
         // Resolve App::Link
-        if (auto link = Base::freecad_dynamic_cast<App::Link>(sub)) {
+        if (auto link = freecad_cast<App::Link*>(sub)) {
             sub = link->getLinkedObject(true);
         }
 
         std::string mod = Base::Type::getModuleName(sub->getTypeId().getName());
         if (!App::MeasureManager::hasMeasureHandler(mod.c_str())) {
-            Base::Console().Message("No measure handler available for geometry of module: %s\n",
+            Base::Console().message("No measure handler available for geometry of module: %s\n",
                                     mod);
             clearSelection();
             return;

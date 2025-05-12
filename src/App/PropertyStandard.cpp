@@ -277,7 +277,7 @@ unsigned int PropertyPath::getMemSize() const
 // PropertyEnumeration
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-TYPESYSTEM_SOURCE(App::PropertyEnumeration, App::PropertyInteger)
+TYPESYSTEM_SOURCE(App::PropertyEnumeration, App::Property)
 
 //**************************************************************************
 // Construction/Destruction
@@ -442,7 +442,7 @@ void PropertyEnumeration::Restore(Base::XMLReader& reader)
     if (val < 0) {
         // If the enum is empty at this stage do not print a warning
         if (_enum.hasEnums()) {
-            Base::Console().DeveloperWarning(std::string("PropertyEnumeration"),
+            Base::Console().developerWarning(std::string("PropertyEnumeration"),
                                              "Enumeration index %d is out of range, ignore it\n",
                                              val);
         }
@@ -518,7 +518,7 @@ void PropertyEnumeration::setPyObject(PyObject* value)
         }
         catch (Py::Exception&) {
             Base::PyException e;
-            e.ReportException();
+            e.reportException();
         }
     }
 
@@ -601,7 +601,11 @@ bool PropertyEnumeration::getPyPathValue(const ObjectIdentifier& path, Py::Objec
     std::string p = path.getSubPathStr();
     if (p == ".Enum" || p == ".All") {
         Base::PyGILStateLocker lock;
-        Py::Tuple res(_enum.maxValue() + 1);
+        auto maxEnumValue = _enum.maxValue();
+        if (maxEnumValue < 0) {
+            return false;  // The enum is invalid
+        }
+        Py::Tuple res(maxEnumValue + 1);
         std::vector<std::string> enums = _enum.getEnumVector();
         PropertyString tmp;
         for (int i = 0; i < int(enums.size()); ++i) {
@@ -1246,7 +1250,7 @@ void PropertyFloatConstraint::setPyObject(PyObject* value)
 
         double stepSize = valConstr[3];
         // need a value > 0
-        if (stepSize < DBL_EPSILON) {
+        if (stepSize < std::numeric_limits<double>::epsilon()) {
             throw Base::ValueError("Step size must be greater than zero");
         }
 
@@ -1278,7 +1282,8 @@ TYPESYSTEM_SOURCE(App::PropertyPrecision, App::PropertyFloatConstraint)
 //**************************************************************************
 // Construction/Destruction
 //
-const PropertyFloatConstraint::Constraints PrecisionStandard = {0.0, DBL_MAX, 0.001};
+const PropertyFloatConstraint::Constraints PrecisionStandard = {
+    0.0, std::numeric_limits<double>::max(), 0.001};
 
 PropertyPrecision::PropertyPrecision()
 {
@@ -1437,7 +1442,7 @@ void PropertyString::setValue(const char* newValue)
 
     std::vector<std::pair<Property*, std::unique_ptr<Property>>> propChanges;
     std::string newValueStr = newValue;
-    auto obj = dynamic_cast<DocumentObject*>(getContainer());
+    auto obj = freecad_cast<DocumentObject*>(getContainer());
     bool commit = false;
 
     if (obj && this == &obj->Label) {
@@ -1505,7 +1510,7 @@ void PropertyString::setPyObject(PyObject* value)
 void PropertyString::Save(Base::Writer& writer) const
 {
     std::string val;
-    auto obj = dynamic_cast<DocumentObject*>(getContainer());
+    auto obj = freecad_cast<DocumentObject*>(getContainer());
     writer.Stream() << writer.ind() << "<String ";
     bool exported = false;
     if (obj && obj->isAttachedToDocument() && obj->isExporting() && &obj->Label == this) {
@@ -1529,7 +1534,7 @@ void PropertyString::Restore(Base::XMLReader& reader)
     // read my Element
     reader.readElement("String");
     // get the value of my Attribute
-    auto obj = dynamic_cast<DocumentObject*>(getContainer());
+    auto obj = freecad_cast<DocumentObject*>(getContainer());
     if (obj && &obj->Label == this) {
         if (reader.hasAttribute("restore")) {
             int restore = reader.getAttributeAsInteger("restore");

@@ -146,7 +146,7 @@ PyObject *PropertyGeometryList::getPyObject()
 void PropertyGeometryList::setPyObject(PyObject *value)
 {
     // check container of this property to notify about changes
-    Part2DObject* part2d = dynamic_cast<Part2DObject*>(this->getContainer());
+    Part2DObject* part2d = freecad_cast<Part2DObject*>(this->getContainer());
 
     if (PySequence_Check(value)) {
         Py::Sequence sequence(value);
@@ -191,13 +191,13 @@ void PropertyGeometryList::trySaveGeometry(Geometry * geom, Base::Writer &writer
         geom->Save(writer);
         for( auto & ext : geom->getExtensions() ) {
             auto extension = ext.lock();
-            auto gpe = freecad_dynamic_cast<GeometryMigrationPersistenceExtension>(extension.get());
+            auto gpe = freecad_cast<GeometryMigrationPersistenceExtension*>(extension.get());
             if (gpe)
                 gpe->postSave(writer);
         }
     }
     catch (const Base::NotImplementedError& e) {
-        Base::Console().Warning(std::string("PropertyGeometryList"), "Not yet implemented: %s\n", e.what());
+        Base::Console().warning(std::string("PropertyGeometryList"), "Not yet implemented: %s\n", e.what());
     }
 }
 
@@ -219,7 +219,7 @@ void PropertyGeometryList::tryRestoreGeometry(Geometry * geom, Base::XMLReader &
         geom->Restore(reader);
     }
     catch (const Base::NotImplementedError& e) {
-        Base::Console().Warning(std::string("PropertyGeometryList"), "Not yet implemented: %s\n", e.what());
+        Base::Console().warning(std::string("PropertyGeometryList"), "Not yet implemented: %s\n", e.what());
     }
 }
 
@@ -232,7 +232,7 @@ void PropertyGeometryList::Save(Writer &writer) const
                                         << _lValueList[i]->getTypeId().getName() << "\"";
         for (auto &e : _lValueList[i]->getExtensions() ) {
             auto ext = e.lock();
-            if (auto gpe = freecad_dynamic_cast<GeometryMigrationPersistenceExtension>(ext.get())) {
+            if (auto gpe = freecad_cast<GeometryMigrationPersistenceExtension*>(ext.get())) {
                 gpe->preSave(writer);
             }
         }
@@ -263,7 +263,7 @@ void PropertyGeometryList::Restore(Base::XMLReader &reader)
         tryRestoreGeometry(newG, reader);
 
         if(reader.testStatus(Base::XMLReader::ReaderStatus::PartialRestoreInObject)) {
-            Base::Console().Error("Geometry \"%s\" within a PropertyGeometryList was subject to a partial restore.\n",reader.localName());
+            Base::Console().error("Geometry \"%s\" within a PropertyGeometryList was subject to a partial restore.\n",reader.localName());
             if(isOrderRelevant()) {
                 // Pushes the best try by the Geometry class
                 values.push_back(newG);
