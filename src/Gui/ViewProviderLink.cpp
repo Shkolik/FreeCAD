@@ -673,8 +673,11 @@ public:
 
     QIcon getIcon(QPixmap px) {
         static int iconSize = -1;
-        if(iconSize < 0)
-            iconSize = QApplication::style()->standardPixmap(QStyle::SP_DirClosedIcon).width();
+        if (iconSize < 0) {
+            auto sampleIcon = QApplication::style()->standardPixmap(QStyle::SP_DirClosedIcon);
+            double pixelRatio = sampleIcon.devicePixelRatio();
+            iconSize = static_cast<int>(sampleIcon.width() / pixelRatio);
+        }
 
         if(!isLinked())
             return QIcon();
@@ -2793,11 +2796,13 @@ ViewProvider *ViewProviderLink::startEditing(int mode) {
         }
 
         if (auto result = inherited::startEditing(mode)) {
-            transformDragger->addStartCallback(dragStartCallback, this);
-            transformDragger->addFinishCallback(dragFinishCallback, this);
-            transformDragger->addMotionCallback(dragMotionCallback, this);
+            if (transformDragger.get()) {
+                transformDragger->addStartCallback(dragStartCallback, this);
+                transformDragger->addFinishCallback(dragFinishCallback, this);
+                transformDragger->addMotionCallback(dragMotionCallback, this);
 
-            setDraggerPlacement(dragCtx->initialPlacement);
+                setDraggerPlacement(dragCtx->initialPlacement);
+            }
 
             return result;
         }

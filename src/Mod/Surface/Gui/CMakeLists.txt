@@ -20,10 +20,13 @@ SET(SurfaceGui_UIC_SRCS
     TaskFillingVertex.ui
     TaskGeomFillSurface.ui
     TaskSections.ui
+    Blending/TaskBlendCurve.ui
     Gordon/TaskGordonSurface.ui
 )
 
 SET(BlendingGui_SRCS
+    Blending/TaskBlendCurve.cpp
+    Blending/TaskBlendCurve.h
     Blending/ViewProviderBlendCurve.cpp
     Blending/ViewProviderBlendCurve.h
 )

@@ -646,7 +646,7 @@ void PropertyDistanceList::Save(Base::Writer& writer) const
 void PropertyDistanceList::Restore(Base::XMLReader& reader)
 {
     reader.readElement("FloatList");
-    std::string file(reader.getAttribute("file"));
+    std::string file(reader.getAttribute<const char*>("file"));
 
     if (!file.empty()) {
         // initiate a file read
@@ -869,7 +869,7 @@ App::DocumentObjectExecReturn* Feature::execute()
     DistanceInspection insp(this->SearchRadius.getValue(), actual, inspectNominal);
     unsigned long count = actual->countPoints();
     std::stringstream str;
-    str << "Inspecting " << this->Label.getValue() << "...";
+    str << "Inspecting " << this->Label.getValue() << "…";
     Base::SequencerLauncher seq(str.str().c_str(), count);
 
     std::vector<float> vals(count);
@@ -958,7 +958,7 @@ App::DocumentObjectExecReturn* Feature::execute()
     else {
         // Single-threaded operation
         std::stringstream str;
-        str << "Inspecting " << this->Label.getValue() << "...";
+        str << "Inspecting " << this->Label.getValue() << "…";
         Base::SequencerLauncher seq(str.str().c_str(), count);
 
         for (unsigned int i = 0; i < count; i++) {

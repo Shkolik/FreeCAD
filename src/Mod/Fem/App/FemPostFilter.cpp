@@ -88,7 +88,7 @@ FemPostFilter::FilterPipeline& FemPostFilter::getFilterPipeline(std::string name
 void FemPostFilter::setActiveFilterPipeline(std::string name)
 {
     if (m_pipelines.count(name) == 0) {
-        throw Base::ValueError("Not a filter pipline name");
+        throw Base::ValueError("Not a filter pipeline name");
     }
 
     if (m_activePipeline != name && isValid()) {
@@ -382,21 +382,21 @@ FemPostDataAlongLineFilter::FemPostDataAlongLineFilter()
     m_line->SetPoint2(vec2.x, vec2.y, vec2.z);
     m_line->SetResolution(Resolution.getValue());
 
+    m_arclength = vtkSmartPointer<vtkAppendArcLength>::New();
+    m_arclength->SetInputConnection(m_line->GetOutputPort(0));
+
 
     auto passthrough = vtkSmartPointer<vtkPassThrough>::New();
     m_probe = vtkSmartPointer<vtkProbeFilter>::New();
     m_probe->SetSourceConnection(passthrough->GetOutputPort(0));
-    m_probe->SetInputConnection(m_line->GetOutputPort());
-    m_probe->SetValidPointMaskArrayName("ValidPointArray");
+    m_probe->SetInputConnection(m_arclength->GetOutputPort());
     m_probe->SetPassPointArrays(1);
     m_probe->SetPassCellArrays(1);
-    // needs vtk > 6.1
-#if (VTK_MAJOR_VERSION > 6) && (VTK_MINOR_VERSION > 1)
     m_probe->ComputeToleranceOff();
     m_probe->SetTolerance(0.01);
-#endif
 
     clip.source = passthrough;
+    clip.algorithmStorage.push_back(m_arclength);
     clip.target = m_probe;
 
     addFilterPipeline(clip, "DataAlongLine");
@@ -491,12 +491,7 @@ void FemPostDataAlongLineFilter::GetAxisData()
         return;
     }
 
-    vtkDataArray* tcoords = dset->GetPointData()->GetTCoords("Texture Coordinates");
-
-    const Base::Vector3d& vec1 = Point1.getValue();
-    const Base::Vector3d& vec2 = Point2.getValue();
-    const Base::Vector3d diff = vec1 - vec2;
-    double Len = diff.Length();
+    vtkDataArray* alength = dset->GetPointData()->GetArray("arc_length");
 
     for (vtkIdType i = 0; i < dset->GetNumberOfPoints(); ++i) {
         double value = 0;
@@ -520,8 +515,7 @@ void FemPostDataAlongLineFilter::GetAxisData()
         }
 
         values.push_back(value);
-        double tcoord = tcoords->GetComponent(i, 0);
-        coords.push_back(tcoord * Len);
+        coords.push_back(alength->GetTuple1(i));
     }
 
     YAxisData.setValues(values);
@@ -563,11 +557,8 @@ FemPostDataAtPointFilter::FemPostDataAtPointFilter()
     m_probe->SetValidPointMaskArrayName("ValidPointArray");
     m_probe->SetPassPointArrays(1);
     m_probe->SetPassCellArrays(1);
-    // needs vtk > 6.1
-#if (VTK_MAJOR_VERSION > 6) && (VTK_MINOR_VERSION > 1)
     m_probe->ComputeToleranceOff();
     m_probe->SetTolerance(0.01);
-#endif
 
     clip.source = passthrough;
     clip.target = m_probe;
@@ -1459,7 +1450,6 @@ void FemPostCalculatorFilter::updateAvailableFields()
 
     std::vector<std::string> scalars;
     std::vector<std::string> vectors;
-    //    std::vector<std::string> tensors;
 
     vtkSmartPointer<vtkDataObject> data = getInputData();
     vtkDataSet* dset = vtkDataSet::SafeDownCast(data);
@@ -1488,14 +1478,28 @@ void FemPostCalculatorFilter::updateAvailableFields()
 
 const std::vector<std::string> FemPostCalculatorFilter::getScalarVariables()
 {
+#if (VTK_MAJOR_VERSION >= 9) && (VTK_MINOR_VERSION > 0)
     std::vector<std::string> scalars = m_calculator->GetScalarVariableNames();
+#else
+    std::vector<std::string> scalars(m_calculator->GetScalarVariableNames(),
+                                     m_calculator->GetScalarVariableNames()
+                                         + m_calculator->GetNumberOfScalarArrays());
+#endif
+
     scalars.insert(scalars.begin(), {"coordsX", "coordsY", "coordsZ"});
     return scalars;
 }
 
 const std::vector<std::string> FemPostCalculatorFilter::getVectorVariables()
 {
+#if (VTK_MAJOR_VERSION >= 9) && (VTK_MINOR_VERSION > 0)
     std::vector<std::string> vectors = m_calculator->GetVectorVariableNames();
+#else
+    std::vector<std::string> vectors(m_calculator->GetVectorVariableNames(),
+                                     m_calculator->GetVectorVariableNames()
+                                         + m_calculator->GetNumberOfVectorArrays());
+#endif
+
     vectors.insert(vectors.begin(), "coords");
     return vectors;
 }
