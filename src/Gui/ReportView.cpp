@@ -20,8 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "PreCompiled.h"
-#ifndef _PreComp_
+
 # include <QApplication>
 # include <QContextMenuEvent>
 # include <QGridLayout>
@@ -29,7 +28,7 @@
 # include <QTextCursor>
 # include <QTextStream>
 # include <QTime>
-#endif
+
 
 #include <Base/Interpreter.h>
 #include <Base/Color.h>
@@ -80,7 +79,7 @@ ReportView::ReportView( QWidget* parent )
     // create the python console
     tabPython = new PythonConsole();
     tabPython->setWordWrapMode(QTextOption::NoWrap);
-    tabPython->setWindowTitle(tr("Python console"));
+    tabPython->setWindowTitle(tr("Python Console"));
     tabPython->setWindowIcon(BitmapFactory().iconFromTheme("applications-python"));
     int python = tabWidget->addTab(tabPython, tabPython->windowTitle());
     tabWidget->setTabIcon(python, tabPython->windowIcon());
@@ -102,7 +101,7 @@ void ReportView::changeEvent(QEvent *e)
     QWidget::changeEvent(e);
     if (e->type() == QEvent::LanguageChange) {
         tabOutput->setWindowTitle(tr("Output"));
-        tabPython->setWindowTitle(tr("Python console"));
+        tabPython->setWindowTitle(tr("Python Console"));
         for (int i=0; i<tabWidget->count();i++)
             tabWidget->setTabText(i, tabWidget->widget(i)->windowTitle());
     }
@@ -464,8 +463,19 @@ ReportOutput::~ReportOutput()
 
 void ReportOutput::restoreFont()
 {
-    QFont serifFont(QLatin1String("Courier"), 10, QFont::Normal);
-    setFont(serifFont);
+    QFont font;
+    auto hPrefGrp = App::GetApplication().GetParameterGroupByPath(
+        "User parameter:BaseApp/Preferences/Editor");
+    int fontSize = hPrefGrp->GetInt("FontSize", 10);
+    auto serifFont = hPrefGrp->GetASCII("Font");
+    if (serifFont.empty()) {
+        font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+        font.setPointSize(fontSize);
+    }
+    else {
+        font = QFont (QString::fromStdString(serifFont), fontSize);
+    }
+    setFont(font);
 }
 
 void ReportOutput::sendLog(const std::string& notifiername, const std::string& msg, Base::LogStyle level,
@@ -555,7 +565,7 @@ bool ReportOutput::event(QEvent* event)
 {
     if (event && event->type() == QEvent::ShortcutOverride) {
         auto kevent = static_cast<QKeyEvent*>(event);
-        if (kevent == QKeySequence::Copy)
+        if (kevent == QKeySequence::Copy || kevent == QKeySequence::SelectAll)
             kevent->accept();
     }
     return QTextEdit::event(event);
@@ -590,14 +600,14 @@ void ReportOutput::contextMenuEvent ( QContextMenuEvent * e )
     menu->addSeparator();
 
     auto displayMenu = new QMenu(optionMenu);
-    displayMenu->setTitle(tr("Display message types"));
+    displayMenu->setTitle(tr("Display Message Types"));
     optionMenu->addMenu(displayMenu);
 
-    QAction* logMsg = displayMenu->addAction(tr("Normal messages"), this, &ReportOutput::onToggleNormalMessage);
+    QAction* logMsg = displayMenu->addAction(tr("Normal Messages"), this, &ReportOutput::onToggleNormalMessage);
     logMsg->setCheckable(true);
     logMsg->setChecked(bMsg);
 
-    QAction* logAct = displayMenu->addAction(tr("Log messages"), this, &ReportOutput::onToggleLogMessage);
+    QAction* logAct = displayMenu->addAction(tr("Log Messages"), this, &ReportOutput::onToggleLogMessage);
     logAct->setCheckable(true);
     logAct->setChecked(bLog);
 
@@ -609,19 +619,19 @@ void ReportOutput::contextMenuEvent ( QContextMenuEvent * e )
     errAct->setCheckable(true);
     errAct->setChecked(bErr);
 
-    QAction* logCritical = displayMenu->addAction(tr("Critical messages"), this, &ReportOutput::onToggleCritical);
+    QAction* logCritical = displayMenu->addAction(tr("Critical Messages"), this, &ReportOutput::onToggleCritical);
     logCritical->setCheckable(true);
     logCritical->setChecked(bCritical);
 
     auto showOnMenu = new QMenu (optionMenu);
-    showOnMenu->setTitle(tr("Show Report view on"));
+    showOnMenu->setTitle(tr("Show Report View On"));
     optionMenu->addMenu(showOnMenu);
 
-    QAction* showNormAct = showOnMenu->addAction(tr("Normal messages"), this, &ReportOutput::onToggleShowReportViewOnNormalMessage);
+    QAction* showNormAct = showOnMenu->addAction(tr("Normal Messages"), this, &ReportOutput::onToggleShowReportViewOnNormalMessage);
     showNormAct->setCheckable(true);
     showNormAct->setChecked(bShowOnNormal);
 
-    QAction* showLogAct = showOnMenu->addAction(tr("Log messages"), this, &ReportOutput::onToggleShowReportViewOnLogMessage);
+    QAction* showLogAct = showOnMenu->addAction(tr("Log Messages"), this, &ReportOutput::onToggleShowReportViewOnLogMessage);
     showLogAct->setCheckable(true);
     showLogAct->setChecked(bShowOnLog);
 
@@ -633,22 +643,22 @@ void ReportOutput::contextMenuEvent ( QContextMenuEvent * e )
     showErrAct->setCheckable(true);
     showErrAct->setChecked(bShowOnError);
 
-    QAction* showCriticalAct = showOnMenu->addAction(tr("Critical messages"), this, SLOT(onToggleShowReportViewOnCritical()));
+    QAction* showCriticalAct = showOnMenu->addAction(tr("Critical Messages"), this, SLOT(onToggleShowReportViewOnCritical()));
     showCriticalAct->setCheckable(true);
     showCriticalAct->setChecked(bShowOnCritical);
 
     optionMenu->addSeparator();
 
-    QAction* stdoutAct = optionMenu->addAction(tr("Redirect Python output"), this, &ReportOutput::onToggleRedirectPythonStdout);
+    QAction* stdoutAct = optionMenu->addAction(tr("Redirect Python Output"), this, &ReportOutput::onToggleRedirectPythonStdout);
     stdoutAct->setCheckable(true);
     stdoutAct->setChecked(d->redirected_stdout);
 
-    QAction* stderrAct = optionMenu->addAction(tr("Redirect Python errors"), this, &ReportOutput::onToggleRedirectPythonStderr);
+    QAction* stderrAct = optionMenu->addAction(tr("Redirect Python Errors"), this, &ReportOutput::onToggleRedirectPythonStderr);
     stderrAct->setCheckable(true);
     stderrAct->setChecked(d->redirected_stderr);
 
     optionMenu->addSeparator();
-    QAction* botAct = optionMenu->addAction(tr("Go to end"), this, &ReportOutput::onToggleGoToEnd);
+    QAction* botAct = optionMenu->addAction(tr("Go to End"), this, &ReportOutput::onToggleGoToEnd);
     botAct->setCheckable(true);
     botAct->setChecked(gotoEnd);
 
@@ -669,7 +679,7 @@ void ReportOutput::contextMenuEvent ( QContextMenuEvent * e )
 
     menu->addAction(tr("Clear"), this, &ReportOutput::clear);
     menu->addSeparator();
-    menu->addAction(tr("Save As..."), this, &ReportOutput::onSaveAs);
+    menu->addAction(tr("Save As…"), this, &ReportOutput::onSaveAs);
 
     menu->exec(e->globalPos());
     delete menu;
@@ -678,7 +688,7 @@ void ReportOutput::contextMenuEvent ( QContextMenuEvent * e )
 void ReportOutput::onSaveAs()
 {
     QString fn = QFileDialog::getSaveFileName(this, tr("Save Report Output"), QString(),
-        QStringLiteral("%1 (*.txt *.log)").arg(tr("Plain Text Files")));
+        QStringLiteral("%1 (*.txt *.log)").arg(tr("Plain text files")));
     if (!fn.isEmpty()) {
         QFileInfo fi(fn);
         if (fi.completeSuffix().isEmpty())
@@ -854,9 +864,15 @@ void ReportOutput::OnChange(Base::Subject<const char*> &rCaller, const char * sR
     }
     else if (strcmp(sReason, "FontSize") == 0 || strcmp(sReason, "Font") == 0) {
         int fontSize = rclGrp.GetInt("FontSize", 10);
-        QString fontFamily = QString::fromLatin1(rclGrp.GetASCII("Font", "Courier").c_str());
-
-        QFont font(fontFamily, fontSize);
+        QFont font;
+        auto fontName = rclGrp.GetASCII("Font");
+        if (fontName.empty()) {
+            font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+            font.setPointSize(fontSize);
+        }
+        else {
+            font = QFont (QString::fromStdString(fontName), fontSize);
+        }
         setFont(font);
         QFontMetrics metric(font);
         int width = QtTools::horizontalAdvance(metric, QLatin1String("0000"));
@@ -878,3 +894,4 @@ void ReportOutput::OnChange(Base::Subject<const char*> &rCaller, const char * sR
 }
 
 #include "moc_ReportView.cpp"
+

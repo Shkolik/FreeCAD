@@ -23,6 +23,7 @@
 #ifndef GUI_WAIT_CURSOR_H
 #define GUI_WAIT_CURSOR_H
 
+#include <FCGlobal.h>
 
 namespace Gui {
 
@@ -74,6 +75,19 @@ public:
     void restoreCursor();
     FilterEventsFlags ignoreEvents() const;
     void setIgnoreEvents(FilterEventsFlags flags = AllEvents);
+
+    /**
+     * @brief Suspends the wait cursor state by restoring the normal cursor
+     * and removing the event filter. To be used before showing an interactive
+     * dialog during a long operation.
+     */
+    static void suspend();
+
+    /**
+     * @brief Resumes the wait cursor state by setting the wait cursor
+     * and reinstalling the event filter, if a WaitCursor is active.
+     */
+    static void resume();
 
 private:
     FilterEventsFlags filter;

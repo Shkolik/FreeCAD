@@ -23,7 +23,6 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "PreCompiled.h"
 
 #include "FemConstraintTemperature.h"
 
@@ -44,6 +43,16 @@ ConstraintTemperature::ConstraintTemperature()
                       (App::PropertyType)(App::Prop_None),
                       "Type of constraint, temperature or concentrated heat flux");
     ConstraintType.setEnums(ConstraintTypes);
+    ADD_PROPERTY_TYPE(EnableAmplitude,
+                      (false),
+                      "ConstraintTemperature",
+                      (App::PropertyType)(App::Prop_None),
+                      "Amplitude of the temperature boundary condition");
+    ADD_PROPERTY_TYPE(AmplitudeValues,
+                      (std::vector<std::string> {"0, 0", "1, 1"}),
+                      "ConstraintTemperature",
+                      (App::PropertyType)(App::Prop_None),
+                      "Amplitude values");
 }
 
 App::DocumentObjectExecReturn* ConstraintTemperature::execute()

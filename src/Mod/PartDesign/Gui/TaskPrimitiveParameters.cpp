@@ -20,13 +20,9 @@
  *                                                                         *
  ***************************************************************************/
 
-
-#include "PreCompiled.h"
-
-#ifndef _PreComp_
 #include <limits>
+
 #include <QMessageBox>
-#endif
 
 #include <App/Document.h>
 #include <App/Origin.h>
@@ -48,10 +44,13 @@ using namespace PartDesignGui;
 
 // clang-format off
 TaskBoxPrimitives::TaskBoxPrimitives(ViewProviderPrimitive* vp, QWidget* parent)
-  : TaskBox(QPixmap(),tr("Primitive parameters"), true, parent)
+  : TaskBox(QPixmap(),tr("Primitive Parameters"), true, parent)
   , ui(new Ui_DlgPrimitives)
   , vp(vp)
 {
+    vp->showPreview(true);
+    vp->showPreviousFeature(true);
+
     proxy = new QWidget(this);
     ui->setupUi(proxy);
 
@@ -972,8 +971,9 @@ bool TaskBoxPrimitives::setPrimitive(App::DocumentObject* obj)
     return true;
 }
 
-TaskPrimitiveParameters::TaskPrimitiveParameters(ViewProviderPrimitive* PrimitiveView)
-    : vp_prm(PrimitiveView)
+TaskDlgPrimitiveParameters::TaskDlgPrimitiveParameters(ViewProviderPrimitive* PrimitiveView)
+    : TaskDlgFeatureParameters(PrimitiveView)
+    , vp_prm(PrimitiveView)
 {
     assert(PrimitiveView);
 
@@ -981,11 +981,12 @@ TaskPrimitiveParameters::TaskPrimitiveParameters(ViewProviderPrimitive* Primitiv
     Content.push_back(primitive);
     parameter = new PartGui::TaskAttacher(PrimitiveView, nullptr, QString(), tr("Attachment"));
     Content.push_back(parameter);
+    Content.push_back(preview);
 }
 
-TaskPrimitiveParameters::~TaskPrimitiveParameters() = default;
+TaskDlgPrimitiveParameters::~TaskDlgPrimitiveParameters() = default;
 
-bool TaskPrimitiveParameters::accept()
+bool TaskDlgPrimitiveParameters::accept()
 {
     bool primitiveOK = primitive->setPrimitive(vp_prm->getObject());
     if (!primitiveOK) {
@@ -997,7 +998,7 @@ bool TaskPrimitiveParameters::accept()
     return true;
 }
 
-bool TaskPrimitiveParameters::reject()
+bool TaskDlgPrimitiveParameters::reject()
 {
     // roll back the done things
     Gui::Command::abortCommand();
@@ -1006,7 +1007,7 @@ bool TaskPrimitiveParameters::reject()
     return true;
 }
 
-QDialogButtonBox::StandardButtons TaskPrimitiveParameters::getStandardButtons() const
+QDialogButtonBox::StandardButtons TaskDlgPrimitiveParameters::getStandardButtons() const
 {
     return Gui::TaskView::TaskDialog::getStandardButtons();
 }

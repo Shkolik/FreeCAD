@@ -21,8 +21,6 @@
  *                                                                          *
  ***************************************************************************/
 
-#include "PreCompiled.h"
-#ifndef _PreComp_
 #include <BRepAdaptor_Curve.hxx>
 #include <BRepAdaptor_Surface.hxx>
 #include <TopoDS.hxx>
@@ -30,7 +28,7 @@
 #include <gp_Circ.hxx>
 #include <gp_Cylinder.hxx>
 #include <gp_Sphere.hxx>
-#endif
+
 
 #include <App/Application.h>
 #include <App/Datums.h>
@@ -404,8 +402,8 @@ void setJointActivated(const App::DocumentObject* joint, bool val)
         return;
     }
 
-    if (auto propActivated = joint->getPropertyByName<App::PropertyBool>("Activated")) {
-        propActivated->setValue(val);
+    if (auto propSuppressed = joint->getPropertyByName<App::PropertyBool>("Suppressed")) {
+        propSuppressed->setValue(!val);
     }
 }
 
@@ -415,8 +413,8 @@ bool getJointActivated(const App::DocumentObject* joint)
         return false;
     }
 
-    if (const auto propActivated = joint->getPropertyByName<App::PropertyBool>("Activated")) {
-        return propActivated->getValue();
+    if (const auto propActivated = joint->getPropertyByName<App::PropertyBool>("Suppressed")) {
+        return !propActivated->getValue();
     }
     return false;
 }
@@ -433,6 +431,11 @@ double getJointDistance(const App::DocumentObject* joint, const char* propertyNa
     }
 
     return prop->getValue();
+}
+
+double getJointAngle(const App::DocumentObject* joint)
+{
+    return getJointDistance(joint, "Angle");
 }
 
 double getJointDistance(const App::DocumentObject* joint)
@@ -728,5 +731,17 @@ App::DocumentObject* getMovingPartFromRef(const AssemblyObject* assemblyObject,
     return getMovingPartFromRef(assemblyObject, prop);
 }
 
+void syncPlacements(App::DocumentObject* src, App::DocumentObject* to)
+{
+    auto* plcPropSource =
+        dynamic_cast<App::PropertyPlacement*>(src->getPropertyByName("Placement"));
+    auto* plcPropLink = dynamic_cast<App::PropertyPlacement*>(to->getPropertyByName("Placement"));
+
+    if (plcPropSource && plcPropLink) {
+        if (!plcPropSource->getValue().isSame(plcPropLink->getValue())) {
+            plcPropLink->setValue(plcPropSource->getValue());
+        }
+    }
+}
 
 }  // namespace Assembly

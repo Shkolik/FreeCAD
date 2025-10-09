@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 /***************************************************************************
  *   Copyright (c) 2004 Werner Mayer <wmayer[at]users.sourceforge.net>     *
  *                                                                         *
@@ -65,6 +66,7 @@ public:
     void updateProperty(const App::Property&);
     void appendProperty(const App::Property&);
     void removeProperty(const App::Property&);
+    void renameProperty(const App::Property&);
 
     QStringList propertyPathFromIndex(const QModelIndex&) const;
     QModelIndex propertyIndexFromPath(const QStringList&) const;

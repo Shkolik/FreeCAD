@@ -60,6 +60,7 @@ else:
 unicode = str
 
 
+# fmt: off
 BuildingTypes = ['Undefined',
 'Agricultural - Barn',
 'Agricultural - Chicken coop or chickenhouse',
@@ -200,6 +201,7 @@ BuildingTypes = ['Undefined',
 'Other - Workshop',
 'Other - World trade centre'
 ]
+# fmt: on
 
 
 class BuildingPart(ArchIFC.IfcProduct):
@@ -821,7 +823,7 @@ class ViewProviderBuildingPart:
             menu.addAction(actionActivate)
 
         actionSetWorkingPlane = QtGui.QAction(QtGui.QIcon(":/icons/Draft_SelectPlane.svg"),
-                                              translate("Arch", "Set working plane"),
+                                              translate("Arch", "Set Working Plane"),
                                               menu)
         QtCore.QObject.connect(actionSetWorkingPlane,
                                QtCore.SIGNAL("triggered()"),
@@ -829,28 +831,28 @@ class ViewProviderBuildingPart:
         menu.addAction(actionSetWorkingPlane)
 
         actionWriteCamera = QtGui.QAction(QtGui.QIcon(":/icons/Draft_SelectPlane.svg"),
-                                          translate("Arch", "Write camera position"),
+                                          translate("Arch", "Write Camera Position"),
                                           menu)
         QtCore.QObject.connect(actionWriteCamera,
                                QtCore.SIGNAL("triggered()"),
                                self.writeCamera)
         menu.addAction(actionWriteCamera)
 
-        actionCreateGroup = QtGui.QAction(translate("Arch", "Create group..."),
+        actionCreateGroup = QtGui.QAction(translate("Arch", "New Group"),
                                           menu)
         QtCore.QObject.connect(actionCreateGroup,
                                QtCore.SIGNAL("triggered()"),
                                self.createGroup)
         menu.addAction(actionCreateGroup)
 
-        actionReorder = QtGui.QAction(translate("Arch", "Reorder children alphabetically"),
+        actionReorder = QtGui.QAction(translate("Arch", "Reorder Children Alphabetically"),
                                       menu)
         QtCore.QObject.connect(actionReorder,
                                QtCore.SIGNAL("triggered()"),
                                self.reorder)
         menu.addAction(actionReorder)
 
-        actionCloneUp = QtGui.QAction(translate("Arch", "Clone level up"),
+        actionCloneUp = QtGui.QAction(translate("Arch", "Clone Level Up"),
                                       menu)
         QtCore.QObject.connect(actionCloneUp,
                                QtCore.SIGNAL("triggered()"),
@@ -943,7 +945,7 @@ class ViewProviderBuildingPart:
 
         if hasattr(self,"Object"):
             if not self.Object.Height.Value:
-                FreeCAD.Console.PrintError("This level has no height value. Please define a height before using this function.\n")
+                FreeCAD.Console.PrintError("This level has no height value. Define a height before using this function.\n")
                 return
             height = self.Object.Height.Value
             ng = []

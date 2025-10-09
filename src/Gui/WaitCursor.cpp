@@ -20,10 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 
+#include <FCConfig.h>
 
-#include "PreCompiled.h"
-
-#ifndef _PreComp_
 # include <QApplication>
 # include <QMessageBox>
 # include <QProgressDialog>
@@ -31,7 +29,6 @@
 # ifdef FC_OS_WIN32
 #   include <windows.h>
 # endif
-#endif
 
 #include "WaitCursor.h"
 
@@ -188,4 +185,17 @@ WaitCursor::FilterEventsFlags WaitCursor::ignoreEvents() const
 void WaitCursor::setIgnoreEvents(FilterEventsFlags flags)
 {
     WaitCursorP::getInstance()->setIgnoreEvents(flags);
+}
+
+void WaitCursor::suspend()
+{
+    // Calling setBusy(false) will restore the cursor and remove the event filter.
+    WaitCursorP::getInstance()->setBusy(false);
+}
+
+void WaitCursor::resume()
+{
+    // Calling setBusy(true) will set the wait cursor and reinstall the event filter.
+    // The WaitCursorP's internal state `isOn` correctly handles this call.
+    WaitCursorP::getInstance()->setBusy(true);
 }

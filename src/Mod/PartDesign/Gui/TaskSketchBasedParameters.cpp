@@ -22,13 +22,11 @@
  ***************************************************************************/
 
 
-#include "PreCompiled.h"
 
-#ifndef _PreComp_
 # include <QRegularExpression>
 # include <QRegularExpressionMatch>
 # include <QTextStream>
-#endif
+
 
 #include <App/Document.h>
 #include <App/Origin.h>
@@ -58,7 +56,7 @@ TaskSketchBasedParameters::TaskSketchBasedParameters(PartDesignGui::ViewProvider
     this->blockSelection(true);
 }
 
-const QString TaskSketchBasedParameters::onAddSelection(const Gui::SelectionChanges& msg)
+const QString TaskSketchBasedParameters::onAddSelection(const Gui::SelectionChanges& msg, App::PropertyLinkSub& prop)
 {
     // Note: The validity checking has already been done in ReferenceSelection.cpp
     auto sketchBased = getObject<PartDesign::ProfileBased>();
@@ -81,31 +79,46 @@ const QString TaskSketchBasedParameters::onAddSelection(const Gui::SelectionChan
     }
 
     std::vector<std::string> upToFaces(1,subname);
-    sketchBased->UpToFace.setValue(selObj, upToFaces);
+    prop.setValue(selObj, upToFaces);
     recomputeFeature();
 
     return refStr;
 }
 
-void TaskSketchBasedParameters::startReferenceSelection(App::DocumentObject* profile,
+void TaskSketchBasedParameters::startReferenceSelection(App::DocumentObject*,
                                                         App::DocumentObject* base)
 {
-    if (Gui::Document* doc = getGuiDocument()) {
-        doc->setHide(profile->getNameInDocument());
-        if (base) {
-            doc->setShow(base->getNameInDocument());
+    const auto* bodyViewProvider = getViewObject<ViewProvider>()->getBodyViewProvider();
+
+    previouslyVisibleViewProvider = bodyViewProvider->getShownViewProvider();
+
+    if (!base) {
+        return;
+    }
+
+    if (Document* doc = getGuiDocument()) {
+        if (previouslyVisibleViewProvider) {
+            previouslyVisibleViewProvider->hide();
         }
+
+        doc->setShow(base->getNameInDocument());
     }
 }
 
-void TaskSketchBasedParameters::finishReferenceSelection(App::DocumentObject* profile,
+void TaskSketchBasedParameters::finishReferenceSelection(App::DocumentObject*,
                                                          App::DocumentObject* base)
 {
-    if (Gui::Document* doc = getGuiDocument()) {
-        doc->setShow(profile->getNameInDocument());
+    if (!previouslyVisibleViewProvider) {
+        return;
+    }
+
+    if (Document* doc = getGuiDocument()) {
         if (base) {
             doc->setHide(base->getNameInDocument());
         }
+
+        previouslyVisibleViewProvider->show();
+        previouslyVisibleViewProvider = nullptr;
     }
 }
 

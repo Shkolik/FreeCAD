@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 /***************************************************************************
  *   Copyright (c) 2004 Werner Mayer <wmayer[at]users.sourceforge.net>     *
  *                                                                         *
@@ -70,6 +71,12 @@ class GuiExport PropertyEditor: public QTreeView
     // clang-format on
 
 public:
+    enum class ExpansionMode {
+        DefaultExpand,
+        AutoExpand,
+        AutoCollapse
+    };
+
     PropertyEditor(QWidget* parent = nullptr);
     ~PropertyEditor() override;
 
@@ -78,8 +85,7 @@ public:
                  bool checkDocument = false);
     void updateProperty(const App::Property&);
     void removeProperty(const App::Property&);
-    void setAutomaticExpand(bool);
-    bool isAutomaticExpand(bool) const;
+    void renameProperty(const App::Property&);
     void setAutomaticDocumentUpdate(bool);
     bool isAutomaticDocumentUpdate(bool) const;
     /*! Reset the internal state of the view. */
@@ -127,11 +133,19 @@ protected:
 #endif
     void contextMenuEvent(QContextMenuEvent* event) override;
     bool event(QEvent*) override;
+    void keyPressEvent(QKeyEvent* event) override;
 
 private:
+    void setFirstLevelExpanded(bool doExpand);
+    void expandToDefault();
+    QMenu* setupExpansionSubmenu(QWidget* parent);
+    void collapseAll();
     void setEditorMode(const QModelIndex& parent, int start, int end);
     void closeTransaction();
     void recomputeDocument(App::Document*);
+    std::unordered_set<App::Property*> acquireSelectedProperties() const;
+    void removeProperties(const std::unordered_set<App::Property*>& props);
+    bool removeSelectedDynamicProperties();
 
     // check if mouse_pos is around right or bottom side of a cell
     // and return the index of that cell if found
@@ -143,7 +157,7 @@ private:
     QStringList selectedProperty;
     PropertyModel::PropertyList propList;
     std::unordered_set<const App::PropertyContainer*> propOwners;
-    bool autoexpand;
+    ExpansionMode expansionMode;
     bool autoupdate;
     bool committing;
     bool delaybuild;

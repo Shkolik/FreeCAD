@@ -89,10 +89,10 @@ class ViewProviderWorkingPlaneProxy:
         return True
 
     def setupContextMenu(self,vobj,menu):
-        action1 = QtGui.QAction(QtGui.QIcon(":/icons/Draft_SelectPlane.svg"),"Write camera position",menu)
+        action1 = QtGui.QAction(QtGui.QIcon(":/icons/Draft_SelectPlane.svg"),"Save Camera Position",menu)
         QtCore.QObject.connect(action1,QtCore.SIGNAL("triggered()"),self.writeCamera)
         menu.addAction(action1)
-        action2 = QtGui.QAction(QtGui.QIcon(":/icons/Draft_SelectPlane.svg"),"Write objects state",menu)
+        action2 = QtGui.QAction(QtGui.QIcon(":/icons/Draft_SelectPlane.svg"),"Save Visibility of Objects",menu)
         QtCore.QObject.connect(action2,QtCore.SIGNAL("triggered()"),self.writeState)
         menu.addAction(action2)
 
@@ -135,7 +135,21 @@ class ViewProviderWorkingPlaneProxy:
         self.lcoords = coin.SoCoordinate3()
         import PartGui # Required for "SoBrepEdgeSet" (because a WorkingPlaneProxy is not a Part::FeaturePython object).
         ls = coin.SoType.fromName("SoBrepEdgeSet").createInstance()
-        ls.coordIndex.setValues(0,28,[0,1,-1,2,3,4,5,-1,6,7,-1,8,9,10,11,-1,12,13,-1,14,15,16,17,-1,18,19,20,21])
+        # fmt: off
+        ls.coordIndex.setValues(
+            0,
+            28,
+            [
+                0, 1, -1,
+                2, 3, 4, 5, -1,
+                6, 7, -1,
+                8, 9, 10, 11, -1,
+                12, 13, -1,
+                14, 15, 16, 17, -1,
+                18, 19, 20, 21
+            ],
+        )
+        # fmt: on
         sep = coin.SoSeparator()
         psep = coin.SoSeparator()
         fsep = coin.SoSeparator()

@@ -21,13 +21,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "PreCompiled.h"
-#ifndef _PreComp_
 # include <Interface_Static.hxx>
 # include <IGESControl_Controller.hxx>
 # include <STEPControl_Controller.hxx>
 # include <Standard_Version.hxx>
-#endif
+
+#include <FCConfig.h>
 
 #include <App/Application.h>
 #include <Base/Console.h>
@@ -98,6 +97,7 @@
 #include "GeometryIntExtensionPy.h"
 #include "GeometryMigrationExtension.h"
 #include "GeometryStringExtensionPy.h"
+#include "PreviewExtension.h"
 #include "HyperbolaPy.h"
 #include "ImportStep.h"
 #include "LinePy.h"
@@ -435,7 +435,7 @@ PyMOD_INIT_FUNC(Part)
 
     Part::AttachExtension       ::init();
     Part::AttachExtensionPython ::init();
-
+    Part::PreviewExtension      ::init();
     Part::PrismExtension        ::init();
 
     Part::Feature               ::init();

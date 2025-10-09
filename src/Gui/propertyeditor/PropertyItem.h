@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 /***************************************************************************
  *   Copyright (c) 2004 Werner Mayer <wmayer[at]users.sourceforge.net>     *
  *                                                                         *
@@ -149,6 +150,7 @@ public:
     bool hasProperty(const App::Property*) const;
     virtual void assignProperty(const App::Property*);
     bool removeProperty(const App::Property*);
+    bool renameProperty(const App::Property*);
     App::Property* getFirstProperty();
     const App::Property* getFirstProperty() const;
 

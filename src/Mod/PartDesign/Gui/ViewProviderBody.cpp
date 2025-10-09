@@ -21,14 +21,12 @@
  ***************************************************************************/
 
 
-#include "PreCompiled.h"
 
-#ifndef _PreComp_
 # include <Inventor/actions/SoGetBoundingBoxAction.h>
 # include <Inventor/nodes/SoSeparator.h>
 # include <Precision.hxx>
 # include <QMenu>
-#endif
+
 
 #include <App/Document.h>
 #include <App/Origin.h>
@@ -118,7 +116,7 @@ void ViewProviderBody::setupContextMenu(QMenu* menu, QObject* receiver, const ch
     Q_UNUSED(member);
     Gui::ActionFunction* func = new Gui::ActionFunction(menu);
 
-    QAction* act = menu->addAction(tr("Active body"));
+    QAction* act = menu->addAction(tr("Active Body"));
     act->setCheckable(true);
     act->setChecked(isActiveBody());
     func->trigger(act, [this]() {
@@ -330,13 +328,41 @@ void ViewProviderBody::setVisualBodyMode(bool bodymode) {
     }
 }
 
-std::vector< std::string > ViewProviderBody::getDisplayModes() const {
+std::vector<std::string> ViewProviderBody::getDisplayModes() const
+{
 
-    //we get all display modes and remove the "Group" mode, as this is what we use for "Through"
-    //body display mode
-    std::vector< std::string > modes = ViewProviderPart::getDisplayModes();
+    // we get all display modes and remove the "Group" mode, as this is what we use for "Through"
+    // body display mode
+    std::vector<std::string> modes = ViewProviderPart::getDisplayModes();
     modes.erase(modes.begin());
     return modes;
+}
+
+PartDesign::Feature* ViewProviderBody::getShownFeature() const
+{
+    auto body = static_cast<PartDesign::Body*>(getObject());
+    auto features = body->Group.getValues();
+
+    for (auto feature : features) {
+        if (!feature->isDerivedFrom<PartDesign::Feature>()) {
+            continue;
+        }
+
+        if (feature->Visibility.getValue()) {
+            return static_cast<PartDesign::Feature*>(feature);
+        }
+    }
+
+    return nullptr;
+}
+
+Gui::ViewProvider* ViewProviderBody::getShownViewProvider() const
+{
+    if (const auto* feature = getShownFeature()) {
+        return Gui::Application::Instance->getViewProvider(feature);
+    }
+
+    return nullptr;
 }
 
 bool ViewProviderBody::canDropObjects() const
@@ -363,6 +389,9 @@ bool ViewProviderBody::canDropObject(App::DocumentObject* obj) const
     }
     else if (obj->isDerivedFrom<App::LocalCoordinateSystem>()) {
         return !obj->isDerivedFrom<App::Origin>();
+    }
+    else if (obj->isDerivedFrom<Part::Part2DObject>()) {
+        return true;
     }
     else if (!obj->isDerivedFrom<Part::Feature>()) {
         return false;
@@ -425,3 +454,14 @@ void ViewProviderBody::dropObject(App::DocumentObject* obj)
         }
     }
 }
+bool ViewProviderBody::canDragObjectToTarget(App::DocumentObject* obj,
+                                             App::DocumentObject* target) const
+{
+    if (obj->isDerivedFrom<PartDesign::Feature>()) {
+        return target && target->is<PartDesign::Body>();
+    }
+
+    return ViewProviderPart::canDragObjectToTarget(obj, target);
+}
+
+

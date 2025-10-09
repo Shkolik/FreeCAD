@@ -20,9 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "PreCompiled.h"
 
-#ifndef _PreComp_
 # include <sstream>
 # include <BRep_Builder.hxx>
 # include <Mod/Part/App/FCBRepAlgoAPI_Fuse.h>
@@ -32,7 +30,7 @@
 # include <TopoDS_Vertex.hxx>
 # include <BRepBuilderAPI_Copy.hxx>
 #include <BRepCheck_Analyzer.hxx>
-#endif
+
 
 #include <App/Document.h>
 #include <App/GroupExtension.h>
@@ -166,25 +164,30 @@ TopoDS_Shape ShapeExtractor::getShapes(const std::vector<App::DocumentObject*> l
     for (auto& s:sourceShapes) {
         if (SU::isShapeReallyNull(s)) {
             continue;
-        } else if (s.ShapeType() < TopAbs_SOLID) {
-            //clean up composite shapes
-            TopoDS_Shape cleanShape = ShapeFinder::ShapeFinder::stripInfiniteShapes(s);
+        }
+
+        if (s.ShapeType() < TopAbs_SOLID) {
+            //clean up TopAbs_COMPOUND & TopAbs_COMPSOLID
+            TopoDS_Shape cleanShape = ShapeFinder::stripInfiniteShapes(s);
             if (!cleanShape.IsNull()) {
                 builder.Add(comp, cleanShape);
             }
         } else if (Part::TopoShape(s).isInfinite()) {
             continue;    //simple shape is infinite
-        } else {
-            //a simple shape - add to compound
-            builder.Add(comp, s);
         }
-    }
-    //it appears that an empty compound is !IsNull(), so we need to check a different way
-    if (!SU::isShapeReallyNull(comp)) {
-        return comp;
+
+        //a simple shape - add to compound
+        builder.Add(comp, s);
     }
 
-    return TopoDS_Shape();
+    //it appears that an empty compound is !IsNull(), so we need to check a different way
+    if (SU::isShapeReallyNull(comp)) {
+        return {};
+    }
+
+    // BRepTools::Write(comp, "SEgetShapesOut.brep");
+
+    return comp;
 }
 
 std::vector<TopoDS_Shape> ShapeExtractor::getXShapes(const App::Link* xLink)

@@ -21,11 +21,9 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "PreCompiled.h"
 
-#ifndef _PreComp_
 #include <Precision.hxx>
-#endif
+
 
 #include "FemConstraintForce.h"
 
@@ -54,6 +52,16 @@ ConstraintForce::ConstraintForce()
 
     // by default use the null vector to indicate an invalid value
     naturalDirectionVector = Base::Vector3d(0, 0, 0);
+    ADD_PROPERTY_TYPE(EnableAmplitude,
+                      (false),
+                      "ConstraintForce",
+                      (App::PropertyType)(App::Prop_None),
+                      "Amplitude of the force load");
+    ADD_PROPERTY_TYPE(AmplitudeValues,
+                      (std::vector<std::string> {"0, 0", "1, 1"}),
+                      "ConstraintForce",
+                      (App::PropertyType)(App::Prop_None),
+                      "Amplitude values");
 }
 
 App::DocumentObjectExecReturn* ConstraintForce::execute()

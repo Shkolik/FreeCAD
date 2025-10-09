@@ -26,6 +26,7 @@
 
 #include <Mod/Part/Gui/ViewProvider.h>
 #include <Mod/PartDesign/PartDesignGlobal.h>
+#include <Mod/PartDesign/App/Feature.h>
 #include <Gui/ViewProviderOriginGroupExtension.h>
 #include <QCoreApplication>
 
@@ -78,12 +79,18 @@ public:
      */
     SbBox3f getBoundBox ();
 
+    PartDesign::Feature* getShownFeature() const;
+    ViewProvider* getShownViewProvider() const;
+
     /** Check whether objects can be added to the view provider by drag and drop */
     bool canDropObjects() const override;
     /** Check whether the object can be dropped to the view provider by drag and drop */
     bool canDropObject(App::DocumentObject*) const override;
     /** Add an object to the view provider by drag and drop */
     void dropObject(App::DocumentObject*) override;
+    bool canDragObjectToTarget(App::DocumentObject* obj, App::DocumentObject* target) const override;
+    /* Check whether the object accept reordering of its children during drop.*/
+    bool acceptReorderingObjects() const override { return true; };
 
 protected:
     /// Copy over all visual properties to the child features
@@ -101,3 +108,4 @@ private:
 
 
 #endif // PARTGUI_ViewProviderHole_H
+

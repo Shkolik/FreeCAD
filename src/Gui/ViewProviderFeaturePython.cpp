@@ -20,9 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "PreCompiled.h"
 
-#ifndef _PreComp_
+
 # include <sstream>
 # include <QApplication>
 # include <QEvent>
@@ -31,7 +30,7 @@
 # include <QPixmap>
 # include <Inventor/SoPickedPoint.h>
 # include <Inventor/details/SoDetail.h>
-#endif
+
 
 #include <App/DocumentObjectPy.h>
 #include <Base/Interpreter.h>
@@ -156,6 +155,64 @@ QIcon ViewProviderFeaturePythonImp::getIcon() const
     }
 
     return {};
+}
+
+std::map<BitmapFactoryInst::Position, std::string>
+ViewProviderFeaturePythonImp::getOverlayIcons() const
+{
+    std::map<BitmapFactoryInst::Position, std::string> overlays;
+    _FC_PY_CALL_CHECK(getOverlayIcons, return overlays);
+
+    Base::PyGILStateLocker lock;
+    try {
+        Py::Object ret(Base::pyCall(py_getOverlayIcons.ptr()));
+        if (ret.isNone()) {
+            return overlays;
+        }
+
+        // Expect a dictionary (dict) from Python
+        if (!PyDict_Check(ret.ptr())) {
+            return overlays;
+        }
+
+        Py::Dict dict(ret);
+        PyObject *key, *value;
+        Py_ssize_t pos = 0;
+
+        // Iterate over the dictionary items
+        while (PyDict_Next(dict.ptr(), &pos, &key, &value)) {
+            // Key should be an integer (from the enum)
+            if (!PyLong_Check(key)) {
+                continue;
+            }
+            // Value should be a string
+            if (!PyUnicode_Check(value)) {
+                continue;
+            }
+
+            long position_val = PyLong_AsLong(key);
+            // Basic validation for the enum range
+            if (position_val >= BitmapFactoryInst::TopLeft
+                && position_val <= BitmapFactoryInst::BottomRight) {
+                auto position = static_cast<BitmapFactoryInst::Position>(position_val);
+                std::string iconName = Py::String(value).as_std_string("utf-8");
+                if (!iconName.empty()) {
+                    overlays[position] = iconName;
+                }
+            }
+        }
+    }
+    catch (Py::Exception&) {
+        if (PyErr_ExceptionMatches(PyExc_NotImplementedError)) {
+            PyErr_Clear();
+        }
+        else {
+            Base::PyException e;
+            e.reportException();
+        }
+    }
+
+    return overlays;
 }
 
 bool ViewProviderFeaturePythonImp::claimChildren(std::vector<App::DocumentObject*> &children) const
@@ -699,6 +756,32 @@ void ViewProviderFeaturePythonImp::finishRestoring()
     }catch (Py::Exception&) {
         Base::PyException e; // extract the Python error text
         e.reportException();
+    }
+}
+
+void ViewProviderFeaturePythonImp::beforeDelete()
+{
+    _FC_PY_CALL_CHECK(beforeDelete, return);
+
+    Base::PyGILStateLocker lock;
+    try {
+        if (has__object__) {
+            Base::pyCall(py_beforeDelete.ptr());
+        }
+        else {
+            Py::Tuple args(1);
+            args.setItem(0, Py::Object(object->getPyObject(), true));
+            Base::pyCall(py_beforeDelete.ptr(), args.ptr());
+        }
+    }
+    catch (Py::Exception&) {
+        if (PyErr_ExceptionMatches(PyExc_NotImplementedError)) {
+            PyErr_Clear();
+        }
+        else {
+            Base::PyException e;
+            e.reportException();
+        }
     }
 }
 

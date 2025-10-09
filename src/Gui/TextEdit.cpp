@@ -20,9 +20,8 @@
  *                                                                         *
  ***************************************************************************/
 
-#include "PreCompiled.h"
 
-#ifndef _PreComp_
+
 # include <QApplication>
 # include <QKeyEvent>
 # include <QPainter>
@@ -30,7 +29,8 @@
 # include <QRegularExpressionMatch>
 # include <QShortcut>
 # include <QTextCursor>
-#endif
+
+#include <FCConfig.h>
 
 #include "CallTips.h"
 #include "TextEdit.h"
@@ -281,7 +281,8 @@ TextEditor::TextEditor(QWidget* parent)
     d = new TextEditorP();
     lineNumberArea = new LineMarker(this);
 
-    QFont serifFont(QLatin1String("Courier"), 10, QFont::Normal);
+    QFont serifFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    serifFont.setPointSize(10);
     setFont(serifFont);
 
     ParameterGrp::handle hPrefGrp = getWindowParameter();
@@ -447,9 +448,15 @@ void TextEditor::OnChange(Base::Subject<const char*> &rCaller,const char* sReaso
 #else
         int fontSize = hPrefGrp->GetInt("FontSize", 10);
 #endif
-        QString fontFamily = QString::fromLatin1(hPrefGrp->GetASCII( "Font", "Courier" ).c_str());
-
-        QFont font(fontFamily, fontSize);
+        QFont font;
+        auto fontName = hPrefGrp->GetASCII("Font");
+        if (fontName.empty()) {
+            font = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+            font.setPointSize(fontSize);
+        }
+        else {
+            font = QFont (QString::fromStdString(fontName), fontSize);
+        }
         setFont(font);
         lineNumberArea->setFont(font);
     }

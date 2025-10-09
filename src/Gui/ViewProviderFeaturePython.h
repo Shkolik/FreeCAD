@@ -30,6 +30,7 @@
 
 #include "ViewProviderGeometryObject.h"
 #include "Document.h"
+#include "BitmapFactory.h"
 
 class SoSensor;
 class SoDragger;
@@ -55,6 +56,8 @@ public:
 
     // Returns the icon
     QIcon getIcon() const;
+    // returns a map of position -> icon name.
+    std::map<BitmapFactoryInst::Position, std::string> getOverlayIcons() const;
     bool claimChildren(std::vector<App::DocumentObject*>&) const;
     ValueT useNewSelectionModel() const;
     void onSelectionChanged(const SelectionChanges&);
@@ -78,6 +81,7 @@ public:
     void onBeforeChange(const App::Property* prop);
     void startRestoring();
     void finishRestoring();
+    void beforeDelete();
     ValueT onDelete(const std::vector<std::string> & sub);
     ValueT canDelete(App::DocumentObject *obj) const;
     //@}
@@ -138,6 +142,7 @@ private:
 
 #define FC_PY_VIEW_OBJECT \
     FC_PY_ELEMENT(getIcon) \
+    FC_PY_ELEMENT(getOverlayIcons) \
     FC_PY_ELEMENT(claimChildren) \
     FC_PY_ELEMENT(useNewSelectionModel) \
     FC_PY_ELEMENT(getElementPicked) \
@@ -157,6 +162,7 @@ private:
     FC_PY_ELEMENT(onBeforeChange) \
     FC_PY_ELEMENT(startRestoring) \
     FC_PY_ELEMENT(finishRestoring) \
+    FC_PY_ELEMENT(beforeDelete) \
     FC_PY_ELEMENT(onDelete) \
     FC_PY_ELEMENT(canDelete) \
     FC_PY_ELEMENT(isShow) \
@@ -222,6 +228,29 @@ public:
         else
             icon = ViewProviderT::mergeGreyableOverlayIcons(icon);
         return icon;
+    }
+
+    QIcon mergeColorfulOverlayIcons(const QIcon& orig) const override
+    {
+        QIcon currentIcon = orig;
+
+        // Get the map of overlay names from the Python implementation
+        std::map<BitmapFactoryInst::Position, std::string> overlayMap = imp->getOverlayIcons();
+
+        if (!overlayMap.empty()) {
+            // Use the static instance of BitmapFactory to perform the merge
+            for (const auto& [position, name] : overlayMap) {
+                static const QSize overlayIconSize  { 10, 10 };
+                QPixmap overlayPixmap =
+                    Gui::BitmapFactory().pixmapFromSvg(name.c_str(), overlayIconSize);
+                if (!overlayPixmap.isNull()) {
+                    currentIcon =
+                        Gui::BitmapFactoryInst::mergePixmap(currentIcon, overlayPixmap, position);
+                }
+            }
+        }
+
+        return ViewProviderT::mergeColorfulOverlayIcons(currentIcon);
     }
 
     std::vector<App::DocumentObject*> claimChildren() const override {
@@ -305,6 +334,10 @@ public:
     }
     void getTaskViewContent(std::vector<Gui::TaskView::TaskContent*>& c) const override {
         ViewProviderT::getTaskViewContent(c);
+    }
+    void beforeDelete() override {
+        imp->beforeDelete();
+        ViewProviderT::beforeDelete();
     }
     bool onDelete(const std::vector<std::string> & sub) override {
         switch(imp->onDelete(sub)) {
