@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+
 /***************************************************************************
  *   Copyright (c) 2013 Luke Parry <l.parry@warwick.ac.uk>                 *
  *                                                                         *
@@ -399,6 +401,7 @@ double Measurement::length() const
                     case GeomAbs_Ellipse:
                     case GeomAbs_BSplineCurve:
                     case GeomAbs_Hyperbola:
+                    case GeomAbs_Parabola:
                     case GeomAbs_BezierCurve: {
                         result += GCPnts_AbscissaPoint::Length(curve);
                         break;

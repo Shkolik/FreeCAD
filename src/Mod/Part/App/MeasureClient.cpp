@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+
 /***************************************************************************
  *   Copyright (c) 2023 Wandererfan <wandererfan@gmail.com>                *
  *   Copyright (c) 2023 Joel Meijering (EDG5000) <joel@meijering.email>    *
@@ -176,6 +178,11 @@ App::MeasureElementType PartMeasureTypeCb(App::DocumentObject* ob, const char* s
                     return isStraightBSplineCurve(curve.BSpline())
                                ? App::MeasureElementType::LINESEGMENT
                                : App::MeasureElementType::CURVE;
+                }
+                case GeomAbs_Ellipse:
+                case GeomAbs_Hyperbola:
+                case GeomAbs_Parabola: {
+                    return App::MeasureElementType::CURVE;
                 }
                 default: { return App::MeasureElementType::INVALID; }
             }

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+
 /***************************************************************************
  *   Copyright (c) 2008 Werner Mayer <wmayer[at]users.sourceforge.net>     *
  *                                                                         *
@@ -128,6 +130,11 @@ public:
     void scale(const Base::Vector3d& vec, double scale) const;
     void transform(const Base::Matrix4D& mat) const;
     void translate(const Base::Vector3d& vec) const;
+
+    virtual bool reverseIfReversed()
+    {
+        return false;
+    };
 
 protected:
     /// create a new tag for the geometry object
@@ -420,6 +427,7 @@ public:
     double getAngleXU() const;
     void setAngleXU(double angle);
     bool isReversed() const;
+    bool reverseIfReversed() override;
 
     Base::Vector3d getAxisDirection() const;
 
@@ -505,6 +513,7 @@ public:
     inline void setRange(double u, double v) override { setRange(u,v,false);}
 
     bool isReversed() const;
+    bool reverseIfReversed() override;
     double getAngleXU() const;
     void setAngleXU(double angle);
 

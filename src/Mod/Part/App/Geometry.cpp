@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+
 /***************************************************************************
  *   Copyright (c) 2008 Werner Mayer <wmayer[at]users.sourceforge.net>     *
  *                                                                         *
@@ -2231,6 +2233,16 @@ bool GeomConic::isReversed() const
     return conic->Axis().Direction().Z() < 0;
 }
 
+bool GeomConic::reverseIfReversed()
+{
+    Handle(Geom_Conic) hConic = Handle(Geom_Conic)::DownCast(handle());
+    if (isReversed()) {
+        hConic->Reverse();
+        return true;
+    }
+    return false;
+}
+
 GeomBSplineCurve* GeomConic::toNurbs(double first, double last) const
 {
     Handle(Geom_Conic) conic =  Handle(Geom_Conic)::DownCast(handle());
@@ -2499,6 +2511,18 @@ bool GeomArcOfConic::isReversed() const
     Handle(Geom_Conic) conic = Handle(Geom_Conic)::DownCast(curve->BasisCurve());
     assert(!conic.IsNull());
     return conic->Axis().Direction().Z() < 0;
+}
+
+bool GeomArcOfConic::reverseIfReversed()
+{
+    Handle(Geom_TrimmedCurve) tCurve = Handle(Geom_TrimmedCurve)::DownCast(handle());
+    if (tCurve) {
+        if (isReversed()) {
+            tCurve->Reverse();
+            return true;
+        }
+    }
+    return false;
 }
 
 /*!
@@ -7074,4 +7098,5 @@ std::unique_ptr<GeomCurve> makeFromCurveAdaptor(const Adaptor3d_Curve& adapt, bo
 }
 
 } // namespace Part
+
 
