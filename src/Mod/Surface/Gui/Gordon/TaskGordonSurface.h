@@ -119,14 +119,18 @@ private:
     void onButtonGuideRemoveToggled(bool checked);
     void onDeleteProfile();
     void onDeleteGuide();
+    void onReverseProfile();
+    void onReverseGuide();
     void clearSelection();
     void onToleranceChanged(double tolerance);
-    void appendEdges(const Gui::SelectionChanges& msg,
+    void appendEdges(const QList<QVariant> data,
                      QListWidget* list,
-                     App::PropertyLinkSubList& edges);
-    void removeEdge(const Gui::SelectionChanges& msg,
+                     App::PropertyLinkSubList& edges,
+                     App::PropertyBoolList& directions);
+    void removeEdge(const QList<QVariant> data,
                     QListWidget* list,
-                    App::PropertyLinkSubList& edges);
+                    App::PropertyLinkSubList& edges,
+                    App::PropertyBoolList& directions);
 
 private:
     void exitSelectionMode();

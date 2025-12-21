@@ -55,7 +55,6 @@
 #include <map>
 #include <Gui/InputField.h>
 
-
 using namespace SurfaceGui;
 
 PROPERTY_SOURCE(SurfaceGui::ViewProviderGordonSurface, PartGui::ViewProviderSpline)
@@ -112,52 +111,52 @@ void ViewProviderGordonSurface::highlightReferences(const References& profiles,
 {
     std::map<App::DocumentObject*, std::vector<std::string>> subs;
 
-    for (const auto& it : profiles) {
-        // Check if 'base' exists as a key in 'subs', if not, add it with an empty vector
-        if (subs.find(it.first) == subs.end()) {
-            subs[it.first] = std::vector<std::string>();
+    auto append_unique = [](std::vector<std::string>& vec, const std::vector<std::string>& values) {
+        for (const auto& val : values) {
+            if (std::ranges::find(vec, val) == vec.end()) {
+                vec.push_back(val);
+            }
         }
+    };
 
-        // Append values from 'it.second' to the vector stored by the key 'base'
-        subs[it.first].insert(subs[it.first].end(), it.second.begin(), it.second.end());
+    for (const auto& [obj, subnames] : profiles) {
+        if (!subs.contains(obj)) {
+            subs[obj] = std::vector<std::string>();
+        }
+        append_unique(subs[obj], subnames);
     }
 
-    for (const auto& it : guides) {
-        // Check if 'base' exists as a key in 'subs', if not, add it with an empty vector
-        if (subs.find(it.first) == subs.end()) {
-            subs[it.first] = std::vector<std::string>();
+    for (const auto& [obj, subnames] : guides) {
+        if (!subs.contains(obj)) {
+            subs[obj] = std::vector<std::string>();
         }
-
-        // Append values from 'it.second' to the vector stored by the key 'base'
-        subs[it.first].insert(subs[it.first].end(), it.second.begin(), it.second.end());
+        append_unique(subs[obj], subnames);
     }
 
-    for (const auto& it : subs) {
-        Part::Feature* base = dynamic_cast<Part::Feature*>(it.first);
+    for (const auto& [obj, subnames] : subs) {
+        auto const* base = dynamic_cast<Part::Feature*>(obj);
         if (base) {
-            PartGui::ViewProviderPartExt* svp = dynamic_cast<PartGui::ViewProviderPartExt*>(
+            auto* svp = dynamic_cast<PartGui::ViewProviderPartExt*>(
                 Gui::Application::Instance->getViewProvider(base));
-            if (svp) {
-                if (on) {
-                    std::vector<Base::Color> colors;
-                    TopTools_IndexedMapOfShape eMap;
-                    TopExp::MapShapes(base->Shape.getValue(), TopAbs_EDGE, eMap);
-                    colors.resize(eMap.Extent(), svp->LineColor.getValue());
+            if (!svp) {
+                continue;
+            }                        
+            svp->unsetHighlightedEdges();            
+            if (on) {
+                std::vector<Base::Color> colors;
+                TopTools_IndexedMapOfShape eMap;
+                TopExp::MapShapes(base->Shape.getValue(), TopAbs_EDGE, eMap);
+                colors.resize(eMap.Extent(), svp->LineColor.getValue());
 
-                    for (const auto& jt : it.second) {
-                        std::size_t idx = static_cast<std::size_t>(std::stoi(jt.substr(4)) - 1);
-                        // check again that the index is in range because it's possible that
-                        // the sub-names are invalid
-                        if (idx < colors.size()) {
-                            colors[idx] = Base::Color(1.0, 0.0, 1.0);  // magenta
-                        }
+                for (const auto& jt : subnames) {
+                    std::size_t idx = static_cast<std::size_t>(std::stoi(jt.substr(4)) - 1);
+                    // check again that the index is in range because it's possible that
+                    // the sub-names are invalid
+                    if (idx < colors.size()) {
+                        colors[idx] = Base::Color(1.0, 0.0, 1.0);  // magenta
                     }
-
-                    svp->setHighlightedEdges(colors);
                 }
-                else {
-                    svp->unsetHighlightedEdges();
-                }
+                svp->setHighlightedEdges(colors);
             }
         }
     }
@@ -198,9 +197,7 @@ public:
 
         switch (mode) {            
             case GordonSurfacePanel::AppendEdge:
-                return selectionType == Guide 
-                    ? allowEdge(true, editedObject->GuideEdges, pObj, sSubName)
-                    : allowEdge(true, editedObject->ProfileEdges, pObj, sSubName);
+                return allowEdge(true, editedObject->GuideEdges, pObj, sSubName) && allowEdge(true, editedObject->ProfileEdges, pObj, sSubName);
             case GordonSurfacePanel::RemoveEdge:
                 return selectionType == Guide
                     ? allowEdge(false, editedObject->GuideEdges, pObj, sSubName)
@@ -211,18 +208,17 @@ public:
     }
 
 private:   
-    bool allowEdge(bool appendEdges, const App::PropertyLinkSubList& edges, App::DocumentObject* pObj, const char* sSubName)
+    bool allowEdge(bool appendEdges, const App::PropertyLinkSubList& edges, const App::DocumentObject* pObj, const char* sSubName) const
     {
-        std::string element(sSubName);
-        if (element.substr(0, 4) != "Edge") {
+        if (std::string element(sSubName); !element.starts_with("Edge")) {
             return false;
         }
 
         auto links = edges.getSubListValues();
         
-        for (const auto& it : links) {
-            if (it.first == pObj) {
-                for (const auto& jt : it.second) {
+        for (const auto& [objPtr, subNames] : links) {
+            if (objPtr == pObj) {
+                for (const auto& jt : subNames) {
                     if (jt == sSubName) {
                         return !appendEdges;
                     }
@@ -256,26 +252,33 @@ GordonSurfacePanel::GordonSurfacePanel(ViewProviderGordonSurface* vp, Surface::G
     setEditedObject(obj);
 
     // Create context menu
-    QAction* action = new QAction(tr("Remove"), this);
-    action->setShortcut(QStringLiteral("Del"));
-    action->setShortcutContext(Qt::WidgetShortcut);
-    ui->listProfiles->addAction(action);
-    connect(action, &QAction::triggered, this, &GordonSurfacePanel::onDeleteProfile);
+    auto* reverseProfile = new QAction(tr("Reverse"), this);
+    reverseProfile->setShortcut(QStringLiteral("R"));
+    reverseProfile->setShortcutContext(Qt::WidgetShortcut);
+    ui->listProfiles->addAction(reverseProfile);
+    connect(reverseProfile, &QAction::triggered, this, &GordonSurfacePanel::onReverseProfile);
+
+    auto* deleteProfile = new QAction(tr("Remove"), this);
+    deleteProfile->setShortcut(QStringLiteral("Del"));
+    deleteProfile->setShortcutContext(Qt::WidgetShortcut);
+    ui->listProfiles->addAction(deleteProfile);
+    connect(deleteProfile, &QAction::triggered, this, &GordonSurfacePanel::onDeleteProfile);
+
     ui->listProfiles->setContextMenuPolicy(Qt::ActionsContextMenu);
 
-    QAction* action1 = new QAction(tr("Remove"), this);
-    action1->setShortcut(QStringLiteral("Del"));
-    action1->setShortcutContext(Qt::WidgetShortcut);
-    ui->listGuides->addAction(action1);
-    connect(action1, &QAction::triggered, this, &GordonSurfacePanel::onDeleteGuide);
-    ui->listGuides->setContextMenuPolicy(Qt::ActionsContextMenu);
+    auto* reverseGuide = new QAction(tr("Reverse"), this);
+    reverseGuide->setShortcut(QStringLiteral("R"));
+    reverseGuide->setShortcutContext(Qt::WidgetShortcut);
+    ui->listGuides->addAction(reverseGuide);
+    connect(reverseGuide, &QAction::triggered, this, &GordonSurfacePanel::onReverseGuide);
 
-    //// clang-format off
-    //connect(ui->listProfiles->model(), &QAbstractItemModel::rowsMoved,
-    //        this, &GordonSurfacePanel::onProfileIndexesMoved);
-    //connect(ui->listGuides->model(), &QAbstractItemModel::rowsMoved,
-    //        this, &GordonSurfacePanel::onGuideIndexesMoved);
-    //// clang-format on
+    auto* deleteGuide = new QAction(tr("Remove"), this);
+    deleteGuide->setShortcut(QStringLiteral("Del"));
+    deleteGuide->setShortcutContext(Qt::WidgetShortcut);
+    ui->listGuides->addAction(deleteGuide);
+    connect(deleteGuide, &QAction::triggered, this, &GordonSurfacePanel::onDeleteGuide);
+    
+    ui->listGuides->setContextMenuPolicy(Qt::ActionsContextMenu);
 }
 
 /*
@@ -300,9 +303,10 @@ void GordonSurfacePanel::setupConnections()
             this, &GordonSurfacePanel::onButtonGuideAddToggled);
     connect(ui->buttonGuideRemove, &QToolButton::toggled,
             this, &GordonSurfacePanel::onButtonGuideRemoveToggled);
+
     connect(ui->toleranceSpinBox, &QDoubleSpinBox::valueChanged,
             this, &GordonSurfacePanel::onToleranceChanged);
-    
+
     // clang-format on
 }
 
@@ -317,60 +321,72 @@ void GordonSurfacePanel::appendButtons(Gui::ButtonGroup* buttonGroup)
 void GordonSurfacePanel::setEditedObject(Surface::GordonSurface* fea)
 {
     editedObject = fea;
-    App::Document* doc = editedObject->getDocument();
-
+    App::Document const* doc = editedObject->getDocument();
 
     // get the profiles
     auto profilesObjects = editedObject->ProfileEdges.getValues();
     auto profileEdges = editedObject->ProfileEdges.getSubValues();
+    auto profileDirections = editedObject->ProfileDirections.getValues();
 
     for (std::size_t i = 0; i < profilesObjects.size(); i++) {
-        App::DocumentObject* obj = profilesObjects[i];
+        App::DocumentObject const* obj = profilesObjects[i];
         std::string edge = profileEdges[i];
+        bool direction = profileDirections[i];
 
-        QListWidgetItem* item = new QListWidgetItem(ui->listProfiles);
+        auto* item = new QListWidgetItem(ui->listProfiles);
         ui->listProfiles->addItem(item);
 
-        QString text = QStringLiteral("%1.%2").arg(QString::fromUtf8(obj->Label.getValue()),
-                                                   QString::fromStdString(edge));
+        QString text = QStringLiteral("%1.%2%3").arg(QString::fromUtf8(obj->Label.getValue()),
+                                                   QString::fromStdString(edge),
+                                                   QString::fromUtf8(direction ? " <->" : ""));
         item->setText(text);
 
         // The user data field of a list widget item
-        // is a list of 3 elements:
+        // is a list of 5 elements:
         // 1. document name
         // 2. object name
         // 3. sub-element name of the edge
+        // 4. direction of the edge
+        // 5. object label
         QList<QVariant> data;
         data << QByteArray(doc->getName());
         data << QByteArray(obj->getNameInDocument());
         data << QByteArray(edge.c_str());
+        data << QVariant(direction);
+        data << QByteArray(obj->Label.getValue());
         item->setData(Qt::UserRole, data);
     }
 
     // get the guides
     auto guidesObjects = editedObject->GuideEdges.getValues();
     auto guidesEdges = editedObject->GuideEdges.getSubValues();
-
+    auto guideDirections = editedObject->GuideDirections.getValues();
+    
     for (std::size_t i = 0; i < guidesObjects.size(); i++) {
-        App::DocumentObject* obj = guidesObjects[i];
+        App::DocumentObject const* obj = guidesObjects[i];
         std::string edge = guidesEdges[i];
-
-        QListWidgetItem* item = new QListWidgetItem(ui->listGuides);
+        bool direction = guideDirections[i];
+        auto* item = new QListWidgetItem(ui->listGuides);
         ui->listGuides->addItem(item);
 
-        QString text = QStringLiteral("%1.%2").arg(QString::fromUtf8(obj->Label.getValue()),
-                                                   QString::fromStdString(edge));
+        QString text = QStringLiteral("%1.%2%3").arg(QString::fromUtf8(obj->Label.getValue()),
+                                                   QString::fromStdString(edge),
+                                                   QString::fromUtf8(direction ? " (Reversed)" : ""));
         item->setText(text);
 
         // The user data field of a list widget item
-        // is a list of 3 elements:
+        // is a list of 5 elements:
         // 1. document name
         // 2. object name
         // 3. sub-element name of the edge
+        // 4. direction of the edge
+        // 5. object label
         QList<QVariant> data;
         data << QByteArray(doc->getName());
         data << QByteArray(obj->getNameInDocument());
         data << QByteArray(edge.c_str());
+        data << QVariant(guideDirections[i]);
+        data << QByteArray(obj->Label.getValue());
         item->setData(Qt::UserRole, data);
     }
 
@@ -534,70 +550,96 @@ void GordonSurfacePanel::onButtonGuideRemoveToggled(bool checked)
     }
 }
 
-void GordonSurfacePanel::appendEdges(const Gui::SelectionChanges& msg, QListWidget* list,
-                                     App::PropertyLinkSubList& edges)
+void GordonSurfacePanel::appendEdges(const QList<QVariant> data, QListWidget* list,
+                                     App::PropertyLinkSubList& edges, App::PropertyBoolList& directions)
 {
-    QListWidgetItem* item = new QListWidgetItem(list);
+    auto item = new QListWidgetItem(list);
     list->addItem(item);
 
-    Gui::SelectionObject sel(msg);
-    QString text = QStringLiteral("%1.%2").arg(QString::fromUtf8(sel.getObject()->Label.getValue()),
-                                               QString::fromLatin1(msg.pSubName));
-    item->setText(text);
+    auto docName = data[0].toByteArray();
+    auto objectName = data[1].toByteArray();
+    auto subName = data[2].toByteArray();
 
-    QList<QVariant> data;
-    data << QByteArray(msg.pDocName);
-    data << QByteArray(msg.pObjectName);
-    data << QByteArray(msg.pSubName);
-    item->setData(Qt::UserRole, data);
+    auto doc = App::GetApplication().getDocument(docName);
+    auto obj = doc ? doc->getObject(objectName) : nullptr;
+
+    if (!obj) {
+        return;
+    }
+    
+    item->setText(QStringLiteral("%1.%2").arg(
+        QString::fromUtf8(obj->Label.getValue()), 
+        QString::fromUtf8(subName))
+    );
+        
+    item->setData(Qt::UserRole, QVariantList() << data[0] << data[1] << data[2] << QVariant(false) << QByteArray(obj->Label.getValue()));
 
     auto objects = edges.getValues();
-    objects.push_back(sel.getObject());
+    objects.push_back(obj);
     auto element = edges.getSubValues();
-    element.emplace_back(msg.pSubName);
+    element.emplace_back(subName);
     edges.setValues(objects, element);
+    auto dirs = directions.getValues();
+    dirs.push_back(false);  // default direction
+    directions.setValues(dirs);
 }
 
-void GordonSurfacePanel::removeEdge(const Gui::SelectionChanges& msg,
-                                    QListWidget* list,
-                                    App::PropertyLinkSubList& edges)
+void remove_bit_at(boost::dynamic_bitset<>& db, size_t pos)
 {
-    Gui::SelectionObject sel(msg);
-    QList<QVariant> data;
-    data << QByteArray(msg.pDocName);
-    data << QByteArray(msg.pObjectName);
-    data << QByteArray(msg.pSubName);
+    if (pos >= db.size()) {
+        return;  // check bounds
+    }
 
-    // only the three first elements must match
+    // Shift all bits after 'pos' one position to the left (down)
+    for (size_t i = pos; i < db.size() - 1; ++i) {
+        db[i] = db[i + 1];
+    }
+
+    // Resize the bitset to the new, smaller size
+    db.resize(db.size() - 1);
+}
+
+void GordonSurfacePanel::removeEdge(const QList<QVariant> data, QListWidget* list,
+                                    App::PropertyLinkSubList& edges, App::PropertyBoolList& directions)
+{
+    auto docName = data[0].toByteArray();
+    auto objectName = data[1].toByteArray();
+    auto subName = data[2].toByteArray();
+
+    auto doc = App::GetApplication().getDocument(docName);
+    auto obj = doc ? doc->getObject(objectName) : nullptr;
+
+    if (!obj) {
+        return;
+    }
+
     for (int i = 0; i < list->count(); i++) {
         QListWidgetItem* item = list->item(i);
-        QList<QVariant> userdata = item->data(Qt::UserRole).toList();
-        if (userdata == data) {
+        QList<QVariant> userdata = item->data(Qt::UserRole).toList(); 
+        // only the three first elements must match
+        if (userdata.mid(0, 3) == data.mid(0, 3)) {
             list->takeItem(i);
             delete item;
             break;
         }
     }
-
-    App::DocumentObject* obj = sel.getObject();
-    std::string sub = msg.pSubName;
+        
     auto objects = edges.getValues();
     auto element = edges.getSubValues();
-    auto it = objects.begin();
-    auto jt = element.begin();
+    auto dirs = directions.getValues();
 
-    for (; it != objects.end() && jt != element.end(); ++it, ++jt) {
-        if (*it == obj && *jt == sub) {
-            std::size_t index = std::distance(objects.begin(), it);
+    for (std::size_t idx = 0; idx < objects.size() && idx < element.size() && idx < dirs.size(); ++idx) {
+        if (objects[idx] == obj && element[idx] == subName) {
+            objects.erase(objects.begin() + idx);
+            element.erase(element.begin() + idx);
+            remove_bit_at(dirs, idx);
 
-            objects.erase(it);
-            element.erase(jt);
             edges.setValues(objects, element);
+            directions.setValues(dirs);
             break;
         }
     }
 }
-
 
 void GordonSurfacePanel::onSelectionChanged(const Gui::SelectionChanges& msg)
 {
@@ -606,25 +648,43 @@ void GordonSurfacePanel::onSelectionChanged(const Gui::SelectionChanges& msg)
     }
 
     if (msg.Type == Gui::SelectionChanges::AddSelection) {
+        auto doc = App::GetApplication().getDocument(msg.pDocName);
+        auto obj = doc ? doc->getObject(msg.pObjectName) : nullptr;
+
+        if (!obj) {
+            return;
+        }
+
+        // The user data field of a list widget item
+        // is a list of 5 elements, but only 3 used here:
+        // 1. document name
+        // 2. object name
+        // 3. sub-element name of the edge
+        QList<QVariant> data;
+        data << QByteArray(doc->getName());
+        data << QByteArray(obj->getNameInDocument());
+        data << QByteArray(msg.pSubName);
+
         checkOpenCommand();
         if (selectionMode == AppendEdge) {
             if (selectionType == Profile) {
-                appendEdges(msg, ui->listProfiles, editedObject->ProfileEdges);
+                appendEdges(data, ui->listProfiles, editedObject->ProfileEdges, editedObject->ProfileDirections);
             }
             else {
-                appendEdges(msg, ui->listGuides, editedObject->GuideEdges);
+                appendEdges(data, ui->listGuides, editedObject->GuideEdges, editedObject->GuideDirections);
             }
         }
         else if (selectionMode == RemoveEdge) {
+            //this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(), editedObject->GuideEdges.getSubListValues(), false);
+
             if (selectionType == Profile) {
-                removeEdge(msg, ui->listProfiles, editedObject->ProfileEdges);
+                removeEdge(data, ui->listProfiles, editedObject->ProfileEdges, editedObject->ProfileDirections);
             }
             else {
-                removeEdge(msg, ui->listGuides, editedObject->GuideEdges);
+                removeEdge(data, ui->listGuides, editedObject->GuideEdges, editedObject->GuideDirections);
             }
         }
 
-        //editedObject->recomputeFeature();
         QTimer::singleShot(50, this, &GordonSurfacePanel::clearSelection);
         this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(),
                                       editedObject->GuideEdges.getSubListValues(),
@@ -635,35 +695,22 @@ void GordonSurfacePanel::onSelectionChanged(const Gui::SelectionChanges& msg)
 void GordonSurfacePanel::onDeleteProfile()
 {
     int row = ui->listProfiles->currentRow();
-    QListWidgetItem* item = ui->listProfiles->item(row);
+    const QListWidgetItem* item = ui->listProfiles->item(row);
+
     if (item) {
         checkOpenCommand();
-        QList<QVariant> data;
-        data = item->data(Qt::UserRole).toList();
-        ui->listProfiles->takeItem(row);
-        delete item;
+        QList<QVariant> data = item->data(Qt::UserRole).toList();
 
-        App::Document* doc = App::GetApplication().getDocument(data[0].toByteArray());
-        App::DocumentObject* obj = doc ? doc->getObject(data[1].toByteArray()) : nullptr;
-        std::string sub = data[2].toByteArray().constData();
-        auto objects = editedObject->ProfileEdges.getValues();
-        auto element = editedObject->ProfileEdges.getSubValues();
-        auto it = objects.begin();
-        auto jt = element.begin();
+        this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(), editedObject->GuideEdges.getSubListValues(), false);
 
-        for (; it != objects.end() && jt != element.end(); ++it, ++jt) {
-            if (*it == obj && *jt == sub) {
-                std::size_t index = std::distance(objects.begin(), it);
+        removeEdge(data, ui->listProfiles, editedObject->ProfileEdges, editedObject->ProfileDirections);
 
-                objects.erase(it);
-                element.erase(jt);
-                editedObject->ProfileEdges.setValues(objects, element);
-                break;
-            }
-        }
-        this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(),
-                                      editedObject->GuideEdges.getSubListValues(),
-                                      true);
+        QTimer::singleShot(50, this, &GordonSurfacePanel::clearSelection);
+        this->vp->highlightReferences(
+            editedObject->ProfileEdges.getSubListValues(),
+            editedObject->GuideEdges.getSubListValues(),
+            true
+        );
 
         //editedObject->recomputeFeature();
     }
@@ -672,37 +719,119 @@ void GordonSurfacePanel::onDeleteProfile()
 void GordonSurfacePanel::onDeleteGuide()
 {
     int row = ui->listGuides->currentRow();
-    QListWidgetItem* item = ui->listGuides->item(row);
+    const QListWidgetItem* item = ui->listGuides->item(row);
     if (item) {
         checkOpenCommand();
-        QList<QVariant> data;
-        data = item->data(Qt::UserRole).toList();
-        ui->listGuides->takeItem(row);
-        delete item;
+        QList<QVariant> data = item->data(Qt::UserRole).toList();
+        
+        this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(), editedObject->GuideEdges.getSubListValues(), false);
 
-        App::Document* doc = App::GetApplication().getDocument(data[0].toByteArray());
-        App::DocumentObject* obj = doc ? doc->getObject(data[1].toByteArray()) : nullptr;
-        std::string sub = data[2].toByteArray().constData();
-        auto objects = editedObject->GuideEdges.getValues();
-        auto element = editedObject->GuideEdges.getSubValues();
-        auto it = objects.begin();
-        auto jt = element.begin();
+        removeEdge(data, ui->listGuides, editedObject->GuideEdges, editedObject->GuideDirections);
 
-        for (; it != objects.end() && jt != element.end(); ++it, ++jt) {
-            if (*it == obj && *jt == sub) {
-                std::size_t index = std::distance(objects.begin(), it);
-
-                objects.erase(it);
-                element.erase(jt);
-                editedObject->GuideEdges.setValues(objects, element);
-                break;
-            }
-        }
-        this->vp->highlightReferences(editedObject->GuideEdges.getSubListValues(),
+        QTimer::singleShot(50, this, &GordonSurfacePanel::clearSelection);
+        this->vp->highlightReferences(editedObject->ProfileEdges.getSubListValues(),
                                       editedObject->GuideEdges.getSubListValues(),
                                       true);
 
         //editedObject->recomputeFeature();
+    }
+}
+
+void GordonSurfacePanel::onReverseGuide()
+{
+    int row = ui->listGuides->currentRow();
+    QListWidgetItem* item = ui->listGuides->item(row);
+    if (item) {
+        checkOpenCommand();
+        const QList<QVariant> data = item->data(Qt::UserRole).toList();
+        
+        auto docName = data[0].toByteArray();
+        auto objectName = data[1].toByteArray();
+        auto subName = data[2].toByteArray();
+        bool direction = data[3].toBool();
+
+        auto doc = App::GetApplication().getDocument(docName);
+        auto obj = doc ? doc->getObject(objectName) : nullptr;
+        
+        if (!obj) {
+            return;
+        }
+
+        QString text = QStringLiteral("%1.%2%3").arg(
+            QString::fromUtf8(obj->Label.getValue()),
+            QString::fromUtf8(subName),
+            QString::fromUtf8(!direction ? " (Reversed)" : "")
+        );
+
+        item->setData(
+            Qt::UserRole,
+            QVariantList() << data[0] << data[1] << data[2] << QVariant(!direction)
+        );
+
+        item->setText(text);
+        auto objects = editedObject->GuideEdges.getValues();
+        auto element = editedObject->GuideEdges.getSubValues();
+        auto dirs = editedObject->GuideDirections.getValues();
+        
+        for (std::size_t idx = 0; idx < objects.size() && idx < element.size() && idx < dirs.size();
+             ++idx) {
+            if (objects[idx] == obj && element[idx] == subName) {
+                dirs[idx] = !dirs[idx];
+                editedObject->GuideDirections.setValues(dirs);
+                break;
+            }
+        }
+        // editedObject->recomputeFeature();
+    }
+}
+
+void GordonSurfacePanel::onReverseProfile()
+{
+    int row = ui->listProfiles->currentRow();
+    QListWidgetItem* item = ui->listProfiles->item(row);
+    if (item) {
+        checkOpenCommand();
+        const QList<QVariant> data = item->data(Qt::UserRole).toList();
+
+        auto docName = data[0].toByteArray();
+        auto objectName = data[1].toByteArray();
+        auto subName = data[2].toByteArray();
+        bool direction = data[3].toBool();
+
+        auto doc = App::GetApplication().getDocument(docName);
+        auto obj = doc ? doc->getObject(objectName) : nullptr;
+
+        if (!obj) {
+            return;
+        }
+
+        QString text = QStringLiteral("%1.%2%3").arg(
+            QString::fromUtf8(obj->Label.getValue()),
+            QString::fromUtf8(subName),
+            QString::fromUtf8(!direction ? " (Reversed)" : "")
+        );
+
+        item->setData(
+            Qt::UserRole,
+            QVariantList() << data[0] << data[1] << data[2] << QVariant(!direction)
+        );
+
+        item->setText(text);
+
+        auto objects = editedObject->ProfileEdges.getValues();
+        auto element = editedObject->ProfileEdges.getSubValues();
+        auto dirs = editedObject->ProfileDirections.getValues();
+
+        for (std::size_t idx = 0; idx < objects.size() && idx < element.size() && idx < dirs.size();
+             ++idx) {
+            if (objects[idx] == obj && element[idx] == subName) {
+                dirs[idx] = !dirs[idx];
+                editedObject->ProfileDirections.setValues(dirs);
+                break;
+            }
+        }
+
+        // editedObject->recomputeFeature();
     }
 }
 
@@ -713,6 +842,7 @@ void GordonSurfacePanel::onToleranceChanged(double tolerance)
 
 void GordonSurfacePanel::exitSelectionMode()
 {
+    selectionMode = None;
     // 'selectionMode' is passed by reference to the filter and changed when the filter is deleted
     Gui::Selection().clearSelection();
     Gui::Selection().rmvSelectionGate();

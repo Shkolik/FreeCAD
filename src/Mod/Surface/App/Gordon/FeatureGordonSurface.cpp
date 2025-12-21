@@ -29,10 +29,8 @@
 #include <TopoDS.hxx>
 #include <gp_Pnt.hxx>
 #endif
-
 #include "FeatureGordonSurface.h"
 #include "occ_gordon.h"
-
 
 using namespace Surface;
 
@@ -42,42 +40,41 @@ GordonSurface::GordonSurface()
 {
     ADD_PROPERTY_TYPE(ProfileEdges, (nullptr, ""), "GordonSurface", App::Prop_None, "Profiles edges.");
     ADD_PROPERTY_TYPE(GuideEdges, (nullptr, ""), "GordonSurface", App::Prop_None, "Guide edges.");
-    ADD_PROPERTY_TYPE(Tolerance, (Precision::Approximation()), "GordonSurface", App::Prop_None, "Tolerance");
-
+    ADD_PROPERTY_TYPE(ProfileDirections, (false), "GordonSurface", App::Prop_None, "Profile directions.");
+    ADD_PROPERTY_TYPE(GuideDirections, (false), "GordonSurface", App::Prop_None, "Guide directions.");
+    ADD_PROPERTY_TYPE(Tolerance, (1.e-3), "GordonSurface", App::Prop_None, "Tolerance");
+    
     ProfileEdges.setScope(App::LinkScope::Global);
     GuideEdges.setScope(App::LinkScope::Global);
 
     ProfileEdges.setSize(0);
     GuideEdges.setSize(0);
-    Tolerance.setValue(Precision::Approximation());
+    ProfileDirections.setSize(0);
+    GuideDirections.setSize(0);
+    Tolerance.setValue(1.e-3);
 }
 
 short GordonSurface::mustExecute() const
 {
-    if (ProfileEdges.isTouched() || GuideEdges.isTouched() || Tolerance.isTouched()) {
+    if (ProfileEdges.isTouched() || GuideEdges.isTouched() || ProfileDirections.isTouched()
+        || GuideDirections.isTouched() || Tolerance.isTouched()) {
         return 1;
     }
     return 0;
 }
 
-std::string pointStr(Handle(Geom_BSplineCurve) curve)
-{
-    auto firstPoint = curve->Value(curve->FirstParameter());
-    auto lastPoint = curve->Value(curve->LastParameter());
-    std::string strF = "First point: (" + std::to_string(firstPoint.X()) + ", "
-        + std::to_string(firstPoint.Y())
-        + ", " + std::to_string(firstPoint.Z()) + ") "; 
-    std::string strL = "Last point: (" + std::to_string(lastPoint.X()) + ", "
-        + std::to_string(lastPoint.Y()) + ", " + std::to_string(lastPoint.Z()) + ") "; 
-    return strF + strL;
-}
 
-std::vector<Handle(Geom_BSplineCurve)> getCurves(const App::PropertyLinkSubList& edges)
+std::vector<Handle(Geom_BSplineCurve)> getCurves(const App::PropertyLinkSubList& edges, const App::PropertyBoolList& directions)
 {
     std::vector<Handle(Geom_BSplineCurve)> curves;
 
     auto objects = edges.getValues();
     auto subNames = edges.getSubValues();
+    auto dirs = directions.getValues();
+
+    if (objects.size() != dirs.size() || objects.size() != subNames.size() || dirs.size() != subNames.size()) {
+        Standard_Failure::Raise(std::format("Inconsistent number of edges ({}), sub-shapes ({}), and directions ({}).",objects.size(),dirs.size(),subNames.size()).c_str());
+    }
 
     for (std::size_t i = 0; i < objects.size(); i++) {
         App::DocumentObject* obj = objects[i];
@@ -89,33 +86,23 @@ std::vector<Handle(Geom_BSplineCurve)> getCurves(const App::PropertyLinkSubList&
             if (!edgeShape.IsNull() && edgeShape.ShapeType() == TopAbs_EDGE) {   
                 Standard_Real u1, u2;
                 const TopoDS_Edge& edge = TopoDS::Edge(edgeShape);
-                TopLoc_Location heloc;  // this will be output
+                TopLoc_Location heloc;  // this will be output curve location
                 Handle(Geom_Curve) c_geom = BRep_Tool::Curve(edge, heloc, u1, u2);  // The geometric curve
-                Handle(Geom_BSplineCurve) bspline = Handle(Geom_BSplineCurve)::DownCast(c_geom);  // Try to get BSpline curve
+                     
+                ShapeConstruct_Curve scc;
+                Handle(Geom_BSplineCurve)  bspline = scc.ConvertToBSpline(c_geom, u1, u2, Precision::Confusion());
+                if (bspline.IsNull()) {
+                    Standard_Failure::Raise(
+                        "A curve was not a B-spline and could not be converted into one.");
+                }                    
+                if (dirs[i]) {
+                    bspline->Reverse();
+                }
+                
+                bspline->Transform(heloc.Transformation());  // apply original transformation to control points
 
-                gp_Trsf transf = heloc.Transformation();                
-                if (!bspline.IsNull()) {
-                    bspline->Segment(u1, u2);     // DownCast(c_geom) will not trim spline - do it manually
-                }
-                else {
-                    // try to convert it into a B-spline
-                    Handle(Geom_TrimmedCurve) trim = new Geom_TrimmedCurve(c_geom, u1, u2);
-                    // Approximate the curve to non-rational polynomial BSpline
-                    // to avoid C0 continuity in output surface
-                    GeomConvert conv;
-                    Convert_ParameterisationType paratype = Convert_Polynomial;
-                    bspline = conv.CurveToBSplineCurve(trim, paratype);
-                    if (bspline.IsNull()) {
-                        // GeomConvert failed, try ShapeConstruct_Curve now
-                        ShapeConstruct_Curve scc;
-                        bspline = scc.ConvertToBSpline(c_geom, u1, u2, Precision::Confusion());
-                        if (bspline.IsNull()) {
-                            Standard_Failure::Raise(
-                                "A curve was not a B-spline and could not be converted into one.");
-                        }                  
-                    }
-                }
-                bspline->Transform(transf);  // apply original transformation to control points
+                /*showBSpline(bspline, "BSpline");*/
+
                 curves.emplace_back(bspline);
             }
             else {
@@ -140,8 +127,8 @@ App::DocumentObjectExecReturn* GordonSurface::execute()
         std::vector<Handle(Geom_BSplineCurve)> vcurves, ucurves;
         
         // Create a Gordon surface
-        ucurves = getCurves(ProfileEdges);
-        vcurves = getCurves(GuideEdges);
+        ucurves = getCurves(ProfileEdges, ProfileDirections);
+        vcurves = getCurves(GuideEdges, GuideDirections);
 
         // there is no reason to go under 1e-7 precision
         double tol = Tolerance.getValue() < Precision::Confusion() ? Precision::Confusion() : Tolerance.getValue();
@@ -164,4 +151,23 @@ App::DocumentObjectExecReturn* GordonSurface::execute()
     catch (const Standard_Failure& e) {
         return new App::DocumentObjectExecReturn(e.GetMessageString());
     }
+}
+
+void GordonSurface::onDocumentRestored()
+{
+    // init ProfileDirections and GuideDirections if not exists
+    if (ProfileDirections.getSize() != ProfileEdges.getSize()) {
+        ProfileDirections.setSize(ProfileEdges.getSize());
+        for (std::size_t i = 0; i < ProfileDirections.getSize(); ++i) {
+            ProfileDirections.set1Value(i, false);
+        }
+    }
+    if (GuideDirections.getSize() != GuideEdges.getSize()) {
+        GuideDirections.setSize(GuideEdges.getSize());
+        for (std::size_t i = 0; i < GuideDirections.getSize(); ++i) {
+            GuideDirections.set1Value(i, false);
+        }
+    }
+
+    Part::Spline::onDocumentRestored();
 }

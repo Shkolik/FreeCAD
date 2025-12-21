@@ -200,20 +200,20 @@ void InterpolateCurveNetwork::MakeCurvesCompatible()
 
     ComputeIntersections(tmp_intersection_params_u, tmp_intersection_params_v);
 
-    printIntersectionMatrix(tmp_intersection_params_u,
+    /*printIntersectionMatrix(tmp_intersection_params_u,
                 tmp_intersection_params_v,
                 nProfiles,
                 nGuides,
-                "tmp_intersection_");
+                "tmp_intersection_");*/
 
     // sort intersection_params_u and intersection_params_v and u-directional and v-directional B-spline curves
     SortCurves(tmp_intersection_params_u, tmp_intersection_params_v);
 
-    printIntersectionMatrix(tmp_intersection_params_u,
+    /*printIntersectionMatrix(tmp_intersection_params_u,
                 tmp_intersection_params_v,
                 nProfiles,
                 nGuides,
-                "sorted tmp_intersection_");
+                "sorted tmp_intersection_");*/
     
     // TODO: Need to check if profiles are closed curves
     // and if so - duplicate 1st guide at the end of guides array and fix intersection matrix
@@ -274,6 +274,7 @@ void InterpolateCurveNetwork::MakeCurvesCompatible()
         intersection_params_v = tmp_intersection_params_v;
     }
 
+    
     /*printIntersectionMatrix(intersection_params_u,
                 intersection_params_v,
                 nProfiles,
@@ -301,9 +302,11 @@ void InterpolateCurveNetwork::MakeCurvesCompatible()
         newParametersGuides.push_back(sum / nGuides);
     }
 
-    /*printVector(newParametersProfiles, "newParametersProfiles");
-    printVector(newParametersGuides, "newParametersGuides");*/
-            
+    /*
+    printVector(newParametersProfiles, "newParametersProfiles");
+    printVector(newParametersGuides, "newParametersGuides");
+    */
+
     if (newParametersProfiles.front() > BSplineAlgorithms::PAR_CHECK_TOL
         || newParametersGuides.front() > BSplineAlgorithms::PAR_CHECK_TOL) {
         throw error("At least one B-splines has no intersection at the beginning.");
@@ -410,7 +413,7 @@ void InterpolateCurveNetwork::MakeCurvesCompatible()
     m_intersectionParamsV = newParametersGuides;
 }
 
-// TODO: Eliminate hardcoded tolerances
+
 void InterpolateCurveNetwork::EliminateInaccuraciesNetworkIntersections(const std::vector<Handle(Geom_BSplineCurve)> & sortedProfiles,
                                                                              const std::vector<Handle(Geom_BSplineCurve)> & sortedGuides,
                                                                              math_Matrix & intersection_params_u,

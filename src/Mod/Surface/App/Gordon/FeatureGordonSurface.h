@@ -42,7 +42,9 @@ public:
 
     App::PropertyLinkSubList ProfileEdges;  // Profiles
     App::PropertyLinkSubList GuideEdges;    // Guides
-    App::PropertyFloat Tolerance;           // Guides
+    App::PropertyBoolList ProfileDirections;  // Profile Directions
+    App::PropertyBoolList GuideDirections;    // Guide Directions
+    App::PropertyFloat Tolerance;           // Tolerance
 
     App::DocumentObjectExecReturn* execute() override;
     short mustExecute() const override;
@@ -50,6 +52,9 @@ public:
     {
         return "SurfaceGui::ViewProviderGordonSurface";
     }
+
+protected:
+    void onDocumentRestored() override;
 };
 
 }  // Namespace Surface

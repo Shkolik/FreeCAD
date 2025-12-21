@@ -169,9 +169,30 @@ void showBSplineSurface(Handle(Geom_BSplineSurface) surface, const char* name = 
 
     App::Document* doc = App::GetApplication().getActiveDocument();
     std::string objName = doc->getUniqueObjectName(name);
-    Part::Feature* object = static_cast<Part::Feature*>(doc->addObject("Part::Feature", objName.c_str()));
+    auto* object = static_cast<Part::Feature*>(doc->addObject("Part::Feature", objName.c_str()));
     
     object->Shape.setValue(faceMaker.Face());
+}
+
+void showBSpline(Handle(Geom_BSplineCurve) bspline, const char* name = "BSpline")
+{
+    App::Document* doc = App::GetApplication().getActiveDocument();
+    std::string objName = doc->getUniqueObjectName(name);
+
+    auto* feat = static_cast<Part::Feature*>(doc->addObject("Part::Feature", objName.c_str()));
+
+    feat->Shape.setValue(BRepBuilderAPI_MakeEdge(bspline));
+}
+
+std::string pointStr(Handle(Geom_BSplineCurve) curve)
+{
+    auto firstPoint = curve->Value(curve->FirstParameter());
+    auto lastPoint = curve->Value(curve->LastParameter());
+    std::string strF = "First point: (" + std::to_string(firstPoint.X()) + ", "
+        + std::to_string(firstPoint.Y()) + ", " + std::to_string(firstPoint.Z()) + ") ";
+    std::string strL = "Last point: (" + std::to_string(lastPoint.X()) + ", "
+        + std::to_string(lastPoint.Y()) + ", " + std::to_string(lastPoint.Z()) + ") ";
+    return strF + strL;
 }
 }  // namespace
 
