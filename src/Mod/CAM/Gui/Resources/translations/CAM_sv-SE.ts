@@ -434,32 +434,32 @@ För ämnen från basobjektets avgränsningsruta innebär det det extra material
       <translation>Parameterredigerare för verktygsbit</translation>
     </message>
     <message>
-      <location filename="../panels/ToolBitEditor.ui" line="65"/>
+      <location filename="../panels/ToolBitEditor.ui" line="50"/>
       <source>Toolbit</source>
       <translation>Verktygsbit</translation>
     </message>
     <message>
-      <location filename="../panels/ToolBitEditor.ui" line="90"/>
+      <location filename="../panels/ToolBitEditor.ui" line="75"/>
       <source>Notes</source>
       <translation>Anteckningar</translation>
     </message>
     <message>
-      <location filename="../panels/ToolBitEditor.ui" line="107"/>
+      <location filename="../panels/ToolBitEditor.ui" line="92"/>
       <source>Coating</source>
       <translation>Beläggning</translation>
     </message>
     <message>
-      <location filename="../panels/ToolBitEditor.ui" line="117"/>
+      <location filename="../panels/ToolBitEditor.ui" line="102"/>
       <source>Hardness</source>
       <translation>Hårdhet</translation>
     </message>
     <message>
-      <location filename="../panels/ToolBitEditor.ui" line="127"/>
+      <location filename="../panels/ToolBitEditor.ui" line="112"/>
       <source>Materials</source>
       <translation>Material</translation>
     </message>
     <message>
-      <location filename="../panels/ToolBitEditor.ui" line="140"/>
+      <location filename="../panels/ToolBitEditor.ui" line="125"/>
       <source>Supplier</source>
       <translation>Leverantör</translation>
     </message>
@@ -680,9 +680,9 @@ För ämnen från basobjektets avgränsningsruta innebär det det extra material
     </message>
     <message>
       <location filename="../panels/PageBaseGeometryEdit.ui" line="72"/>
-      <location filename="../panels/PropertyBag.ui" line="62"/>
-      <location filename="../panels/PageBaseLocationEdit.ui" line="43"/>
       <location filename="../panels/PageBaseHoleGeometryEdit.ui" line="52"/>
+      <location filename="../panels/PageBaseLocationEdit.ui" line="43"/>
+      <location filename="../panels/PropertyBag.ui" line="62"/>
       <source>Add</source>
       <translation>Lägg till</translation>
     </message>
@@ -693,9 +693,9 @@ För ämnen från basobjektets avgränsningsruta innebär det det extra material
     </message>
     <message>
       <location filename="../panels/PageBaseGeometryEdit.ui" line="82"/>
-      <location filename="../panels/PropertyBag.ui" line="48"/>
-      <location filename="../panels/PageBaseLocationEdit.ui" line="53"/>
       <location filename="../panels/PageBaseHoleGeometryEdit.ui" line="62"/>
+      <location filename="../panels/PageBaseLocationEdit.ui" line="53"/>
+      <location filename="../panels/PropertyBag.ui" line="48"/>
       <source>Remove</source>
       <translation>Ta bort</translation>
     </message>
@@ -724,8 +724,8 @@ Reset raderar alla aktuella objekt från listan och fyller på listan med alla c
       <translation>Funktion</translation>
     </message>
     <message>
-      <location filename="../panels/PageBaseHoleGeometryEdit.ui" line="41"/>
       <location filename="../panels/ToolEditor.ui" line="96"/>
+      <location filename="../panels/PageBaseHoleGeometryEdit.ui" line="41"/>
       <source>Diameter</source>
       <translation>Diameter</translation>
     </message>
@@ -873,7 +873,7 @@ Reset raderar alla aktuella objekt från listan och fyller på listan med alla c
     <message>
       <location filename="../panels/PageHeightsEdit.ui" line="54"/>
       <source>The height above which it is safe to move the tool bit with rapid movements. Below this height all lateral and downward movements are performed with feed rate speeds.</source>
-      <translation>Den höjd över vilken det är säkert att flytta verktygsbiten med snabba rörelser. Under denna höjd utförs alla rörelser i sidled och nedåt med matningshastigheter.</translation>
+      <translation>Den höjd över vilken det är säkert att flytta verktygsbiten med snabba rörelser. Under denna höjd utförs alla rörelser i sidled och nedåt med matning.</translation>
     </message>
     <message>
       <location filename="../panels/PageHeightsEdit.ui" line="24"/>
@@ -893,19 +893,19 @@ Reset raderar alla aktuella objekt från listan och fyller på listan med alla c
       <translation>Kylvätskeläge</translation>
     </message>
     <message>
-      <location filename="../panels/SetupGlobal.ui" line="180"/>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="29"/>
-      <location filename="../panels/PageOpThreadMillingEdit.ui" line="29"/>
-      <location filename="../panels/PageOpVcarveEdit.ui" line="29"/>
       <location filename="../panels/PageOpHelixEdit.ui" line="29"/>
+      <location filename="../panels/SetupGlobal.ui" line="180"/>
+      <location filename="../panels/PageOpVcarveEdit.ui" line="29"/>
+      <location filename="../panels/PageOpThreadMillingEdit.ui" line="29"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="29"/>
       <location filename="../panels/PageOpDrillingEdit.ui" line="35"/>
       <source>Tool Controller</source>
       <translation>Verktygskontroller</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpAdaptiveEdit.ui" line="33"/>
-      <location filename="../panels/SetupGlobal.ui" line="249"/>
       <location filename="../panels/PageOpHelixEdit.ui" line="43"/>
+      <location filename="../panels/SetupGlobal.ui" line="249"/>
+      <location filename="../panels/PageOpAdaptiveEdit.ui" line="33"/>
       <source>Coolant</source>
       <translation>Kylvätska</translation>
     </message>
@@ -959,34 +959,34 @@ Större värden (längre till höger) ger snabbare beräkningar; mindre värden 
       <translation>Vinkel på helixens ingångskon</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpAdaptiveEdit.ui" line="23"/>
-      <location filename="../panels/PageOpEngraveEdit.ui" line="29"/>
-      <location filename="../panels/PageOpProbeEdit.ui" line="35"/>
-      <location filename="../panels/PageOpPocketFullEdit.ui" line="29"/>
-      <location filename="../panels/PageOpCustomEdit.ui" line="35"/>
       <location filename="../panels/PageOpDeburrEdit.ui" line="53"/>
       <location filename="../panels/PageOpSlotEdit.ui" line="35"/>
-      <location filename="../panels/PageOpWaterlineEdit.ui" line="29"/>
+      <location filename="../panels/PageOpCustomEdit.ui" line="35"/>
+      <location filename="../panels/PageOpPocketFullEdit.ui" line="29"/>
+      <location filename="../panels/PageOpEngraveEdit.ui" line="29"/>
       <location filename="../panels/PageOpProfileFullEdit.ui" line="29"/>
+      <location filename="../panels/PageOpWaterlineEdit.ui" line="29"/>
+      <location filename="../panels/PageOpAdaptiveEdit.ui" line="23"/>
+      <location filename="../panels/PageOpProbeEdit.ui" line="35"/>
       <source>Tool controller</source>
       <translation>Verktygsstyrenhet</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpAdaptiveEdit.ui" line="43"/>
-      <location filename="../panels/PageOpEngraveEdit.ui" line="57"/>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="57"/>
-      <location filename="../panels/PageOpTappingEdit.ui" line="117"/>
-      <location filename="../panels/PageOpThreadMillingEdit.ui" line="43"/>
-      <location filename="../panels/PageOpProbeEdit.ui" line="49"/>
-      <location filename="../panels/PageOpPocketFullEdit.ui" line="57"/>
-      <location filename="../panels/PageOpCustomEdit.ui" line="59"/>
-      <location filename="../panels/PageOpVcarveEdit.ui" line="57"/>
-      <location filename="../panels/PageOpHelixEdit.ui" line="57"/>
       <location filename="../panels/PageOpDeburrEdit.ui" line="99"/>
       <location filename="../panels/PageOpSlotEdit.ui" line="59"/>
-      <location filename="../panels/PageOpDrillingEdit.ui" line="73"/>
-      <location filename="../panels/PageOpWaterlineEdit.ui" line="53"/>
+      <location filename="../panels/PageOpHelixEdit.ui" line="57"/>
+      <location filename="../panels/PageOpCustomEdit.ui" line="59"/>
+      <location filename="../panels/PageOpPocketFullEdit.ui" line="57"/>
+      <location filename="../panels/PageOpEngraveEdit.ui" line="57"/>
       <location filename="../panels/PageOpProfileFullEdit.ui" line="57"/>
+      <location filename="../panels/PageOpVcarveEdit.ui" line="57"/>
+      <location filename="../panels/PageOpWaterlineEdit.ui" line="53"/>
+      <location filename="../panels/PageOpAdaptiveEdit.ui" line="43"/>
+      <location filename="../panels/PageOpProbeEdit.ui" line="49"/>
+      <location filename="../panels/PageOpThreadMillingEdit.ui" line="43"/>
+      <location filename="../panels/PageOpTappingEdit.ui" line="117"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="57"/>
+      <location filename="../panels/PageOpDrillingEdit.ui" line="73"/>
       <source>Edit Tool Controller</source>
       <translation>Styrenhet för redigeringsverktyg</translation>
     </message>
@@ -1021,8 +1021,8 @@ Större värden (längre till höger) ger snabbare beräkningar; mindre värden 
       <translation>Helix rampvinkel</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpAdaptiveEdit.ui" line="196"/>
       <location filename="../panels/PageOpPocketFullEdit.ui" line="244"/>
+      <location filename="../panels/PageOpAdaptiveEdit.ui" line="196"/>
       <source>Use outline</source>
       <translation>Använd kontur</translation>
     </message>
@@ -1062,10 +1062,10 @@ Större värden (längre till höger) ger snabbare beräkningar; mindre värden 
       <translation>Stoppa</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpThreadMillingEdit.ui" line="188"/>
-      <location filename="../panels/PageOpHelixEdit.ui" line="94"/>
       <location filename="../panels/PageOpDeburrEdit.ui" line="138"/>
+      <location filename="../panels/PageOpHelixEdit.ui" line="94"/>
       <location filename="../panels/PageOpProfileFullEdit.ui" line="89"/>
+      <location filename="../panels/PageOpThreadMillingEdit.ui" line="188"/>
       <source>Direction</source>
       <translation>Riktning</translation>
     </message>
@@ -1091,6 +1091,8 @@ Större värden (längre till höger) ger snabbare beräkningar; mindre värden 
       <translation>Geringsfog</translation>
     </message>
     <message>
+      <location filename="../panels/PageOpDeburrEdit.ui" line="205"/>
+      <location filename="../panels/PageOpDeburrEdit.ui" line="232"/>
       <location filename="../panels/ToolEditor.ui" line="77"/>
       <location filename="../panels/ToolEditor.ui" line="134"/>
       <location filename="../panels/ToolEditor.ui" line="144"/>
@@ -1100,8 +1102,6 @@ Större värden (längre till höger) ger snabbare beräkningar; mindre värden 
       <location filename="../panels/ToolEditor.ui" line="223"/>
       <location filename="../panels/ToolEditor.ui" line="240"/>
       <location filename="../panels/ToolEditor.ui" line="280"/>
-      <location filename="../panels/PageOpDeburrEdit.ui" line="205"/>
-      <location filename="../panels/PageOpDeburrEdit.ui" line="232"/>
       <source>mm</source>
       <translation>mm</translation>
     </message>
@@ -1218,12 +1218,12 @@ Större värden (längre till höger) ger snabbare beräkningar; mindre värden 
     <message>
       <location filename="../panels/PageOpDrillingEdit.ui" line="183"/>
       <source>Feed retract</source>
-      <translation>Matningsretract</translation>
+      <translation>Matningsreträtt</translation>
     </message>
     <message>
       <location filename="../panels/PageOpDrillingEdit.ui" line="186"/>
       <source>G85: Retract from the hole at the given feedrate instead of rapid move</source>
-      <translation>G85: Dra tillbaka från hålet med den angivna matningshastigheten istället för snabbdragning</translation>
+      <translation>G85: Dra tillbaka från hålet med angiven matning istället för snabbförflyttning</translation>
     </message>
     <message>
       <location filename="../panels/PageOpHelixEdit.ui" line="70"/>
@@ -1262,9 +1262,9 @@ Större värden (längre till höger) ger snabbare beräkningar; mindre värden 
       <translation>Ange hur många procent av verktygsdiametern som varje spiral ska förskjutas i förhållande till den föregående. En förskjutning på 100% innebär ingen överlappning av de enskilda snitten.</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpAdaptiveEdit.ui" line="172"/>
-      <location filename="../panels/PageOpPocketFullEdit.ui" line="185"/>
       <location filename="../panels/PageOpHelixEdit.ui" line="118"/>
+      <location filename="../panels/PageOpPocketFullEdit.ui" line="185"/>
+      <location filename="../panels/PageOpAdaptiveEdit.ui" line="172"/>
       <source>Step over percent</source>
       <translation>Steg över procent</translation>
     </message>
@@ -1353,14 +1353,14 @@ Det senare kan användas för att platta av hela ämnesområdet för att säkers
       <translation>Klippläge</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpPocketFullEdit.ui" line="106"/>
       <location filename="../panels/PageOpHelixEdit.ui" line="105"/>
+      <location filename="../panels/PageOpPocketFullEdit.ui" line="106"/>
       <source>Climb</source>
       <translation>Klättra</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpPocketFullEdit.ui" line="111"/>
       <location filename="../panels/PageOpHelixEdit.ui" line="110"/>
+      <location filename="../panels/PageOpPocketFullEdit.ui" line="111"/>
       <source>Conventional</source>
       <translation>Konventionell</translation>
     </message>
@@ -1370,39 +1370,39 @@ Det senare kan användas för att platta av hela ämnesområdet för att säkers
       <translation>Mönster</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpEngraveEdit.ui" line="36"/>
-      <location filename="../panels/PageOpEngraveEdit.ui" line="50"/>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="36"/>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="50"/>
-      <location filename="../panels/PageOpProbeEdit.ui" line="42"/>
-      <location filename="../panels/PageOpPocketFullEdit.ui" line="36"/>
-      <location filename="../panels/PageOpPocketFullEdit.ui" line="50"/>
-      <location filename="../panels/PageOpCustomEdit.ui" line="42"/>
-      <location filename="../panels/PageOpVcarveEdit.ui" line="36"/>
-      <location filename="../panels/PageOpVcarveEdit.ui" line="50"/>
-      <location filename="../panels/PageOpHelixEdit.ui" line="36"/>
-      <location filename="../panels/PageOpHelixEdit.ui" line="50"/>
       <location filename="../panels/PageOpDeburrEdit.ui" line="60"/>
       <location filename="../panels/PageOpDeburrEdit.ui" line="92"/>
-      <location filename="../panels/PageOpDrillingEdit.ui" line="42"/>
-      <location filename="../panels/PageOpDrillingEdit.ui" line="56"/>
-      <location filename="../panels/PageOpWaterlineEdit.ui" line="36"/>
+      <location filename="../panels/PageOpHelixEdit.ui" line="36"/>
+      <location filename="../panels/PageOpHelixEdit.ui" line="50"/>
+      <location filename="../panels/PageOpCustomEdit.ui" line="42"/>
+      <location filename="../panels/PageOpPocketFullEdit.ui" line="36"/>
+      <location filename="../panels/PageOpPocketFullEdit.ui" line="50"/>
+      <location filename="../panels/PageOpEngraveEdit.ui" line="36"/>
+      <location filename="../panels/PageOpEngraveEdit.ui" line="50"/>
       <location filename="../panels/PageOpProfileFullEdit.ui" line="36"/>
       <location filename="../panels/PageOpProfileFullEdit.ui" line="50"/>
+      <location filename="../panels/PageOpVcarveEdit.ui" line="36"/>
+      <location filename="../panels/PageOpVcarveEdit.ui" line="50"/>
+      <location filename="../panels/PageOpWaterlineEdit.ui" line="36"/>
+      <location filename="../panels/PageOpProbeEdit.ui" line="42"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="36"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="50"/>
+      <location filename="../panels/PageOpDrillingEdit.ui" line="42"/>
+      <location filename="../panels/PageOpDrillingEdit.ui" line="56"/>
       <source>The tool and its settings to be used for this operation</source>
       <translation>Det verktyg och dess inställningar som ska användas för denna operation</translation>
     </message>
     <message>
-      <location filename="../panels/SetupGlobal.ui" line="261"/>
-      <location filename="../panels/PageOpEngraveEdit.ui" line="43"/>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="43"/>
-      <location filename="../panels/PageOpTappingEdit.ui" line="96"/>
-      <location filename="../panels/PageOpCustomEdit.ui" line="49"/>
       <location filename="../panels/PageOpDeburrEdit.ui" line="85"/>
       <location filename="../panels/PageOpSlotEdit.ui" line="52"/>
-      <location filename="../panels/PageOpDrillingEdit.ui" line="49"/>
-      <location filename="../panels/PageOpWaterlineEdit.ui" line="46"/>
+      <location filename="../panels/PageOpCustomEdit.ui" line="49"/>
+      <location filename="../panels/SetupGlobal.ui" line="261"/>
+      <location filename="../panels/PageOpEngraveEdit.ui" line="43"/>
       <location filename="../panels/PageOpProfileFullEdit.ui" line="43"/>
+      <location filename="../panels/PageOpWaterlineEdit.ui" line="46"/>
+      <location filename="../panels/PageOpTappingEdit.ui" line="96"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="43"/>
+      <location filename="../panels/PageOpDrillingEdit.ui" line="49"/>
       <source>Coolant mode</source>
       <translation>Kylvätskeläge</translation>
     </message>
@@ -1429,7 +1429,7 @@ Det senare kan användas för att platta av hela ämnesområdet för att säkers
     <message>
       <location filename="../panels/PageOpPocketFullEdit.ui" line="148"/>
       <source>ZigZagOffset</source>
-      <translation type="unfinished">ZigZagOffset</translation>
+      <translation>Sicksack-förskjutning</translation>
     </message>
     <message>
       <location filename="../panels/PageOpPocketFullEdit.ui" line="153"/>
@@ -1477,8 +1477,8 @@ Det senare kan användas för att platta av hela ämnesområdet för att säkers
       <translation>Ange om denna operation använder en startpunkt</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="264"/>
       <location filename="../panels/PageOpPocketFullEdit.ui" line="234"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="264"/>
       <source>Use start point</source>
       <translation>Använd startpunkt</translation>
     </message>
@@ -1597,12 +1597,12 @@ Det senare kan användas för att platta av hela ämnesområdet för att säkers
     <message>
       <location filename="../panels/PageOpProfileFullEdit.ui" line="138"/>
       <source>The number of passes to do. If more than one, requires a non-zero value for &apos;Pass stepover&apos;.</source>
-      <translation>Antalet passeringar som ska göras. Om det är fler än ett, krävs ett värde som inte är noll för "Pass stepover".</translation>
+      <translation>Antalet passeringar som ska göras. Om det är fler än ett, krävs ett värde som inte är noll för "Pass stegöverlapp".</translation>
     </message>
     <message>
       <location filename="../panels/PageOpProfileFullEdit.ui" line="145"/>
       <source>Pass stepover</source>
-      <translation>Passera övergången</translation>
+      <translation>Stegöverlapp för pass</translation>
     </message>
     <message>
       <location filename="../panels/PageOpProfileFullEdit.ui" line="158"/>
@@ -1745,9 +1745,9 @@ Det senare kan användas för att platta av hela ämnesområdet för att säkers
       <translation>Förlänga sökvägen start</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="98"/>
       <location filename="../panels/PageOpSlotEdit.ui" line="352"/>
       <location filename="../panels/PageOpWaterlineEdit.ui" line="105"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="98"/>
       <source>Layer mode</source>
       <translation>Lagerläge</translation>
     </message>
@@ -1782,9 +1782,9 @@ Det senare kan användas för att platta av hela ämnesområdet för att säkers
       <translation>Positivt förlänger slutet på vägen, negativt förkortar</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="105"/>
       <location filename="../panels/PageOpSlotEdit.ui" line="364"/>
       <location filename="../panels/PageOpWaterlineEdit.ui" line="117"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="105"/>
       <source>Complete the operation in a single pass at depth, or multiple passes to final depth</source>
       <translation>Slutför operationen i en enda passage på djupet, eller flera passager till slutligt djup</translation>
     </message>
@@ -1814,14 +1814,14 @@ Det senare kan användas för att platta av hela ämnesområdet för att säkers
       <translation>Omvänd klippriktning</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="70"/>
       <location filename="../panels/PageOpWaterlineEdit.ui" line="86"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="70"/>
       <source>Bounding box</source>
       <translation>Begränsande box</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="77"/>
       <location filename="../panels/PageOpWaterlineEdit.ui" line="98"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="77"/>
       <source>Select the overall boundary for the operation</source>
       <translation>Välj den övergripande avgränsningen för operationen</translation>
     </message>
@@ -1836,14 +1836,14 @@ Det senare kan användas för att platta av hela ämnesområdet för att säkers
       <translation>Planar: plan, 3D-ytskanning. Rotationell: rotationsskanning i 4:e axeln.</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="112"/>
       <location filename="../panels/PageOpWaterlineEdit.ui" line="124"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="112"/>
       <source>Cut pattern</source>
       <translation>Skärmönster</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="119"/>
       <location filename="../panels/PageOpWaterlineEdit.ui" line="136"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="119"/>
       <source>Set the geometric clearing pattern to use for the operation</source>
       <translation>Ställ in det geometriska rensningsmönster som ska användas för operationen</translation>
     </message>
@@ -1893,8 +1893,8 @@ Det senare kan användas för att platta av hela ämnesområdet för att säkers
       <translation>Dropcutter-linjerna skapas parallellt med denna axel.</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="212"/>
       <location filename="../panels/PageOpWaterlineEdit.ui" line="156"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="212"/>
       <source>Set the Z-axis depth offset from the target surface</source>
       <translation>Ställ in Z-axelns djupförskjutning från målytan</translation>
     </message>
@@ -1909,8 +1909,8 @@ Det senare kan användas för att platta av hela ämnesområdet för att säkers
       <translation>Sätts till true om en startpunkt anges</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="274"/>
       <location filename="../panels/PageOpWaterlineEdit.ui" line="214"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="274"/>
       <source>Optimize linear paths</source>
       <translation>Optimera linjära vägar</translation>
     </message>
@@ -1927,17 +1927,17 @@ Det senare kan användas för att platta av hela ämnesområdet för att säkers
     <message>
       <location filename="../panels/PageOpSurfaceEdit.ui" line="297"/>
       <source>Optimize stepover transitions</source>
-      <translation>Optimera övergången till stepover</translation>
+      <translation>Optimera stegöverlapp-övergångar</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="251"/>
       <location filename="../panels/PageOpWaterlineEdit.ui" line="201"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="251"/>
       <source>Set the sampling resolution. Smaller values quickly increase processing time.</source>
       <translation>Ställ in upplösningen för provtagningen. Mindre värden ökar snabbt bearbetningstiden.</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="271"/>
       <location filename="../panels/PageOpWaterlineEdit.ui" line="211"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="271"/>
       <source>Enable optimization of linear paths (co-linear points). Removes unnecessary co-linear points from G-code output.</source>
       <translation>Möjliggör optimering av linjära banor (co-linjära punkter). Tar bort onödiga co-linjära punkter från G-kodutmatningen.</translation>
     </message>
@@ -1967,8 +1967,8 @@ Det senare kan användas för att platta av hela ämnesområdet för att säkers
       <translation>Stega över</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="229"/>
       <location filename="../panels/PageOpWaterlineEdit.ui" line="179"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="229"/>
       <source>The amount by which the tool is laterally displaced on each cycle of the pattern, specified in percent of the tool diameter.
 
 A step over of 100% results in no overlap between two different cycles.</source>
@@ -1977,8 +1977,8 @@ A step over of 100% results in no overlap between two different cycles.</source>
 Ett step over på 100% r resulterar i att det inte blir någon överlappning mellan två olika cykler.</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpSurfaceEdit.ui" line="244"/>
       <location filename="../panels/PageOpWaterlineEdit.ui" line="194"/>
+      <location filename="../panels/PageOpSurfaceEdit.ui" line="244"/>
       <source>Sample interval</source>
       <translation>Provtagningsintervall</translation>
     </message>
@@ -2116,8 +2116,8 @@ Standard: 3 mm</translation>
       <translation>Orientering</translation>
     </message>
     <message>
-      <location filename="../panels/PageOpThreadMillingEdit.ui" line="73"/>
       <location filename="../panels/ToolEditor.ui" line="43"/>
+      <location filename="../panels/PageOpThreadMillingEdit.ui" line="73"/>
       <source>Type</source>
       <translation>Typ</translation>
     </message>
@@ -2735,7 +2735,7 @@ Se policyn för filsparande nedan om hur du hanterar namnkonflikter.</translatio
     <message>
       <location filename="../../DlgSettingsPathColor.ui" line="391"/>
       <source>Multi-panel</source>
-      <translation type="unfinished">Multi-panel</translation>
+      <translation>Flerpanel</translation>
     </message>
     <message>
       <location filename="../../DlgSettingsPathColor.ui" line="396"/>
@@ -2959,8 +2959,8 @@ Se policyn för filsparande nedan om hur du hanterar namnkonflikter.</translatio
       <translation>Hundben</translation>
     </message>
     <message>
-      <location filename="../panels/ZCorrectEdit.ui" line="35"/>
       <location filename="../panels/DogboneEdit.ui" line="35"/>
+      <location filename="../panels/ZCorrectEdit.ui" line="35"/>
       <source>Dressup</source>
       <translation>Försköning</translation>
     </message>
@@ -3194,27 +3194,27 @@ Se policyn för filsparande nedan om hur du hanterar namnkonflikter.</translatio
   <context>
     <name>TaskPathSimulator</name>
     <message>
-      <location filename="../panels/TaskPathSimulator.ui" line="14"/>
       <location filename="../panels/TaskCAMSimulator.ui" line="14"/>
       <location filename="../panels/TaskPathCamoticsSim.ui" line="14"/>
+      <location filename="../panels/TaskPathSimulator.ui" line="14"/>
       <source>Path Simulator</source>
       <translation>Simulator för väg</translation>
     </message>
     <message>
-      <location filename="../panels/TaskPathSimulator.ui" line="229"/>
       <location filename="../panels/TaskCAMSimulator.ui" line="31"/>
+      <location filename="../panels/TaskPathSimulator.ui" line="229"/>
       <source>Accuracy</source>
       <translation>Precision</translation>
     </message>
     <message>
-      <location filename="../panels/TaskPathSimulator.ui" line="278"/>
       <location filename="../panels/TaskCAMSimulator.ui" line="86"/>
+      <location filename="../panels/TaskPathSimulator.ui" line="278"/>
       <source>Job</source>
       <translation>Jobb</translation>
     </message>
     <message>
-      <location filename="../panels/TaskPathSimulator.ui" line="55"/>
       <location filename="../panels/TaskCAMSimulator.ui" line="103"/>
+      <location filename="../panels/TaskPathSimulator.ui" line="55"/>
       <source>Activate/resume simulation</source>
       <translation>Aktivera/återuppta simulering</translation>
     </message>
@@ -3229,8 +3229,8 @@ Se policyn för filsparande nedan om hur du hanterar namnkonflikter.</translatio
       <translation>Stoppa</translation>
     </message>
     <message>
-      <location filename="../panels/TaskPathSimulator.ui" line="58"/>
       <location filename="../panels/TaskCAMSimulator.ui" line="106"/>
+      <location filename="../panels/TaskPathSimulator.ui" line="58"/>
       <source>Play</source>
       <translation>Spela</translation>
     </message>
@@ -3929,9 +3929,8 @@ Standard: 3 mm</translation>
   <context>
     <name>Path</name>
     <message>
-      <location filename="../../../Path/Base/Gui/IconViewProvider.py" line="96"/>
+      <location filename="../../../Path/Base/Gui/IconViewProvider.py" line="101"/>
       <source>Edit</source>
-      <extracomment>float = field(default=0) float = field(default=0) float = field(default=0) float = field(default=0) float = field(default=0) float = field(default=0) float = field(default=None) bool = field(default=False) str = field(default=&quot;G54&quot;) str = field(default=&quot;off&quot;) int = field(default=0) int = field(default=None)</extracomment>
       <translation>Redigera</translation>
     </message>
     <message>
@@ -4061,6 +4060,7 @@ Standard: 3 mm</translation>
     <message>
       <location filename="../../../Path/Base/SetupSheet.py" line="115"/>
       <source>Default speed for horizontal rapid moves.</source>
+      <extracomment>float = field(default=0) float = field(default=0) float = field(default=0) float = field(default=0) float = field(default=0) float = field(default=0) float = field(default=None) bool = field(default=False) str = field(default=&quot;G54&quot;) str = field(default=&quot;off&quot;) int = field(default=0) int = field(default=None)</extracomment>
       <translation>Standardhastighet för horisontella snabba rörelser.</translation>
     </message>
     <message>
@@ -4116,10 +4116,10 @@ Standard: 3 mm</translation>
       <translation>Uttryck som används för nedtrappning av nya operationer.</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Boundary.py" line="54"/>
       <location filename="../../../Path/Dressup/Tags.py" line="905"/>
-      <location filename="../../../Path/Dressup/Gui/Dogbone.py" line="416"/>
+      <location filename="../../../Path/Dressup/Boundary.py" line="54"/>
       <location filename="../../../Path/Dressup/Gui/AxisMap.py" line="56"/>
+      <location filename="../../../Path/Dressup/Gui/Dogbone.py" line="416"/>
       <source>The base path to modify</source>
       <translation>Basvägen för att modifiera</translation>
     </message>
@@ -4590,6 +4590,17 @@ Större värden (längre till höger) ger snabbare beräkningar; mindre värden 
       <translation>Hur mycket ämne som ska lämnas kvar i XY-planet (t.ex. för slutbearbetning)</translation>
     </message>
     <message>
+      <location filename="../../../Path/Op/Adaptive.py" line="1837"/>
+      <source>Orders cuts by region instead of depth. This property is only used if the ModelAwareExperiment is enabled.</source>
+      <translation type="unfinished">Orders cuts by region instead of depth. This property is only used if the ModelAwareExperiment is enabled.</translation>
+    </message>
+    <message>
+      <location filename="../../../Path/Op/Adaptive.py" line="1852"/>
+      <location filename="../../../Path/Op/Adaptive.py" line="1958"/>
+      <source>Enable the experimental model awareness feature to respect 3D geometry and prevent cutting under overhangs</source>
+      <translation type="unfinished">Enable the experimental model awareness feature to respect 3D geometry and prevent cutting under overhangs</translation>
+    </message>
+    <message>
       <location filename="../../../Path/Op/Adaptive.py" line="1947"/>
       <source>How much stock to leave along the Z axis (eg for finishing operation)</source>
       <translation>Hur mycket ämne som ska lämnas längs Z-axeln (t.ex. för slutbearbetning)</translation>
@@ -4646,21 +4657,10 @@ Större värden (längre till höger) ger snabbare beräkningar; mindre värden 
       <translation>Begränsa spiralens diameter, om gränsen är större än verktygsdiametern eller 0, används verktygsdiametern</translation>
     </message>
     <message>
-      <location filename="../../../Path/Op/Adaptive.py" line="1828"/>
       <location filename="../../../Path/Op/PocketShape.py" line="67"/>
+      <location filename="../../../Path/Op/Adaptive.py" line="1828"/>
       <source>Uses the outline of the base geometry.</source>
       <translation>Använder konturen av basgeometrin.</translation>
-    </message>
-    <message>
-      <location filename="../../../Path/Op/Adaptive.py" line="1837"/>
-      <source>Orders cuts by region instead of depth. This property is only used if the ModelAwareExperiment is enabled.</source>
-      <translation type="unfinished">Orders cuts by region instead of depth. This property is only used if the ModelAwareExperiment is enabled.</translation>
-    </message>
-    <message>
-      <location filename="../../../Path/Op/Adaptive.py" line="1852"/>
-      <location filename="../../../Path/Op/Adaptive.py" line="1958"/>
-      <source>Enable the experimental model awareness feature to respect 3D geometry and prevent cutting under overhangs</source>
-      <translation type="unfinished">Enable the experimental model awareness feature to respect 3D geometry and prevent cutting under overhangs</translation>
     </message>
     <message>
       <location filename="../../../Path/Op/Adaptive.py" line="1936"/>
@@ -4773,9 +4773,9 @@ Större värden (längre till höger) ger snabbare beräkningar; mindre värden 
       <translation>Startpunkten för denna väg</translation>
     </message>
     <message>
-      <location filename="../../../Path/Op/Surface.py" line="418"/>
-      <location filename="../../../Path/Op/Slot.py" line="235"/>
       <location filename="../../../Path/Op/Base.py" line="299"/>
+      <location filename="../../../Path/Op/Slot.py" line="235"/>
+      <location filename="../../../Path/Op/Surface.py" line="418"/>
       <location filename="../../../Path/Op/Waterline.py" line="453"/>
       <source>Make True, if specifying a Start Point</source>
       <translation>Make True, om du anger en startpunkt</translation>
@@ -4791,8 +4791,8 @@ Större värden (längre till höger) ger snabbare beräkningar; mindre värden 
       <translation>Övre gräns för vänddiametern.</translation>
     </message>
     <message>
-      <location filename="../../../CAMTests/TestRefactoredTestPost.py" line="665"/>
       <location filename="../../../Path/Op/Base.py" line="424"/>
+      <location filename="../../../CAMTests/TestRefactoredTestPost.py" line="665"/>
       <source>Coolant option for this operation</source>
       <translation>Alternativ för kylvätska för denna operation</translation>
     </message>
@@ -4901,9 +4901,9 @@ Använd egenskapen KeepToolDown för att ändra detta</translation>
       <translation>Tillämpa G99-retraktion: dra bara tillbaka till RetractHeight mellan hålen i denna operation</translation>
     </message>
     <message>
-      <location filename="../../../Path/Op/Vcarve.py" line="294"/>
       <location filename="../../../Path/Op/Engrave.py" line="70"/>
       <location filename="../../../Path/Op/Engrave.py" line="78"/>
+      <location filename="../../../Path/Op/Vcarve.py" line="294"/>
       <source>Additional base objects to be engraved</source>
       <translation>Ytterligare basobjekt som ska graveras</translation>
     </message>
@@ -4972,9 +4972,9 @@ Använd egenskapen KeepToolDown för att ändra detta</translation>
       <translation>Uteslut fräsning av upphöjda områden inuti ytan.</translation>
     </message>
     <message>
+      <location filename="../../../Path/Op/Profile.py" line="116"/>
       <location filename="../../../Path/Op/Pocket.py" line="67"/>
       <location filename="../../../Path/Op/Surface.py" line="240"/>
-      <location filename="../../../Path/Op/Profile.py" line="116"/>
       <location filename="../../../Path/Op/Waterline.py" line="266"/>
       <source>Choose how to process multiple Base Geometry features.</source>
       <translation>Välj hur du vill bearbeta flera Base Geometry-funktioner.</translation>
@@ -5028,7 +5028,7 @@ Använd egenskapen KeepToolDown för att ändra detta</translation>
       <location filename="../../../Path/Op/PocketBase.py" line="187"/>
       <location filename="../../../Path/Op/PocketBase.py" line="256"/>
       <source>Last Stepover Radius.  If 0, 50% of cutter is used. Tuning this can be used to improve stepover for some shapes</source>
-      <translation>Radie för sista stegövergången.  Om 0 används skäret 50% of. Inställning av detta kan användas för att förbättra stepover för vissa former</translation>
+      <translation>Radie för sista stegöverlappet. Om 0 används 50% av skäret. Inställning av detta kan användas för att förbättra stegöverlappar för vissa former</translation>
     </message>
     <message>
       <location filename="../../../Path/Op/PocketBase.py" line="196"/>
@@ -5062,8 +5062,8 @@ Använd egenskapen KeepToolDown för att ändra detta</translation>
       <translation>Utmatningsplatsen för de probdata som ska skrivas</translation>
     </message>
     <message>
-      <location filename="../../../Path/Op/PocketBase.py" line="131"/>
       <location filename="../../../Path/Op/Profile.py" line="107"/>
+      <location filename="../../../Path/Op/PocketBase.py" line="131"/>
       <source>The direction that the toolpath should go around the part ClockWise (CW) or CounterClockWise (CCW)</source>
       <translation>Riktningen som verktygsbanan ska gå runt detaljen Klockvis (CW) eller Motklockvis (CCW)</translation>
     </message>
@@ -5125,15 +5125,15 @@ Använd egenskapen KeepToolDown för att ändra detta</translation>
       <translation>Visa de tillfälliga objekten för konstruktion av sökvägen när modulen är i DEBUG-läge.</translation>
     </message>
     <message>
-      <location filename="../../../Path/Op/Surface.py" line="284"/>
       <location filename="../../../Path/Op/Slot.py" line="148"/>
+      <location filename="../../../Path/Op/Surface.py" line="284"/>
       <location filename="../../../Path/Op/Waterline.py" line="328"/>
       <source>Set the geometric clearing pattern to use for the operation.</source>
       <translation>Ställ in det geometriska rensningsmönster som ska användas för operationen.</translation>
     </message>
     <message>
-      <location filename="../../../Path/Op/Surface.py" line="319"/>
       <location filename="../../../Path/Op/Slot.py" line="175"/>
+      <location filename="../../../Path/Op/Surface.py" line="319"/>
       <location filename="../../../Path/Op/Waterline.py" line="369"/>
       <source>Complete the operation in a single pass at depth, or multiple passes to final depth.</source>
       <translation>Slutför arbetet på djupet i en enda omgång eller i flera omgångar till slutdjupet.</translation>
@@ -5298,7 +5298,7 @@ Använd egenskapen KeepToolDown för att ändra detta</translation>
       <location filename="../../../Path/Op/Surface.py" line="301"/>
       <location filename="../../../Path/Op/Waterline.py" line="345"/>
       <source>Reverse the cut order of the stepover paths. For circular cut patterns, begin at the outside and work toward the center.</source>
-      <translation>Vänd på klippordningen för stepover-stigarna. För cirkulära snittmönster börjar du på utsidan och arbetar dig mot mitten.</translation>
+      <translation>Vänd på skärordningen för stegöverlapp-banorna. För cirkulära snittmönster börjar du på utsidan och arbetar dig mot mitten.</translation>
     </message>
     <message>
       <location filename="../../../Path/Op/Surface.py" line="310"/>
@@ -5482,8 +5482,8 @@ Använd egenskapen KeepToolDown för att ändra detta</translation>
       <translation>Ignorera yttre vattenlinjer över denna höjd.</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Array.py" line="49"/>
       <location filename="../../../Path/Op/Gui/Array.py" line="54"/>
+      <location filename="../../../Path/Dressup/Array.py" line="49"/>
       <source>Pattern method</source>
       <translation>Mönstermetod</translation>
     </message>
@@ -5493,14 +5493,14 @@ Använd egenskapen KeepToolDown för att ändra detta</translation>
       <translation>Gör kopior i X-riktning före Y i linjärt 2D-mönster</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Array.py" line="66"/>
       <location filename="../../../Path/Op/Gui/Array.py" line="71"/>
+      <location filename="../../../Path/Dressup/Array.py" line="66"/>
       <source>The number of copies in X-direction in linear pattern</source>
       <translation>Antalet kopior i X-riktning i linjärt mönster</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Array.py" line="74"/>
       <location filename="../../../Path/Op/Gui/Array.py" line="79"/>
+      <location filename="../../../Path/Dressup/Array.py" line="74"/>
       <source>The number of copies in Y-direction in linear pattern</source>
       <translation>Antalet kopior i Y-riktning i linjärt mönster</translation>
     </message>
@@ -5510,21 +5510,21 @@ Använd egenskapen KeepToolDown för att ändra detta</translation>
       <translation>Gör kopior i X-riktning före Y i linjärt 2D-mönster</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Array.py" line="109"/>
       <location filename="../../../Path/Op/Gui/Array.py" line="114"/>
+      <location filename="../../../Path/Dressup/Array.py" line="109"/>
       <source>Percent of copies to randomly offset</source>
       <translation>Procentandel av kopiorna som ska slumpas ut</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Array.py" line="115"/>
       <location filename="../../../Path/Op/Gui/Array.py" line="120"/>
+      <location filename="../../../Path/Dressup/Array.py" line="115"/>
       <source>Maximum random offset of copies</source>
       <translation>Maximal slumpmässig förskjutning av kopior</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Array.py" line="121"/>
       <location filename="../../../Path/Op/Gui/Array.py" line="126"/>
       <location filename="../../../Path/Op/Gui/Array.py" line="209"/>
+      <location filename="../../../Path/Dressup/Array.py" line="121"/>
       <source>Seed value for jitter randomness</source>
       <translation>Seed-värde för slumpmässig jitter</translation>
     </message>
@@ -5534,26 +5534,26 @@ Använd egenskapen KeepToolDown för att ändra detta</translation>
       <translation>Verktygsbanorna till array</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Array.py" line="58"/>
       <location filename="../../../Path/Op/Gui/Array.py" line="63"/>
+      <location filename="../../../Path/Dressup/Array.py" line="58"/>
       <source>The spacing between the array copies in linear pattern</source>
       <translation>Avståndet mellan matrisens kopior i linjärt mönster</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Array.py" line="80"/>
       <location filename="../../../Path/Op/Gui/Array.py" line="85"/>
+      <location filename="../../../Path/Dressup/Array.py" line="80"/>
       <source>Total angle in polar pattern</source>
       <translation>Total vinkel i polarmönstret</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Array.py" line="88"/>
       <location filename="../../../Path/Op/Gui/Array.py" line="93"/>
+      <location filename="../../../Path/Dressup/Array.py" line="88"/>
       <source>The number of copies in linear 1D and polar pattern</source>
       <translation>Antalet kopior i linjärt 1D- och polärt mönster</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Array.py" line="94"/>
       <location filename="../../../Path/Op/Gui/Array.py" line="99"/>
+      <location filename="../../../Path/Dressup/Array.py" line="94"/>
       <source>The centre of rotation in polar pattern</source>
       <translation>Rotationscentrum i polärt mönster</translation>
     </message>
@@ -5909,22 +5909,22 @@ Använd egenskapen KeepToolDown för att ändra detta</translation>
       <translation>Inga skanningsdata att konvertera till G-kod.</translation>
     </message>
     <message>
-      <location filename="../../../Path/Op/SurfaceSupport.py" line="2675"/>
+      <location filename="../../../Path/Op/SurfaceSupport.py" line="2676"/>
       <source>Failed to identify tool for operation.</source>
       <translation>Misslyckades med att identifiera verktyg för drift.</translation>
     </message>
     <message>
-      <location filename="../../../Path/Op/SurfaceSupport.py" line="2685"/>
+      <location filename="../../../Path/Op/SurfaceSupport.py" line="2686"/>
       <source>Failed to map selected tool to an OCL tool type.</source>
       <translation>Misslyckades med att mappa valt verktyg till en OCL-verktygstyp.</translation>
     </message>
     <message>
-      <location filename="../../../Path/Op/SurfaceSupport.py" line="2697"/>
+      <location filename="../../../Path/Op/SurfaceSupport.py" line="2698"/>
       <source>Failed to translate active tool to OCL tool type.</source>
       <translation>Misslyckades med att översätta aktivt verktyg till OCL-verktygstyp.</translation>
     </message>
     <message>
-      <location filename="../../../Path/Op/SurfaceSupport.py" line="2709"/>
+      <location filename="../../../Path/Op/SurfaceSupport.py" line="2710"/>
       <source>OCL tool not available. Cannot determine is cutter has tilt available.</source>
       <translation>OCL-verktyget är inte tillgängligt. Kan inte avgöra om fräsen har tilt tillgänglig.</translation>
     </message>
@@ -6400,7 +6400,7 @@ Välj en eller flera vertikala ytor för att söka efter slingytor som bildar v�
       <location filename="../panels/DressUpLeadInOutEdit.ui" line="60"/>
       <location filename="../panels/DressUpLeadInOutEdit.ui" line="136"/>
       <source>Radius/length</source>
-      <translation type="unfinished">Radius/length</translation>
+      <translation>Radie/längd</translation>
     </message>
     <message>
       <location filename="../panels/DressUpLeadInOutEdit.ui" line="80"/>
@@ -6626,26 +6626,26 @@ Välj en eller flera vertikala ytor för att söka efter slingytor som bildar v�
   <context>
     <name>CAM_DressupDogbone</name>
     <message>
-      <location filename="../../../Path/Dressup/Gui/DogboneII.py" line="331"/>
       <location filename="../../../Path/Dressup/Gui/Dogbone.py" line="1323"/>
+      <location filename="../../../Path/Dressup/Gui/DogboneII.py" line="331"/>
       <source>Dogbone</source>
       <translation>Hundben</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Gui/DogboneII.py" line="335"/>
       <location filename="../../../Path/Dressup/Gui/Dogbone.py" line="1327"/>
+      <location filename="../../../Path/Dressup/Gui/DogboneII.py" line="335"/>
       <source>Creates a dogbone dress-up object from a selected toolpath</source>
       <translation>Skapar ett utklädningsobjekt i form av ett hundben från en vald verktygsbana</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Gui/DogboneII.py" line="351"/>
       <location filename="../../../Path/Dressup/Gui/Dogbone.py" line="1343"/>
+      <location filename="../../../Path/Dressup/Gui/DogboneII.py" line="351"/>
       <source>Select one toolpath object</source>
       <translation>Välj ett objekt för verktygsbana</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Gui/DogboneII.py" line="357"/>
       <location filename="../../../Path/Dressup/Gui/Dogbone.py" line="1349"/>
+      <location filename="../../../Path/Dressup/Gui/DogboneII.py" line="357"/>
       <source>The selected object is not a toolpath</source>
       <translation>Det valda objektet är inte en verktygsbana</translation>
     </message>
@@ -6762,8 +6762,8 @@ Välj en eller flera vertikala ytor för att söka efter slingytor som bildar v�
       <translation>Välj fil för probpunkt</translation>
     </message>
     <message>
-      <location filename="../../../Path/Dressup/Gui/ZCorrect.py" line="288"/>
       <location filename="../../../Path/Op/Gui/Probe.py" line="107"/>
+      <location filename="../../../Path/Dressup/Gui/ZCorrect.py" line="288"/>
       <source>All Files (*.*)</source>
       <translation>Alla filer (*.*)</translation>
     </message>
@@ -6855,47 +6855,47 @@ Välj en eller flera vertikala ytor för att söka efter slingytor som bildar v�
       <translation>Alla filer (*.*)</translation>
     </message>
     <message>
-      <location filename="../../../Path/Main/Gui/Job.py" line="1399"/>
+      <location filename="../../../Path/Main/Gui/Job.py" line="1401"/>
       <source>Unsupported stock object %s</source>
       <translation>Ämnesobjekt som inte stöds %s</translation>
     </message>
     <message>
-      <location filename="../../../Path/Main/Gui/Job.py" line="1415"/>
+      <location filename="../../../Path/Main/Gui/Job.py" line="1417"/>
       <source>Unsupported stock type %s (%d)</source>
       <translation>Lagertyp som inte stöds %s (%d)</translation>
     </message>
     <message>
-      <location filename="../../../Path/Main/Gui/Job.py" line="1506"/>
+      <location filename="../../../Path/Main/Gui/Job.py" line="1508"/>
       <source>Model Selection</source>
       <translation>Val av modell</translation>
     </message>
     <message>
-      <location filename="../../../Path/Main/Gui/Job.py" line="1661"/>
+      <location filename="../../../Path/Main/Gui/Job.py" line="1663"/>
       <source>Warning</source>
       <translation>Varning</translation>
     </message>
     <message>
-      <location filename="../../../Path/Main/Gui/Job.py" line="1662"/>
+      <location filename="../../../Path/Main/Gui/Job.py" line="1664"/>
       <source>Please add one.</source>
       <translation>Lägg till ett.</translation>
     </message>
     <message>
-      <location filename="../../../Path/Main/Gui/Job.py" line="1663"/>
+      <location filename="../../../Path/Main/Gui/Job.py" line="1665"/>
       <source>Ok</source>
       <translation>Ok</translation>
     </message>
     <message>
-      <location filename="../../../Path/Main/Gui/Job.py" line="1665"/>
+      <location filename="../../../Path/Main/Gui/Job.py" line="1667"/>
       <source>Add</source>
       <translation>Lägg till</translation>
     </message>
     <message>
-      <location filename="../../../Path/Main/Gui/Job.py" line="1676"/>
+      <location filename="../../../Path/Main/Gui/Job.py" line="1678"/>
       <source>This job has no base model.</source>
       <translation>Det här jobbet har ingen basmodell.</translation>
     </message>
     <message>
-      <location filename="../../../Path/Main/Gui/Job.py" line="1683"/>
+      <location filename="../../../Path/Main/Gui/Job.py" line="1685"/>
       <source>This job has no tool.</source>
       <translation>Det här jobbet har inget verktyg.</translation>
     </message>
@@ -7433,8 +7433,8 @@ Välj en eller flera vertikala ytor för att söka efter slingytor som bildar v�
       <translation>Legacy CAM-simulator</translation>
     </message>
     <message>
-      <location filename="../../../Path/Main/Gui/Simulator.py" line="625"/>
       <location filename="../../../Path/Main/Gui/SimulatorGL.py" line="353"/>
+      <location filename="../../../Path/Main/Gui/Simulator.py" line="625"/>
       <source>Simulates G-code on stock</source>
       <translation>Simulerar G-kod på lager</translation>
     </message>
@@ -7594,14 +7594,14 @@ Välj en eller flera vertikala ytor för att söka efter slingytor som bildar v�
       <translation>Den icke-planära adaptiva starten är inte heller tillgänglig.</translation>
     </message>
     <message>
-      <location filename="../../../Path/Op/Gui/Vcarve.py" line="67"/>
       <location filename="../../../Path/Op/Gui/Engrave.py" line="75"/>
+      <location filename="../../../Path/Op/Gui/Vcarve.py" line="67"/>
       <source>%s is not a Base Model object of the job %s</source>
       <translation>%s är inte ett Base Model-objekt för jobbet %s</translation>
     </message>
     <message>
-      <location filename="../../../Path/Op/Gui/ThreadMilling.py" line="113"/>
       <location filename="../../../Path/Op/Gui/Probe.py" line="70"/>
+      <location filename="../../../Path/Op/Gui/ThreadMilling.py" line="113"/>
       <location filename="../../../Path/Op/Gui/Vcarve.py" line="177"/>
       <source>No valid toolcontroller</source>
       <translation>Ingen giltig verktygscontroller</translation>
@@ -7652,7 +7652,7 @@ Välj en eller flera vertikala ytor för att söka efter slingytor som bildar v�
       <translation>SVG postprocessor</translation>
     </message>
     <message>
-      <location filename="../../../Path/Tool/library/serializers/camotics.py" line="60"/>
+      <location filename="../../../Path/Tool/library/serializers/camotics.py" line="67"/>
       <source>Camotics Tool Library</source>
       <translation>Camotics verktygsbibliotek</translation>
     </message>
@@ -7727,7 +7727,7 @@ Välj en eller flera vertikala ytor för att söka efter slingytor som bildar v�
       <translation>{diameter} {cutting_edge_angle} v-bit, {flutes}-flöjt</translation>
     </message>
     <message>
-      <location filename="../../../Path/Tool/toolbit/serializers/camotics.py" line="63"/>
+      <location filename="../../../Path/Tool/toolbit/serializers/camotics.py" line="69"/>
       <source>Camotics Tool</source>
       <translation>Camotics verktyg</translation>
     </message>
@@ -7809,9 +7809,9 @@ This will not delete the toolbits contained within it.</source>
 Detta kommer inte att radera verktygsbitarna som finns i det.</translation>
     </message>
     <message>
+      <location filename="../../../Path/Tool/toolbit/ui/browser.py" line="289"/>
       <location filename="../../../Path/Tool/library/ui/editor.py" line="430"/>
       <location filename="../../../Path/Tool/library/ui/editor.py" line="470"/>
-      <location filename="../../../Path/Tool/toolbit/ui/browser.py" line="289"/>
       <source>Error</source>
       <translation>Fel</translation>
     </message>
@@ -7909,9 +7909,19 @@ Detta kommer inte att radera verktygsbitarna som finns i det.</translation>
       <translation type="unfinished">{diameter} {pitch} {rotation} tap, {flutes}-flute, {cutting_edge_length} cutting edge</translation>
     </message>
     <message>
+      <location filename="../../../Path/Tool/toolbit/models/taperedballnose.py" line="47"/>
+      <source>{diameter} tip, {taper_angle} taper, {flutes}-flute tapered ball nose, {cutting_edge_height} cutting edge</source>
+      <translation type="unfinished">{diameter} tip, {taper_angle} taper, {flutes}-flute tapered ball nose, {cutting_edge_height} cutting edge</translation>
+    </message>
+    <message>
       <location filename="../../../Path/Op/Adaptive.py" line="555"/>
       <source>Adaptive operation couldn&apos;t determine the boundary wire. Did you select base geometry?</source>
       <translation type="unfinished">Adaptive operation couldn&apos;t determine the boundary wire. Did you select base geometry?</translation>
+    </message>
+    <message>
+      <location filename="../../../Path/Post/scripts/opensbp_post.py" line="107"/>
+      <source>see property below</source>
+      <translation type="unfinished">see property below</translation>
     </message>
   </context>
   <context>
@@ -8050,7 +8060,7 @@ Detta kommer inte att radera verktygsbitarna som finns i det.</translation>
     <message>
       <location filename="../../../Path/Op/PocketBase.py" line="73"/>
       <source>ZigZagOffset</source>
-      <translation type="unfinished">ZigZagOffset</translation>
+      <translation>Sicksack-förskjutning</translation>
     </message>
     <message>
       <location filename="../../../Path/Op/PocketBase.py" line="74"/>
@@ -8821,12 +8831,12 @@ Detta kommer inte att radera verktygsbitarna som finns i det.</translation>
   <context>
     <name>CAM_Camotics</name>
     <message>
-      <location filename="../../../Path/Main/Gui/Camotics.py" line="314"/>
+      <location filename="../../../Path/Main/Gui/Camotics.py" line="315"/>
       <source>CAMotics</source>
       <translation>KAMOTIK</translation>
     </message>
     <message>
-      <location filename="../../../Path/Main/Gui/Camotics.py" line="316"/>
+      <location filename="../../../Path/Main/Gui/Camotics.py" line="317"/>
       <source>Simulates using CAMotics</source>
       <translation>Simulerar med hjälp av CAMotics</translation>
     </message>
@@ -9105,74 +9115,79 @@ Detta kommer inte att radera verktygsbitarna som finns i det.</translation>
   <context>
     <name>ToolBitShape</name>
     <message>
-      <location filename="../../../Path/Tool/shape/models/bullnose.py" line="45"/>
-      <location filename="../../../Path/Tool/shape/models/reamer.py" line="37"/>
-      <location filename="../../../Path/Tool/shape/models/custom.py" line="43"/>
+      <location filename="../../../Path/Tool/shape/models/vbit.py" line="41"/>
       <location filename="../../../Path/Tool/shape/models/radius.py" line="40"/>
       <location filename="../../../Path/Tool/shape/models/chamfer.py" line="41"/>
+      <location filename="../../../Path/Tool/shape/models/taperedballnose.py" line="35"/>
+      <location filename="../../../Path/Tool/shape/models/bullnose.py" line="45"/>
       <location filename="../../../Path/Tool/shape/models/ballend.py" line="37"/>
-      <location filename="../../../Path/Tool/shape/models/vbit.py" line="41"/>
+      <location filename="../../../Path/Tool/shape/models/custom.py" line="43"/>
+      <location filename="../../../Path/Tool/shape/models/reamer.py" line="37"/>
       <location filename="../../../Path/Tool/shape/models/endmill.py" line="37"/>
       <source>Cutting edge height</source>
       <translation>Skäreggens höjd</translation>
     </message>
     <message>
-      <location filename="../../../Path/Tool/shape/models/bullnose.py" line="49"/>
-      <location filename="../../../Path/Tool/shape/models/reamer.py" line="41"/>
-      <location filename="../../../Path/Tool/shape/models/custom.py" line="47"/>
-      <location filename="../../../Path/Tool/shape/models/drill.py" line="37"/>
       <location filename="../../../Path/Tool/shape/models/slittingsaw.py" line="49"/>
+      <location filename="../../../Path/Tool/shape/models/drill.py" line="37"/>
+      <location filename="../../../Path/Tool/shape/models/vbit.py" line="45"/>
       <location filename="../../../Path/Tool/shape/models/radius.py" line="44"/>
       <location filename="../../../Path/Tool/shape/models/chamfer.py" line="45"/>
+      <location filename="../../../Path/Tool/shape/models/taperedballnose.py" line="39"/>
+      <location filename="../../../Path/Tool/shape/models/bullnose.py" line="49"/>
       <location filename="../../../Path/Tool/shape/models/ballend.py" line="41"/>
-      <location filename="../../../Path/Tool/shape/models/vbit.py" line="45"/>
+      <location filename="../../../Path/Tool/shape/models/custom.py" line="47"/>
+      <location filename="../../../Path/Tool/shape/models/reamer.py" line="41"/>
       <location filename="../../../Path/Tool/shape/models/endmill.py" line="41"/>
       <source>Diameter</source>
       <translation>Diameter</translation>
     </message>
     <message>
-      <location filename="../../../Path/Tool/shape/models/bullnose.py" line="53"/>
-      <location filename="../../../Path/Tool/shape/models/custom.py" line="51"/>
-      <location filename="../../../Path/Tool/shape/models/drill.py" line="41"/>
       <location filename="../../../Path/Tool/shape/models/slittingsaw.py" line="53"/>
-      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="45"/>
+      <location filename="../../../Path/Tool/shape/models/dovetail.py" line="53"/>
+      <location filename="../../../Path/Tool/shape/models/drill.py" line="41"/>
+      <location filename="../../../Path/Tool/shape/models/vbit.py" line="49"/>
       <location filename="../../../Path/Tool/shape/models/radius.py" line="52"/>
       <location filename="../../../Path/Tool/shape/models/chamfer.py" line="49"/>
-      <location filename="../../../Path/Tool/shape/models/tap.py" line="45"/>
-      <location filename="../../../Path/Tool/shape/models/dovetail.py" line="53"/>
+      <location filename="../../../Path/Tool/shape/models/taperedballnose.py" line="43"/>
+      <location filename="../../../Path/Tool/shape/models/bullnose.py" line="53"/>
+      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="45"/>
       <location filename="../../../Path/Tool/shape/models/ballend.py" line="45"/>
-      <location filename="../../../Path/Tool/shape/models/vbit.py" line="49"/>
+      <location filename="../../../Path/Tool/shape/models/custom.py" line="51"/>
       <location filename="../../../Path/Tool/shape/models/endmill.py" line="45"/>
+      <location filename="../../../Path/Tool/shape/models/tap.py" line="45"/>
       <source>Flutes</source>
       <translation>Flöjter</translation>
     </message>
     <message>
-      <location filename="../../../Path/Tool/shape/models/bullnose.py" line="57"/>
-      <location filename="../../../Path/Tool/shape/models/reamer.py" line="45"/>
-      <location filename="../../../Path/Tool/shape/models/custom.py" line="55"/>
-      <location filename="../../../Path/Tool/shape/models/drill.py" line="45"/>
       <location filename="../../../Path/Tool/shape/models/slittingsaw.py" line="57"/>
-      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="49"/>
+      <location filename="../../../Path/Tool/shape/models/dovetail.py" line="57"/>
+      <location filename="../../../Path/Tool/shape/models/drill.py" line="45"/>
+      <location filename="../../../Path/Tool/shape/models/vbit.py" line="53"/>
       <location filename="../../../Path/Tool/shape/models/radius.py" line="56"/>
       <location filename="../../../Path/Tool/shape/models/chamfer.py" line="53"/>
-      <location filename="../../../Path/Tool/shape/models/dovetail.py" line="57"/>
+      <location filename="../../../Path/Tool/shape/models/taperedballnose.py" line="47"/>
+      <location filename="../../../Path/Tool/shape/models/bullnose.py" line="57"/>
+      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="49"/>
       <location filename="../../../Path/Tool/shape/models/ballend.py" line="49"/>
-      <location filename="../../../Path/Tool/shape/models/vbit.py" line="53"/>
+      <location filename="../../../Path/Tool/shape/models/custom.py" line="55"/>
+      <location filename="../../../Path/Tool/shape/models/reamer.py" line="45"/>
       <location filename="../../../Path/Tool/shape/models/endmill.py" line="49"/>
       <source>Overall tool length</source>
       <translation>Verktygets totala längd</translation>
     </message>
     <message>
-      <location filename="../../../Path/Tool/shape/models/bullnose.py" line="61"/>
-      <location filename="../../../Path/Tool/shape/models/reamer.py" line="49"/>
       <location filename="../../../Path/Tool/shape/models/slittingsaw.py" line="61"/>
-      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="61"/>
+      <location filename="../../../Path/Tool/shape/models/dovetail.py" line="69"/>
+      <location filename="../../../Path/Tool/shape/models/vbit.py" line="57"/>
       <location filename="../../../Path/Tool/shape/models/radius.py" line="60"/>
       <location filename="../../../Path/Tool/shape/models/chamfer.py" line="57"/>
-      <location filename="../../../Path/Tool/shape/models/tap.py" line="53"/>
-      <location filename="../../../Path/Tool/shape/models/dovetail.py" line="69"/>
+      <location filename="../../../Path/Tool/shape/models/taperedballnose.py" line="51"/>
+      <location filename="../../../Path/Tool/shape/models/bullnose.py" line="61"/>
+      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="61"/>
       <location filename="../../../Path/Tool/shape/models/ballend.py" line="53"/>
-      <location filename="../../../Path/Tool/shape/models/vbit.py" line="57"/>
+      <location filename="../../../Path/Tool/shape/models/reamer.py" line="49"/>
+      <location filename="../../../Path/Tool/shape/models/tap.py" line="53"/>
       <source>Shank diameter</source>
       <translation>Skaftets diameter</translation>
     </message>
@@ -9182,14 +9197,15 @@ Detta kommer inte att radera verktygsbitarna som finns i det.</translation>
       <translation>Halvklot</translation>
     </message>
     <message>
-      <location filename="../../../Path/Tool/shape/models/chamfer.py" line="37"/>
       <location filename="../../../Path/Tool/shape/models/vbit.py" line="37"/>
+      <location filename="../../../Path/Tool/shape/models/chamfer.py" line="37"/>
       <source>Cutting edge angle</source>
       <translation>Vinkel på skäregg</translation>
     </message>
     <message>
-      <location filename="../../../Path/Tool/shape/models/chamfer.py" line="61"/>
       <location filename="../../../Path/Tool/shape/models/vbit.py" line="61"/>
+      <location filename="../../../Path/Tool/shape/models/radius.py" line="64"/>
+      <location filename="../../../Path/Tool/shape/models/chamfer.py" line="61"/>
       <source>Tip diameter</source>
       <translation>Spetsdiameter</translation>
     </message>
@@ -9204,14 +9220,14 @@ Detta kommer inte att radera verktygsbitarna som finns i det.</translation>
       <translation>Okänd anpassad form</translation>
     </message>
     <message>
-      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="37"/>
       <location filename="../../../Path/Tool/shape/models/dovetail.py" line="37"/>
+      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="37"/>
       <source>Crest height</source>
       <translation>Höjd över krön</translation>
     </message>
     <message>
-      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="65"/>
       <location filename="../../../Path/Tool/shape/models/dovetail.py" line="41"/>
+      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="65"/>
       <source>Cutting angle</source>
       <translation>Skärvinkel</translation>
     </message>
@@ -9221,20 +9237,20 @@ Detta kommer inte att radera verktygsbitarna som finns i det.</translation>
       <translation>Svanssvansens höjd</translation>
     </message>
     <message>
-      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="41"/>
       <location filename="../../../Path/Tool/shape/models/dovetail.py" line="49"/>
+      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="41"/>
       <source>Major diameter</source>
       <translation>Större diameter</translation>
     </message>
     <message>
-      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="53"/>
       <location filename="../../../Path/Tool/shape/models/dovetail.py" line="61"/>
+      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="53"/>
       <source>Neck diameter</source>
       <translation>Halsdiameter</translation>
     </message>
     <message>
-      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="57"/>
       <location filename="../../../Path/Tool/shape/models/dovetail.py" line="65"/>
+      <location filename="../../../Path/Tool/shape/models/threadmill.py" line="57"/>
       <source>Neck length</source>
       <translation>Halslängd</translation>
     </message>
@@ -9350,9 +9366,24 @@ Detta kommer inte att radera verktygsbitarna som finns i det.</translation>
       <translation>Skärradie</translation>
     </message>
     <message>
-      <location filename="../../../Path/Tool/shape/models/radius.py" line="68"/>
+      <location filename="../../../Path/Tool/shape/models/radius.py" line="72"/>
       <source>Radius Mill</source>
       <translation>Radiefräs</translation>
+    </message>
+    <message>
+      <location filename="../../../Path/Tool/shape/models/taperedballnose.py" line="55"/>
+      <source>Included Taper angle</source>
+      <translation type="unfinished">Included Taper angle</translation>
+    </message>
+    <message>
+      <location filename="../../../Path/Tool/shape/models/taperedballnose.py" line="59"/>
+      <source>Diameter at top of Taper</source>
+      <translation type="unfinished">Diameter at top of Taper</translation>
+    </message>
+    <message>
+      <location filename="../../../Path/Tool/shape/models/taperedballnose.py" line="67"/>
+      <source>Tapered Ball Nose</source>
+      <translation type="unfinished">Tapered Ball Nose</translation>
     </message>
   </context>
   <context>

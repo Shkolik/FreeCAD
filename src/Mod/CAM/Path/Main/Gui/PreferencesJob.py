@@ -39,7 +39,7 @@ class JobPreferencesPage:
         import FreeCADGui
 
         self.form = FreeCADGui.PySideUic.loadUi(":preferences/PathJob.ui")
-        self.form.toolBox.setCurrentIndex(0)  # Take that qt designer!
+        self.form.tabWidget.setCurrentIndex(0)  # Take that qt designer!
 
         self.postProcessorDefaultTooltip = self.form.defaultPostProcessor.toolTip()
         self.postProcessorArgsDefaultTooltip = self.form.defaultPostProcessorArgs.toolTip()
@@ -49,6 +49,15 @@ class JobPreferencesPage:
         jobTemplate = self.form.leDefaultJobTemplate.text()
         geometryTolerance = Units.Quantity(self.form.geometryTolerance.text())
         curveAccuracy = Units.Quantity(self.form.curveAccuracy.text())
+
+        if not geometryTolerance:
+            geomTol = Units.Quantity(Path.Preferences.defaultGeometryTolerance(), Units.Length)
+            self.form.geometryTolerance.setText(geomTol.UserString)
+
+        if not curveAccuracy:
+            curveAcc = Units.Quantity(Path.Preferences.defaultLibAreaCurveAccuracy(), Units.Length)
+            self.form.curveAccuracy.setText(curveAcc.UserString)
+
         Path.Preferences.setJobDefaults(jobTemplate, geometryTolerance, curveAccuracy)
 
         if curveAccuracy:
@@ -149,7 +158,7 @@ class JobPreferencesPage:
         self.form.leDefaultJobTemplate.setText(Path.Preferences.defaultJobTemplate())
 
         blacklist = Path.Preferences.postProcessorBlacklist()
-        for processor in Path.Preferences.allAvailablePostProcessors():
+        for processor in Path.Preferences.allAvailableLegacyPostProcessors():
             item = QtGui.QListWidgetItem(processor)
             if processor in blacklist:
                 item.setCheckState(QtCore.Qt.CheckState.Unchecked)
@@ -167,9 +176,8 @@ class JobPreferencesPage:
 
         geomTol = Units.Quantity(Path.Preferences.defaultGeometryTolerance(), Units.Length)
         self.form.geometryTolerance.setText(geomTol.UserString)
-        self.form.curveAccuracy.setText(
-            Units.Quantity(Path.Preferences.defaultLibAreaCurveAccuracy(), Units.Length).UserString
-        )
+        curveAcc = Units.Quantity(Path.Preferences.defaultLibAreaCurveAccuracy(), Units.Length)
+        self.form.curveAccuracy.setText(curveAcc.UserString)
 
         self.form.leOutputFile.setText(Path.Preferences.defaultOutputFile())
         self.selectComboEntry(self.form.cboOutputPolicy, Path.Preferences.defaultOutputPolicy())

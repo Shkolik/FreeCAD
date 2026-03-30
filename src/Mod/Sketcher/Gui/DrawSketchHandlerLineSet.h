@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+
 /***************************************************************************
  *   Copyright (c) 2022 Abdullah Tahiri <abdullah.tahiri.yo@gmail.com>     *
  *                                                                         *
@@ -20,8 +22,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef SKETCHERGUI_DrawSketchHandlerLineSet_H
-#define SKETCHERGUI_DrawSketchHandlerLineSet_H
+#pragma once
 
 #include <QApplication>
 
@@ -49,6 +50,8 @@ extern GeometryCreationMode geometryCreationMode;  // defined in CommandCreateGe
 
 class DrawSketchHandlerLineSet: public DrawSketchHandler
 {
+    Q_DECLARE_TR_FUNCTIONS(SketcherGui::DrawSketchHandlerLineSet)
+
 public:
     DrawSketchHandlerLineSet()
         : Mode(STATUS_SEEK_First)
@@ -454,9 +457,7 @@ public:
                 // issue the geometry
                 try {
                     // open the transaction
-                    Gui::Command::openCommand(
-                        QT_TRANSLATE_NOOP("Command", "Add line to sketch polyline")
-                    );
+                    openCommand(QT_TRANSLATE_NOOP("Command", "Add line to sketch polyline"));
                     Gui::cmdAppObjectArgs(
                         sketchgui->getObject(),
                         "addGeometry(Part.LineSegment(App.Vector(%f,%f,0),App.Vector(%f,%f,0)),%s)",
@@ -474,7 +475,7 @@ public:
                         QT_TRANSLATE_NOOP("Notifications", "Error"),
                         QT_TRANSLATE_NOOP("Notifications", "Failed to add line")
                     );
-                    Gui::Command::abortCommand();
+                    abortCommand();
                 }
 
                 firstsegment = false;
@@ -486,9 +487,7 @@ public:
                 }
 
                 try {
-                    Gui::Command::openCommand(
-                        QT_TRANSLATE_NOOP("Command", "Add arc to sketch polyline")
-                    );
+                    openCommand(QT_TRANSLATE_NOOP("Command", "Add arc to sketch polyline"));
                     Gui::cmdAppObjectArgs(
                         sketchgui->getObject(),
                         "addGeometry(Part.ArcOfCircle"
@@ -509,7 +508,7 @@ public:
                         QT_TRANSLATE_NOOP("Notifications", "Failed to add arc")
                     );
 
-                    Gui::Command::abortCommand();
+                    abortCommand();
                 }
 
                 firstsegment = false;
@@ -579,7 +578,7 @@ public:
                     );
                     firstsegment = true;
                 }
-                Gui::Command::commitCommand();
+                commitCommand();
 
                 tryAutoRecomputeIfNotSolve(sketchgui->getObject<Sketcher::SketchObject>());
             }
@@ -662,7 +661,7 @@ public:
                 }
             }
             else {
-                Gui::Command::commitCommand();
+                commitCommand();
 
                 // Add auto constraints
                 if (!sugConstr1.empty()) {  // this is relevant only to the very first point
@@ -874,7 +873,5 @@ protected:
         dirVec.Normalize();
     }
 };
+
 }  // namespace SketcherGui
-
-
-#endif  // SKETCHERGUI_DrawSketchHandlerLineSet_H

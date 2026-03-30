@@ -448,23 +448,33 @@ def get_ifcfile(obj):
     """Returns the ifcfile that handles this object"""
 
     project = get_project(obj)
-    if project:
+    if project is None:
+        return None
+    if getattr(project, "Proxy", None):
+        if hasattr(project.Proxy, "ifcfile"):
+            return project.Proxy.ifcfile
+    if getattr(project, "IfcFilePath", None):
+        filepath = project.IfcFilePath
+        if filepath[0] == ".":
+            # path relative to the FreeCAD file directory
+            filepath = os.path.join(os.path.dirname(obj.Document.FileName), filepath)
+            # absolute path
+            filepath = os.path.abspath(filepath)
+        try:
+            ifcfile = ifcopenshell.open(filepath)
+        except OSError:
+            FreeCAD.Console.PrintError("Error: Cannot open IFC file: " + filepath + "\n")
+            return None
+        if hasattr(project, "Proxy"):
+            if project.Proxy is None:
+                if not isinstance(project, FreeCAD.DocumentObject):
+                    project.Proxy = ifc_objects.document_object()
         if getattr(project, "Proxy", None):
-            if hasattr(project.Proxy, "ifcfile"):
-                return project.Proxy.ifcfile
-        if getattr(project, "IfcFilePath", None):
-            ifcfile = ifcopenshell.open(project.IfcFilePath)
-            if hasattr(project, "Proxy"):
-                if project.Proxy is None:
-                    if not isinstance(project, FreeCAD.DocumentObject):
-                        project.Proxy = ifc_objects.document_object()
-            if getattr(project, "Proxy", None):
-                project.Proxy.ifcfile = ifcfile
-            return ifcfile
-        else:
-            FreeCAD.Console.PrintError(
-                "Error: No IFC file attached to this project: " + project.Label
-            )
+            project.Proxy.ifcfile = ifcfile
+        return ifcfile
+    FreeCAD.Console.PrintError(
+        "Error: No IFC file attached to this project: " + project.Label + "\n"
+    )
     return None
 
 
@@ -575,6 +585,7 @@ def add_object(document, otype=None, oname="IfcObject"):
             obj.ViewObject.ShowLevel = False
             obj.ViewObject.ShowLabel = False
             obj.ViewObject.Proxy = ifc_viewproviders.ifc_vp_buildingpart(obj.ViewObject)
+            obj.ViewObject.Proxy.attach(obj.ViewObject)
         for p in obj.PropertiesList:
             if obj.getGroupOfProperty(p) in ["BuildingPart", "IFC Attributes", "Children"]:
                 obj.removeProperty(p)
@@ -632,7 +643,9 @@ def add_properties(obj, ifcfile=None, ifcentity=None, links=False, shapemode=0, 
         if short and attr not in ("Class", "StepId"):
             continue
         attr_def = next((a for a in attr_defs if a.name() == attr), None)
+        attr_type = str(attr_def.type_of_attribute()).lower() if attr_def else ""
         data_type = ifcopenshell.util.attribute.get_primitive_type(attr_def) if attr_def else None
+        is_logical = "<logical>" in attr_type
         if attr == "Class":
             # main enum property, not saved to file
             if attr not in obj.PropertiesList:
@@ -652,6 +665,18 @@ def add_properties(obj, ifcfile=None, ifcentity=None, links=False, shapemode=0, 
             obj.addProperty("App::PropertyDistance", attr, "IFC")
             if value:
                 setattr(obj, attr, value * (1 / get_scale(ifcfile)))
+        elif data_type == "boolean" or is_logical:
+            if attr not in obj.PropertiesList:
+                obj.addProperty("App::PropertyBool", attr, "IFC", locked=True)
+            if isinstance(value, str):
+                value = value.upper()
+            if value in (None, "", False, 0, "0", "FALSE", ".F.", "UNKNOWN"):
+                value = False
+            elif value in (True, 1, "1", "TRUE", ".T."):
+                value = True
+            else:
+                value = bool(value)
+            setattr(obj, attr, value)
         elif isinstance(value, int):
             if attr not in obj.PropertiesList:
                 obj.addProperty("App::PropertyInteger", attr, "IFC", locked=True)
@@ -662,15 +687,6 @@ def add_properties(obj, ifcfile=None, ifcentity=None, links=False, shapemode=0, 
             if attr not in obj.PropertiesList:
                 obj.addProperty("App::PropertyFloat", attr, "IFC", locked=True)
             setattr(obj, attr, value)
-        elif data_type == "boolean":
-            if attr not in obj.PropertiesList:
-                obj.addProperty("App::PropertyBool", attr, "IFC", locked=True)
-            if not value or value in ["UNKNOWN", "FALSE"]:
-                value = False
-            elif not isinstance(value, bool):
-                print("DEBUG: attempting to set boolean value:", attr, value)
-                value = bool(value)
-            setattr(obj, attr, value)  # will trigger error. TODO: Fix this
         elif isinstance(value, ifcopenshell.entity_instance):
             if links:
                 if attr not in obj.PropertiesList:
@@ -756,9 +772,9 @@ def add_properties(obj, ifcfile=None, ifcentity=None, links=False, shapemode=0, 
                 obj.addProperty("App::PropertyLength", "Length", "Axis", locked=True)
             if "Text" not in obj.PropertiesList:
                 obj.addProperty("App::PropertyStringList", "Text", "Base", locked=True)
-            obj.Text = [text.Literal]
-            obj.Placement = ifc_export.get_placement(ifcentity.ObjectPlacement, ifcfile)
+            obj.Placement = axisdata[0]
             obj.Length = axisdata[1]
+            # axisdata[2] is the axis tag, it is already applied by other code
     elif ifcentity.is_a("IfcAnnotation"):
         sectionplane = ifc_export.get_sectionplane(ifcentity)
         if sectionplane:
@@ -1178,6 +1194,11 @@ def save_ifc(obj, filepath=None):
     if not filepath:
         if getattr(obj, "IfcFilePath", None):
             filepath = obj.IfcFilePath
+            if filepath[0] == ".":
+                # path relative to the FreeCAD file directory
+                filepath = os.path.join(os.path.dirname(obj.Document.FileName), filepath)
+                # absolute path
+                filepath = os.path.abspath(filepath)
     if filepath:
         ifcfile = get_ifcfile(obj)
         if not ifcfile:

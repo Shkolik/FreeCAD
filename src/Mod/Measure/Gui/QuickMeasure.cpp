@@ -107,7 +107,7 @@ void QuickMeasure::tryMeasureSelection()
 {
     Gui::Document* doc = Gui::Application::Instance->activeDocument();
     measurement->clear();
-    if (doc && Gui::Control().activeDialog() == nullptr) {
+    if (doc && Gui::Control().activeDialog(nullptr) == nullptr) {
         // we (still) have a doc and are not in a tool dialog where the user needs to click on stuff
         addSelectionToMeasurement();
     }
@@ -190,7 +190,7 @@ void QuickMeasure::addSelectionToMeasurement()
 static QString areaStr(double value)
 {
     Base::Quantity area(value, Base::Unit::Area);
-    return QString::fromStdString(area.getUserString());
+    return QString::fromStdString(Base::UnitsApi::toUnicodeSuperscript(area.getUserString()));
 }
 
 static QString lengthStr(double value)

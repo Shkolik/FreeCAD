@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+
 /***************************************************************************
  *   Copyright (c) 2007 Jürgen Riegel <juergen.riegel@web.de>              *
  *                                                                         *
@@ -25,6 +27,7 @@
 #include <Base/MatrixPy.h>
 #include <Base/PlacementPy.h>
 #include <Base/PyWrapParseTupleAndKeywords.h>
+#include <Base/ServiceProvider.h>
 
 #include "DocumentObject.h"
 #include "Document.h"
@@ -32,6 +35,7 @@
 #include "GeoFeature.h"
 #include "GeoFeatureGroupExtension.h"
 #include "GroupExtension.h"
+#include "Services.h"
 
 
 // inclusion of the generated files (generated out of DocumentObjectPy.xml)
@@ -887,11 +891,23 @@ PyObject* DocumentObjectPy::getElementMapVersion(PyObject* args) const
         Py::String(getDocumentObjectPtr()->getElementMapVersion(prop, Base::asBoolean(restored))));
 }
 
-PyObject* DocumentObjectPy::getCustomAttributes(const char*) const
+PyObject* DocumentObjectPy::getCustomAttributes(const char* attr) const
 {
+    // Must call PropertyContainerPy here, not ExtensionContainerPy
+    if (PyObject* py = PropertyContainerPy::getCustomAttributes(attr)) {  // NOLINT
+        return py;
+    }
+
+    if (auto customProvider = Base::provideService<App::CustomAttributeProvider>()) {
+        auto opt = customProvider->getAttribute(getDocumentObjectPtr(), attr);
+        if (opt.has_value()) {
+            return opt.value();
+        }
+    }
+
     return nullptr;
 }
-// remove
+
 int DocumentObjectPy::setCustomAttributes(const char*, PyObject*)
 {
     return 0;

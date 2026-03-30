@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
 
 /***************************************************************************
  *   Copyright (c) 2020 Werner Mayer <wmayer[at]users.sourceforge.net>     *
@@ -35,6 +36,7 @@
 #include <TopoDS_Shape.hxx>
 
 #include <App/Document.h>
+#include <App/ObjectIdentifier.h>
 #include <Base/Tools.h>
 #include <Mod/Part/App/ExtrusionHelper.h>
 #include "Mod/Part/App/TopoShapeOpCode.h"
@@ -131,22 +133,30 @@ bool FeatureExtrude::hasTaperedAngle() const
 
 void FeatureExtrude::onChanged(const App::Property* prop)
 {
-    if (prop == &Midplane) {
+    if (!isRestoring() && prop == &Midplane) {
         // Deprecation notice: Midplane property is deprecated and has been replaced by SideType in
         // FreeCAD 1.1 when FeatureExtrude was refactored.
+        App::DocumentObject* obj = Profile.getValue();
+        auto baseName = obj ? obj->getNameInDocument() : "";
         Base::Console().warning(
-            "The 'Midplane' property is deprecated and has been replaced by the 'SideType' "
-            "property in FeatureExtrude. Please update your script, this property will be "
-            "removed in a future version.\n"
+            "The 'Midplane' property being set for the extrusion of %s is deprecated and has "
+            "been replaced by the 'SideType' property in FeatureExtrude. Please update your script,"
+            " this property will be removed in a future version.\n",
+            baseName
         );
         if (Midplane.getValue()) {
             SideType.setValue("Symmetric");
+        }
+        else {
+            Base::Console()
+                .warning("Deprecated Midplane property was explicitly set to False: assuming SideType='One side'\n");
+            SideType.setValue("One side");
         }
     }
     ProfileBased::onChanged(prop);
 }
 
-TopoShape FeatureExtrude::makeShellFromUpToShape(TopoShape shape, TopoShape sketchshape, gp_Dir dir)
+TopoShape FeatureExtrude::makeShellFromUpToShape(TopoShape shape, TopoShape sketchshape, gp_Dir& dir)
 {
 
     // Find nearest/furthest face
@@ -486,7 +496,8 @@ App::DocumentObjectExecReturn* FeatureExtrude::buildExtrusion(ExtrudeOptions opt
                 dir,
                 offset1,
                 makeface,
-                base
+                base,
+                invObjLoc
             );
             prisms.push_back(prism1);
         }
@@ -509,7 +520,8 @@ App::DocumentObjectExecReturn* FeatureExtrude::buildExtrusion(ExtrudeOptions opt
                         dir,
                         offset1,
                         makeface,
-                        base
+                        base,
+                        invObjLoc
                     );
                     if (!prism1.isNull() && !prism1.getShape().IsNull()) {
                         prisms.push_back(prism1);
@@ -527,7 +539,8 @@ App::DocumentObjectExecReturn* FeatureExtrude::buildExtrusion(ExtrudeOptions opt
                         dir2,
                         offset1,
                         makeface,
-                        base
+                        base,
+                        invObjLoc
                     );
                     if (!prism2.isNull() && !prism2.getShape().IsNull()) {
                         prisms.push_back(prism2);
@@ -553,7 +566,8 @@ App::DocumentObjectExecReturn* FeatureExtrude::buildExtrusion(ExtrudeOptions opt
                         dir,
                         offset1,
                         makeface,
-                        base
+                        base,
+                        invObjLoc
                     );
                     if (!prism1.isNull() && !prism1.getShape().IsNull()) {
                         prisms.push_back(prism1);
@@ -572,7 +586,8 @@ App::DocumentObjectExecReturn* FeatureExtrude::buildExtrusion(ExtrudeOptions opt
                     dir,
                     offset1,
                     makeface,
-                    base
+                    base,
+                    invObjLoc
                 );
                 prisms.push_back(prism1);
 
@@ -616,7 +631,8 @@ App::DocumentObjectExecReturn* FeatureExtrude::buildExtrusion(ExtrudeOptions opt
                     dir2,
                     offset2,
                     makeface,
-                    base
+                    base,
+                    invObjLoc
                 );
                 if (!prism.isNull() && !prism.getShape().IsNull()) {
                     prisms.push_back(prism);
@@ -638,7 +654,8 @@ App::DocumentObjectExecReturn* FeatureExtrude::buildExtrusion(ExtrudeOptions opt
                     dir,
                     offset1,
                     makeface,
-                    base
+                    base,
+                    invObjLoc
                 );
                 if (!prism.isNull() && !prism.getShape().IsNull()) {
                     prisms.push_back(prism);
@@ -655,7 +672,8 @@ App::DocumentObjectExecReturn* FeatureExtrude::buildExtrusion(ExtrudeOptions opt
                     dir,
                     offset1,
                     makeface,
-                    base
+                    base,
+                    invObjLoc
                 );
                 if (!prism1.isNull() && !prism1.getShape().IsNull()) {
                     prisms.push_back(prism1);
@@ -672,7 +690,8 @@ App::DocumentObjectExecReturn* FeatureExtrude::buildExtrusion(ExtrudeOptions opt
                     dir2,
                     offset2,
                     makeface,
-                    base
+                    base,
+                    invObjLoc
                 );
                 if (!prism2.isNull() && !prism2.getShape().IsNull()) {
                     prisms.push_back(prism2);
@@ -822,7 +841,8 @@ TopoShape FeatureExtrude::generateSingleExtrusionSide(
     gp_Dir dir,
     double offsetVal,
     bool makeFace,
-    const TopoShape& base
+    const TopoShape& base,
+    TopLoc_Location& invObjLoc
 )
 {
     TopoShape prism(0, getDocument()->getStringHasher());
@@ -831,7 +851,6 @@ TopoShape FeatureExtrude::generateSingleExtrusionSide(
         || method == "UpToShape") {
         // Note: This will return an unlimited planar face if support is a datum plane
         TopoShape supportface = getTopoShapeSupportFace();
-        auto invObjLoc = getLocation().Inverted();
         supportface.move(invObjLoc);
 
         if (!supportface.hasSubShape(TopAbs_WIRE)) {
@@ -894,6 +913,7 @@ TopoShape FeatureExtrude::generateSingleExtrusionSide(
 
         Part::ExtrusionParameters params;
         params.taperAngleFwd = Base::toRadians(taperAngleDeg);
+        params.innerWireTaper = Part::InnerWireTaper::SameAsOuter;
 
         if (std::fabs(params.taperAngleFwd) >= Precision::Angular()
             || std::fabs(params.taperAngleRev) >= Precision::Angular()) {
@@ -947,9 +967,37 @@ void FeatureExtrude::onDocumentRestored()
         Type.setValue("Length");
         Type2.setValue("Length");
         SideType.setValue("Two sides");
+
+        // The old TwoLengths code path (generatePrism) always extruded in +dir:
+        //   offset = -L2 * dir  (Reversed=false) or -L * dir (Reversed=true)
+        //   extrude = (L+L2) * dir
+        // The new "Two sides" code extrudes Side 1 in dir, Side 2 in -dir,
+        // with Reversed toggling the sign of dir. To preserve the same OCC
+        // topology (face/edge ordering), we toggle Reversed so the effective
+        // extrusion direction matches the old +dir, and swap Length/Length2
+        // to keep the correct offset for each side.
+        Reversed.setValue(!Reversed.getValue());
+        double origL = Length.getValue();
+        double origL2 = Length2.getValue();
+        Length.setValue(origL2);
+        Length2.setValue(origL);
+
+        App::ObjectIdentifier lengthPath(Length);
+        App::ObjectIdentifier length2Path(Length2);
+        auto exprL = getExpression(lengthPath);
+        auto exprL2 = getExpression(length2Path);
+        if (exprL.expression || exprL2.expression) {
+            clearExpression(lengthPath);
+            clearExpression(length2Path);
+            if (exprL.expression) {
+                setExpression(length2Path, exprL.expression);
+            }
+            if (exprL2.expression) {
+                setExpression(lengthPath, exprL2.expression);
+            }
+        }
     }
     else if (Midplane.getValue()) {
-        // This code is probably now dead, replaced by the onChanged watcher for the Midplane value
         Midplane.setValue(false);
         SideType.setValue("Symmetric");
     }

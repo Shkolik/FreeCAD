@@ -324,7 +324,7 @@ void WorkbenchTabWidget::updateWorkbenchList()
         addWorkbenchTab(action);
     }
 
-    if (temporaryWorkbenchAction != nullptr) {
+    if (temporaryWorkbenchAction) {
         setTemporaryWorkbenchTab(temporaryWorkbenchAction);
     }
 
@@ -438,6 +438,24 @@ void WorkbenchTabWidget::adjustSize()
     QWidget::adjustSize();
 
     parentWidget()->adjustSize();
+}
+
+void WorkbenchComboBox::setVisible(bool visible)
+{
+    if (!visible && parentWidget() && parentWidget()->isVisible()) {
+        // ignore attempts to hide while parent is visible
+        // this works around a layout bug when toolbar grip is attached
+        // in the menu bar area
+        QTimer::singleShot(0, this, [this]() {
+            if (auto toolbar = parentWidget()) {
+                if (auto areaWidget = toolbar->parentWidget()) {
+                    areaWidget->adjustSize();
+                }
+            }
+        });
+        return;
+    }
+    QComboBox::setVisible(visible);
 }
 
 #include "moc_WorkbenchSelector.cpp"

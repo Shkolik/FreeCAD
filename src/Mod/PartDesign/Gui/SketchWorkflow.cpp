@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+
 /**************************************************************************
  *   Copyright (c) 2022 Werner Mayer <wmayer[at]users.sourceforge.net>     *
  *                                                                         *
@@ -436,7 +438,7 @@ public:
                 }
                 else {
                     if ((geoGroup && geoGroup->hasObject(plane, true))
-                        || !App::GeoFeatureGroupExtension::getGroupOfObject(plane)) {
+                        || App::GeoFeatureGroupExtension::getGroupOfObject(plane)) {
                         status.push_back(PartDesignGui::TaskFeaturePick::otherPart);
                     }
                     else {
@@ -720,7 +722,8 @@ private:
 
     void checkForShownDialog()
     {
-        Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog();
+        App::Document* appdocument = guidocument->getDocument();
+        Gui::TaskView::TaskDialog* dlg = Gui::Control().activeDialog(appdocument);
         PartDesignGui::TaskDlgFeaturePick* pickDlg
             = qobject_cast<PartDesignGui::TaskDlgFeaturePick*>(dlg);
         if (dlg && !pickDlg) {

@@ -30,6 +30,7 @@
 #include <QGridLayout>
 #include <QGroupBox>
 #include <QLineEdit>
+#include <QMenuBar>
 #include <QPushButton>
 #include <QRadioButton>
 #include <QRegularExpression>
@@ -42,6 +43,7 @@
 
 #include <Base/Parameter.h>
 #include <App/Application.h>
+#include <App/Document.h>
 
 #include "FileDialog.h"
 #include "MainWindow.h"
@@ -49,6 +51,84 @@
 
 
 using namespace Gui;
+
+namespace
+{
+QString getActiveDocumentDirectory()
+{
+    App::Document* activeDoc = App::GetApplication().getActiveDocument();
+    if (!activeDoc) {
+        return {};
+    }
+
+    const QString docPath = QString::fromUtf8(activeDoc->FileName.getValue());
+    if (docPath.isEmpty()) {
+        return {};
+    }
+
+    const QFileInfo fileInfo(docPath);
+    const QString dirPath = fileInfo.absolutePath();
+    if (dirPath.isEmpty()) {
+        return {};
+    }
+
+    const QDir docDir(dirPath);
+    if (!docDir.exists()) {
+        return {};
+    }
+
+    return docDir.path();
+}
+
+QString getPreferredDialogDirectory()
+{
+    QString dirName = getActiveDocumentDirectory();
+    if (!dirName.isEmpty()) {
+        return dirName;
+    }
+
+    return FileDialog::getWorkingDirectory();
+}
+}  // namespace
+
+// An raii-helper struct to disable actions while dialogs are open
+// At least on macos, shortcuts for enabled actions will still trigger while dialogs are open
+struct ActionDisabler
+{
+    ActionDisabler()
+    {
+        auto mainWin = Gui::getMainWindow();
+        if (!mainWin) {
+            return;
+        }
+        QMenuBar* menuBar = mainWin->menuBar();
+        if (!menuBar) {
+            return;
+        }
+        auto actions = menuBar->actions();
+        actionsToReenable.reserve(actions.size());
+        for (auto action : actions) {
+            if (action->isEnabled()) {
+                action->setEnabled(false);
+                actionsToReenable.push_back(action);
+            }
+        }
+    }
+
+    ~ActionDisabler()
+    {
+        for (auto action : actionsToReenable) {
+            if (action) {
+                action->setEnabled(true);
+            }
+        }
+    }
+
+    FC_DISABLE_COPY(ActionDisabler)
+
+    std::vector<QAction*> actionsToReenable {};
+};
+
 
 bool DialogOptions::dontUseNativeFileDialog()
 {
@@ -111,7 +191,7 @@ QList<QUrl> FileDialog::fetchSidebarUrls()
     list << QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
     list << QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
     list << QStandardPaths::writableLocation(QStandardPaths::PicturesLocation);
-    list << getWorkingDirectory();
+    list << getPreferredDialogDirectory();
     list << restoreLocation();
     list << QDir::currentPath();
 
@@ -195,15 +275,17 @@ QString FileDialog::getSaveFileName(
     Options options
 )
 {
+    ActionDisabler actionDisabler {};
+
     QString dirName = dir;
     bool hasFilename = false;
     if (dirName.isEmpty()) {
-        dirName = getWorkingDirectory();
+        dirName = getPreferredDialogDirectory();
     }
     else {
         QFileInfo fi(dir);
         if (fi.isRelative()) {
-            dirName = getWorkingDirectory();
+            dirName = getPreferredDialogDirectory();
             dirName += QLatin1String("/");
             dirName += fi.fileName();
         }
@@ -238,6 +320,7 @@ QString FileDialog::getSaveFileName(
     if (windowTitle.isEmpty()) {
         windowTitle = FileDialog::tr("Save As");
     }
+
 
     // NOTE: We must not change the specified file name afterwards as we may return the name of an
     // already existing file. Hence we must extract the first matching suffix from the filter list
@@ -298,7 +381,13 @@ QString FileDialog::getExistingDirectory(
     Options options
 )
 {
-    QString path = QFileDialog::getExistingDirectory(parent, caption, dir, options);
+    ActionDisabler actionDisabler {};
+    QString dirName = dir;
+    if (dirName.isEmpty()) {
+        dirName = getPreferredDialogDirectory();
+    }
+
+    QString path = QFileDialog::getExistingDirectory(parent, caption, dirName, options);
     // valid path was selected
     if (!path.isEmpty()) {
         QDir d(path);
@@ -321,9 +410,10 @@ QString FileDialog::getOpenFileName(
     Options options
 )
 {
+    ActionDisabler actionDisabler {};
     QString dirName = dir;
     if (dirName.isEmpty()) {
-        dirName = getWorkingDirectory();
+        dirName = getPreferredDialogDirectory();
     }
 
     QString windowTitle = caption;
@@ -385,9 +475,10 @@ QStringList FileDialog::getOpenFileNames(
     Options options
 )
 {
+    ActionDisabler actionDisabler {};
     QString dirName = dir;
     if (dirName.isEmpty()) {
-        dirName = getWorkingDirectory();
+        dirName = getPreferredDialogDirectory();
     }
 
     QString windowTitle = caption;
@@ -516,6 +607,7 @@ FileOptionsDialog::FileOptionsDialog(QWidget* parent, Qt::WindowFlags fl)
     extensionButton->setText(tr("Extended"));
 
     setOption(QFileDialog::DontUseNativeDialog);
+    setDirectory(getPreferredDialogDirectory());
 
     // search for the grid layout and add the new button
     auto grid = this->findChild<QGridLayout*>();
@@ -799,9 +891,10 @@ void FileChooser::setFileName(const QString& fn)
  */
 void FileChooser::chooseFile()
 {
+    ActionDisabler actionDisabler {};
     QString prechosenDirectory = lineEdit->text();
     if (prechosenDirectory.isEmpty()) {
-        prechosenDirectory = FileDialog::getWorkingDirectory();
+        prechosenDirectory = getPreferredDialogDirectory();
     }
 
     QFileDialog::Options dlgOpt;
@@ -1050,12 +1143,12 @@ SelectModule::Dict SelectModule::exportHandler(const QStringList& fileNames, con
         QFileInfo fi(fileName);
         QString ext = fi.completeSuffix().toLower();
         std::map<std::string, std::string> filters = App::GetApplication().getExportFilters(
-            ext.toLatin1()
+            ext.toStdString()
         );
 
         if (filters.empty()) {
             ext = fi.suffix().toLower();
-            filters = App::GetApplication().getExportFilters(ext.toLatin1());
+            filters = App::GetApplication().getExportFilters(ext.toStdString());
         }
 
         fileExtension[ext].push_back(fileName);
@@ -1120,12 +1213,12 @@ SelectModule::Dict SelectModule::importHandler(const QStringList& fileNames, con
         QFileInfo fi(fileName);
         QString ext = fi.completeSuffix().toLower();
         std::map<std::string, std::string> filters = App::GetApplication().getImportFilters(
-            ext.toLatin1()
+            ext.toStdString()
         );
 
         if (filters.empty()) {
             ext = fi.suffix().toLower();
-            filters = App::GetApplication().getImportFilters(ext.toLatin1());
+            filters = App::GetApplication().getImportFilters(ext.toStdString());
         }
 
         fileExtension[ext].push_back(fileName);

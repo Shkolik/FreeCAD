@@ -20,7 +20,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <boost/signals2.hpp>
+#include <fastsignals/signal.h>
 #include <boost/core/ignore_unused.hpp>
 #include <QAction>
 #include <QApplication>
@@ -202,10 +202,9 @@ void MDIView::viewAll()
 {}
 
 /// receive a message
-bool MDIView::onMsg(const char* pMsg, const char** ppReturn)
+bool MDIView::onMsg(const char* pMsg)
 {
     Q_UNUSED(pMsg);
-    Q_UNUSED(ppReturn);
     return false;
 }
 

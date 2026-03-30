@@ -20,13 +20,12 @@
  *                                                                         *
  ***************************************************************************/
 
-#ifndef GUI_DOCUMENT_H
-#define GUI_DOCUMENT_H
+#pragma once
 
 #include <list>
 #include <map>
 #include <string>
-#include <boost/signals2.hpp>
+#include <fastsignals/signal.h>
 #include <QString>
 
 #include <Base/Persistence.h>
@@ -112,23 +111,26 @@ public:
     /** @name Signals of the document */
     //@{
     /// signal on new Object
-    mutable boost::signals2::signal<void(const Gui::ViewProviderDocumentObject&)> signalNewObject;
+    mutable fastsignals::signal<void(const Gui::ViewProviderDocumentObject&)> signalNewObject;
     /// signal on deleted Object
-    mutable boost::signals2::signal<void(const Gui::ViewProviderDocumentObject&)> signalDeletedObject;
+    mutable fastsignals::signal<void(const Gui::ViewProviderDocumentObject&)> signalDeletedObject;
     /** signal on changed Object, the 2nd argument is the changed property
         of the referenced document object, not of the view provider */
-    mutable boost::signals2::signal<void(const Gui::ViewProviderDocumentObject&, const App::Property&)>
+    mutable fastsignals::signal<void(const Gui::ViewProviderDocumentObject&, const App::Property&)>
         signalChangedObject;
     /// signal on renamed Object
-    mutable boost::signals2::signal<void(const Gui::ViewProviderDocumentObject&)> signalRelabelObject;
-    /// signal on activated Object
-    mutable boost::signals2::signal<void(const Gui::ViewProviderDocumentObject&)> signalActivatedObject;
+    mutable fastsignals::signal<void(const Gui::ViewProviderDocumentObject&)> signalRelabelObject;
+    /// signal on activated Object (relay of App activation signal)
+    mutable fastsignals::signal<void(const Gui::ViewProviderDocumentObject&)> signalActivatedObject;
+    /// signal on activated Object in the tree (bold item)
+    mutable fastsignals::signal<void(const Gui::ViewProviderDocumentObject*, const char*)>
+        signalActivatedViewProvider;
     /// signal on entering in edit mode
-    mutable boost::signals2::signal<void(const Gui::ViewProviderDocumentObject&)> signalInEdit;
+    mutable fastsignals::signal<void(const Gui::ViewProviderDocumentObject&)> signalInEdit;
     /// signal on leaving edit mode
-    mutable boost::signals2::signal<void(const Gui::ViewProviderDocumentObject&)> signalResetEdit;
+    mutable fastsignals::signal<void(const Gui::ViewProviderDocumentObject&)> signalResetEdit;
     /// signal on changed Object, the 2nd argument is the highlite mode to use
-    mutable boost::signals2::signal<void(
+    mutable fastsignals::signal<void(
         const Gui::ViewProviderDocumentObject&,
         const Gui::HighlightMode&,
         bool,
@@ -137,7 +139,7 @@ public:
     )>
         signalHighlightObject;
     /// signal on changed Object, the 2nd argument is the highlite mode to use
-    mutable boost::signals2::signal<void(
+    mutable fastsignals::signal<void(
         const Gui::ViewProviderDocumentObject&,
         const Gui::TreeItemMode&,
         App::DocumentObject* parent,
@@ -145,15 +147,15 @@ public:
     )>
         signalExpandObject;
     /// signal on changed ShowInTree property in view provider
-    mutable boost::signals2::signal<void(const Gui::ViewProviderDocumentObject&)> signalShowItem;
+    mutable fastsignals::signal<void(const Gui::ViewProviderDocumentObject&)> signalShowItem;
     /// signal on scrolling to an object
-    mutable boost::signals2::signal<void(const Gui::ViewProviderDocumentObject&)> signalScrollToObject;
+    mutable fastsignals::signal<void(const Gui::ViewProviderDocumentObject&)> signalScrollToObject;
     /// signal on undo Document
-    mutable boost::signals2::signal<void(const Gui::Document& doc)> signalUndoDocument;
+    mutable fastsignals::signal<void(const Gui::Document& doc)> signalUndoDocument;
     /// signal on redo Document
-    mutable boost::signals2::signal<void(const Gui::Document& doc)> signalRedoDocument;
+    mutable fastsignals::signal<void(const Gui::Document& doc)> signalRedoDocument;
     /// signal on deleting Document
-    mutable boost::signals2::signal<void(const Gui::Document& doc)> signalDeleteDocument;
+    mutable fastsignals::signal<void(const Gui::Document& doc)> signalDeleteDocument;
     //@}
 
     /** @name I/O of the document */
@@ -189,11 +191,20 @@ public:
     void setModified(bool);
     bool isModified() const;
 
+    /// getter-setter for workbench name
+    void setWorkbench(const std::string& name);
+    std::string workbench() const;
+
     /// Returns true if the document is about to be closed, false otherwise
     bool isAboutToClose() const;
 
     /// Getter for the App Document
     App::Document* getDocument() const;
+
+    /// Notify the document when it becomes
+    /// the active document/stops being the active document
+    void setIsActive(bool active);
+    bool isActive() const;
 
     /** @name methods for View handling */
     //@{
@@ -216,7 +227,7 @@ public:
      * first checked view is the current active view.
      * If a view supports the message true is returned and false otherwise.
      */
-    bool sendMsgToFirstView(const Base::Type& typeId, const char* pMsg, const char** ppReturn);
+    bool sendMsgToFirstView(const Base::Type& typeId, const char* pMsg);
     /// Attach a view (get called by the MDIView constructor)
     void attachView(Gui::BaseView* pcView, bool bPassiv = false);
     /// Detach a view (get called by the MDIView destructor)
@@ -285,6 +296,8 @@ public:
         int* mode = nullptr,
         std::string* subElement = nullptr
     ) const;
+    ViewProvider* getEditViewProvider() const;  // Returns the _editViewProvider even if it is not
+                                                // in edit at the moment
     /// set the in edit ViewProvider subname reference
     void setInEdit(ViewProviderDocumentObject* parentVp, const char* subname);
     /** Add or remove view provider from scene graphs of all views
@@ -298,7 +311,7 @@ public:
     /** @name methods for the UNDO REDO handling */
     //@{
     /// Open a new Undo transaction on the document
-    void openCommand(const char* sName = nullptr);
+    int openCommand(const char* sName = nullptr);
     /// Commit the Undo transaction on the document
     void commitCommand();
     /// Abort the Undo transaction on the document
@@ -369,6 +382,3 @@ private:
 };
 
 }  // namespace Gui
-
-
-#endif  // GUI_DOCUMENT_H

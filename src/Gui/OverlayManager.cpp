@@ -199,7 +199,7 @@ struct OverlayInfo
     Qt::DockWidgetArea dockArea;
     std::unordered_map<QDockWidget*, OverlayInfo*>& overlayMap;
     ParameterGrp::handle hGrp;
-    boost::signals2::scoped_connection conn;
+    fastsignals::scoped_connection conn;
 
     OverlayInfo(
         QWidget* parent,
@@ -409,6 +409,7 @@ public:
         Application::Instance->signalResetEdit.connect([this](const ViewProviderDocumentObject&) {
             refresh();
         });
+        Application::Instance->signalActivateWorkbench.connect([this](const char*) { refresh(); });
 
         _actOverlay.setData(QStringLiteral("OBTN Overlay"));
         _actFloat.setData(QStringLiteral("OBTN Float"));
@@ -998,8 +999,10 @@ public:
 
     void setupTitleBar(QDockWidget* dock)
     {
-        if (!dock->titleBarWidget()) {
-            dock->setTitleBarWidget(createTitleBar(dock));
+        auto* oldWidget = dock->titleBarWidget();
+        dock->setTitleBarWidget(createTitleBar(dock));
+        if (oldWidget) {
+            oldWidget->deleteLater();
         }
     }
 
@@ -1673,12 +1676,9 @@ void OverlayManager::onDockFeaturesChange(QDockWidget::DockWidgetFeatures featur
     }
 
     // Rebuild the title widget as it may have a different set of buttons shown.
-    if (auto* titleBarWidget = qobject_cast<OverlayTitleBar*>(dw->titleBarWidget())) {
-        dw->setTitleBarWidget(nullptr);
-        delete titleBarWidget;
+    if (auto tw = dw->titleBarWidget(); !tw || qobject_cast<OverlayTitleBar*>(tw)) {
+        setupTitleBar(dw);
     }
-
-    setupTitleBar(dw);
 }
 
 void OverlayManager::onTaskViewUpdate()
@@ -1769,6 +1769,12 @@ bool OverlayManager::eventFilter(QObject* o, QEvent* ev)
             if (Selection().hasPreselection() && !qobject_cast<View3DInventorViewer*>(o)
                 && !isUnderOverlay()) {
                 Selection().rmvPreselect();
+            }
+            break;
+        case QEvent::Leave:
+            // Clear mirrored cursor when leaving overlay.
+            if (auto tabWidget = qobject_cast<OverlayTabWidget*>(o)) {
+                tabWidget->unsetCursor();
             }
             break;
         case QEvent::ZOrderChange: {
@@ -2009,11 +2015,18 @@ bool OverlayManager::eventFilter(QObject* o, QEvent* ev)
 
             ev->accept();
             d->interceptEvent(hitWidget, ev);
+            // Mirror underlying widget cursor onto transparent overlay.
+            if (ev->type() == QEvent::MouseMove) {
+                activeTabWidget->setCursor(hitWidget->cursor());
+            }
             if (ev->isAccepted() && ev->type() == QEvent::MouseButtonPress) {
                 hitWidget->setFocus();
                 d->_trackingWidget = hitWidget;
                 d->_trackingOverlay = activeTabWidget;
-                d->_trackingOverlay->grabMouse();
+                // Wayland doesn't allow mouse grab
+                if (QGuiApplication::platformName() != QLatin1String("wayland")) {
+                    d->_trackingOverlay->grabMouse();
+                }
             }
             return true;
         }
@@ -2038,7 +2051,10 @@ public:
     ~MouseGrabberGuard()
     {
         if (_grabber) {
-            _grabber->grabMouse();
+            // Wayland doesn't allow mouse grab
+            if (QGuiApplication::platformName() != QLatin1String("wayland")) {
+                _grabber->grabMouse();
+            }
         }
     }
 

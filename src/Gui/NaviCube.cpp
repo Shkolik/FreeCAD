@@ -38,6 +38,7 @@
 #include <Inventor/events/SoLocation2Event.h>
 #include <Inventor/events/SoMouseButtonEvent.h>
 #include <QApplication>
+#include <QElapsedTimer>
 #include <QCursor>
 #include <QImage>
 #include <QMenu>
@@ -207,6 +208,9 @@ private:
     bool m_Dragging = false;
     bool m_MightDrag = false;
     bool m_Hovering = false;
+
+    QElapsedTimer m_ClickTimer;
+    PickId m_LastClickPickId = PickId::None;
 
     SbVec2f m_RelPos = SbVec2f(1.0f, 1.0f);
     SbVec2s m_PosAreaBase = SbVec2s(0, 0);
@@ -534,7 +538,11 @@ void NaviCubeImplementation::createCubeFaceTextures()
         if (m_LabelTextures[pickId].texture) {
             delete m_LabelTextures[pickId].texture;
         }
+#if QT_VERSION < QT_VERSION_CHECK(6, 9, 0)
         m_LabelTextures[pickId].texture = new QOpenGLTexture(image.mirrored());
+#else
+        m_LabelTextures[pickId].texture = new QOpenGLTexture(image.flipped(Qt::Vertical));
+#endif
         m_LabelTextures[pickId].texture->setMaximumAnisotropy(4.0);
         m_LabelTextures[pickId].texture->setMinificationFilter(QOpenGLTexture::LinearMipMapLinear);
         m_LabelTextures[pickId].texture->setMagnificationFilter(QOpenGLTexture::Linear);
@@ -1172,12 +1180,17 @@ SbRotation NaviCubeImplementation::getNearestOrientation(PickId pickId)
 bool NaviCubeImplementation::mouseReleased(short x, short y)
 {
     static const float pi = boost::math::constants::pi<float>();
+    auto resetClickState = [this]() {
+        m_LastClickPickId = PickId::None;
+        m_ClickTimer.invalidate();
+    };
 
     setHilite(PickId::None);
     m_MouseDown = false;
 
     if (m_Dragging) {
         m_Dragging = false;
+        resetClickState();
     }
     else {
         PickId pickId = pickFace(x, y);
@@ -1186,6 +1199,10 @@ bool NaviCubeImplementation::mouseReleased(short x, short y)
 
         if (m_Faces[pickId].type == ShapeId::Main || m_Faces[pickId].type == ShapeId::Edge
             || m_Faces[pickId].type == ShapeId::Corner) {
+            // Detect double-click: same face clicked twice within the system double-click interval
+            bool isDoubleClick = m_ClickTimer.isValid() && m_LastClickPickId == pickId
+                && m_ClickTimer.elapsed() < QApplication::doubleClickInterval();
+
             // Handle the cube faces
             SbRotation orientation;
             if (m_RotateToNearest) {
@@ -1194,17 +1211,27 @@ bool NaviCubeImplementation::mouseReleased(short x, short y)
             else {
                 orientation = m_Faces[pickId].rotation;
             }
-            m_View3DInventorViewer->setCameraOrientation(orientation);
+            m_View3DInventorViewer->setCameraOrientation(orientation, isDoubleClick);
+
+            if (isDoubleClick) {
+                resetClickState();
+            }
+            else {
+                m_LastClickPickId = pickId;
+                m_ClickTimer.start();
+            }
         }
         else if (m_Faces[pickId].type == ShapeId::Button) {
 
             // Handle the menu
             if (pickId == PickId::ViewMenu) {
+                resetClickState();
                 handleMenu();
                 return true;
             }
 
             // Handle the flat buttons
+            resetClickState();
             SbRotation rotation = m_Faces[pickId].rotation;
             if (pickId == PickId::DotBackside) {
                 rotation.scaleAngle(pi);
@@ -1216,7 +1243,7 @@ bool NaviCubeImplementation::mouseReleased(short x, short y)
             // If the previous flat button animation is still active then apply the rotation to the
             // previous target orientation, otherwise apply the rotation to the current camera
             // orientation
-            if (m_flatButtonAnimation != nullptr
+            if (m_flatButtonAnimation
                 && m_flatButtonAnimation->state() == QAbstractAnimation::Running) {
                 m_flatButtonTargetOrientation = rotation * m_flatButtonTargetOrientation;
             }
@@ -1230,6 +1257,7 @@ bool NaviCubeImplementation::mouseReleased(short x, short y)
             );
         }
         else {
+            resetClickState();
             return false;
         }
     }

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+
 /***************************************************************************
  *   Copyright (c) 2022 Boyer Pierre-Louis <pierrelouis.boyer@gmail.com>   *
  *                                                                         *
@@ -21,8 +23,7 @@
  ***************************************************************************/
 
 
-#ifndef SKETCHERGUI_DrawSketchHandlerTranslate_H
-#define SKETCHERGUI_DrawSketchHandlerTranslate_H
+#pragma once
 
 #include <QApplication>
 #include <map>
@@ -56,10 +57,11 @@ using DSHTranslateController = DrawSketchDefaultWidgetController<
     DrawSketchHandlerTranslate,
     StateMachines::ThreeSeekEnd,
     /*PAutoConstraintSize =*/0,
-    /*OnViewParametersT =*/OnViewParameters<6>,
-    /*WidgetParametersT =*/WidgetParameters<2>,
-    /*WidgetCheckboxesT =*/WidgetCheckboxes<1>,
-    /*WidgetComboboxesT =*/WidgetComboboxes<0>>;
+    /*OnViewParametersT =*/OnViewParameters<6>,  // NOLINT
+    /*WidgetParametersT =*/WidgetParameters<2>,  // NOLINT
+    /*WidgetCheckboxesT =*/WidgetCheckboxes<1>,  // NOLINT
+    /*WidgetComboboxesT =*/WidgetComboboxes<0>,  // NOLINT
+    /*WidgetLineEditsT =*/WidgetLineEdits<0>>;   // NOLINT
 
 using DSHTranslateControllerBase = DSHTranslateController::ControllerBase;
 
@@ -67,6 +69,8 @@ using DrawSketchHandlerTranslateBase = DrawSketchControllableHandler<DSHTranslat
 
 class DrawSketchHandlerTranslate: public DrawSketchHandlerTranslateBase
 {
+    Q_DECLARE_TR_FUNCTIONS(SketcherGui::DrawSketchHandlerTranslate)
+
     friend DSHTranslateController;
     friend DSHTranslateControllerBase;
 
@@ -115,7 +119,7 @@ private:
     void executeCommands() override
     {
         try {
-            Gui::Command::openCommand(QT_TRANSLATE_NOOP("Command", "Translate geometries"));
+            openCommand(QT_TRANSLATE_NOOP("Command", "Translate geometries"));
 
             expressionHelper.storeOriginalExpressions(sketchgui->getSketchObject(), listOfGeoIds);
 
@@ -135,7 +139,7 @@ private:
                 deleteOriginalGeos();
             }
 
-            Gui::Command::commitCommand();
+            commitCommand();
         }
         catch (const Base::Exception& e) {
             e.reportException();
@@ -145,7 +149,7 @@ private:
                 QT_TRANSLATE_NOOP("Notifications", "Failed to translate")
             );
 
-            Gui::Command::abortCommand();
+            abortCommand();
             THROWM(
                 Base::RuntimeError,
                 QT_TRANSLATE_NOOP(
@@ -792,6 +796,3 @@ void DSHTranslateController::computeNextDrawSketchHandlerMode()
 }
 
 }  // namespace SketcherGui
-
-
-#endif  // SKETCHERGUI_DrawSketchHandlerTranslate_H

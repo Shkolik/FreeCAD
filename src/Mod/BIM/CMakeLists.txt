@@ -146,6 +146,7 @@ SET(bimcommands_SRCS
     bimcommands/BimLayers.py
     bimcommands/BimLeader.py
     bimcommands/BimLibrary.py
+    bimcommands/BimLink.py
     bimcommands/BimMaterial.py
     bimcommands/BimMoveView.py
     bimcommands/BimNudge.py
@@ -229,6 +230,7 @@ SET(bimtests_SRCS
     bimtests/TestArchRoof.py
     bimtests/TestArchSpace.py
     bimtests/TestArchWall.py
+    bimtests/TestArchWallGui.py
     bimtests/TestArchMaterial.py
     bimtests/TestArchPanel.py
     bimtests/TestArchWindow.py
